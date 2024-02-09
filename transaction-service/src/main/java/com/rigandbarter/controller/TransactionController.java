@@ -20,4 +20,10 @@ public class TransactionController {
         System.out.println("\n\n\n\nTEST ENDPINT HIT\n\n\n\n");
         return "true";
     }
+
+    @GetMapping(path = "/get/{val}")
+    @ResponseStatus(HttpStatus.OK)
+    public String testVal(@PathVariable(name = "val") int val) {
+        return "You requested " + val;
+    }
 }

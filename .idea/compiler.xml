@@ -7,14 +7,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="listing-service" />
+        <module name="api-gateway" />
         <module name="transaction-service" />
+        <module name="listing-service" />
         <module name="discovery-service" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api-gateway" options="-parameters" />
       <module name="discovery-service" options="-parameters" />
       <module name="listing-service" options="-parameters" />
       <module name="rig-and-barter-backend" options="" />
