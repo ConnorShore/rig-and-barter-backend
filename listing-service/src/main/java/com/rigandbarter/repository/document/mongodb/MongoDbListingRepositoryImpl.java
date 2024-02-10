@@ -1,9 +1,9 @@
-package com.rigandbarter.repository;
+package com.rigandbarter.repository.document.mongodb;
 
 import com.rigandbarter.model.Listing;
+import com.rigandbarter.repository.document.IListingRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.stereotype.Repository;

@@ -1,23 +1,22 @@
-package com.rigandbarter.service;
+package com.rigandbarter.repository.file.s3;
 
+import com.rigandbarter.repository.file.IFileRepository;
 import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 
 import java.io.IOException;
-import java.util.UUID;
 
-@Service
-@ConditionalOnProperty(value = "rb.storage.file", havingValue = "s3")
-public class S3Service implements IFileService {
+@Repository
+@ConditionalOnProperty(value = "rb.storage.file", havingValue = "aws-s3")
+public class S3RepositoryImpl implements IFileRepository {
 
     @Autowired
     private S3Template s3Template;
@@ -26,13 +25,7 @@ public class S3Service implements IFileService {
     private String LISTING_IMAGES_BUCKET;
 
     @Override
-    public String uploadFile(MultipartFile file) {
-        // Upload file to AWS S3
-
-        // Prepare a key
-        var fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-        var key = UUID.randomUUID().toString() + fileExtension;
-
+    public String uploadFile(String key, MultipartFile file) {
         // Set metadata
         var metaData = new ObjectMetadata.Builder()
                 .contentType(file.getContentType())

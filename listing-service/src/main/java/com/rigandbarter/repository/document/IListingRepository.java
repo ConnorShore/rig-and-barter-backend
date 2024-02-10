@@ -1,4 +1,4 @@
-package com.rigandbarter.repository;
+package com.rigandbarter.repository.document;
 
 import com.rigandbarter.model.Listing;
 

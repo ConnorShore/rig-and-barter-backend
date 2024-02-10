@@ -3,9 +3,11 @@ package com.rigandbarter.service;
 import com.rigandbarter.dto.ListingRequest;
 import com.rigandbarter.model.ComponentCategory;
 import com.rigandbarter.model.Listing;
-import com.rigandbarter.repository.IListingRepository;
+import com.rigandbarter.repository.file.IFileRepository;
+import com.rigandbarter.repository.document.IListingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -15,10 +17,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ListingService {
 
-    private final IFileService fileService;
     private final IListingRepository listingRepository;
-
-//    private final WebClient.Builder webClientBuilder;
+    private final IFileRepository fileRepository;
 
     /**
      * Creates a new listing in the database and uploads images to blob storage
@@ -26,13 +26,17 @@ public class ListingService {
      * @param image The listing image to save to blob storage
      */
     public void createListing(ListingRequest listingRequest, MultipartFile image) {
+        // Prepare a key for file service
+        var fileExtension = StringUtils.getFilenameExtension(image.getOriginalFilename());
+        var key = UUID.randomUUID() + "." + fileExtension;
+
         // Save the listing image to file service
-        String imageUrl = fileService.uploadFile(image);
+        String imageUrl = fileRepository.uploadFile(key, image);
 
         // Save the listing data to the document db
         var listing = Listing.builder()
                 .id(UUID.randomUUID().toString())
-                .userId("Connor")
+                .userId("DevTest")
                 .title(listingRequest.getTitle())
                 .description(listingRequest.getDescription())
                 .creationDate(LocalDateTime.now())
@@ -40,37 +44,6 @@ public class ListingService {
                 .imageId(imageUrl)
                 .build();
 
-    }
-
-    public void testBlob(MultipartFile file) {
-        fileService.uploadFile(file);
-    }
-
-    public void testDocument() {
-        var listing = Listing.builder()
-                .id("12345")
-                .userId("Connor")
-                .title("Test item")
-                .description("Test descr")
-                .creationDate(LocalDateTime.now())
-                .componentCategory(ComponentCategory.CPU)
-                .imageId("imageID")
-                .build();
         listingRepository.saveListing(listing);
     }
-
-    /**
-     * Test inter-service communication
-     */
-//    public String test() {
-//
-//        String ret = webClientBuilder.build().get()
-//                .uri("http://transaction-service/api/transaction/test")
-//                .retrieve()
-//                .bodyToMono(String.class)
-//                .block();
-//
-//        return ret;
-//    }
-
 }

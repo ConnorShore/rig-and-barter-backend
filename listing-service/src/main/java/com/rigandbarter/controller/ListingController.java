@@ -4,6 +4,8 @@ import com.rigandbarter.dto.ListingRequest;
 import com.rigandbarter.service.ListingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,33 +16,16 @@ public class ListingController {
 
     private final ListingService listingService;
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    public String createListing(@RequestPart(name = "listing") ListingRequest listingRequest,
+    public void createListing(@RequestPart(name = "listing") ListingRequest listingRequest,
                                 @RequestPart(name = "image") MultipartFile image) {
-
-        return "Successfully created listing!";
+        listingService.createListing(listingRequest, image);
     }
 
-    @PostMapping(value = "/testBlob")
+    @GetMapping("status")
     @ResponseStatus(HttpStatus.OK)
-    public String createBlob(@RequestParam(name = "file") MultipartFile file) {
-        listingService.testBlob(file);
-        return "Successfully added blob";
+    public String healthCheck() {
+        return "Listing Service is running...";
     }
-
-    @GetMapping(value = "/testDoc")
-    @ResponseStatus(HttpStatus.OK)
-    public String createDoc() {
-        listingService.testDocument();
-        return "Successfully created doc";
-    }
-
-//    @GetMapping(path = "/select")
-//    @ResponseStatus(HttpStatus.OK)
-//    public String selectListing() {
-//        if(listingService.test().equals("true"))
-//            return "Listing returned";
-//        return "No listings returned";
-//    }
 }

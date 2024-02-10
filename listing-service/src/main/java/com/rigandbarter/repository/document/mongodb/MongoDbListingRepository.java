@@ -1,4 +1,4 @@
-package com.rigandbarter.repository;
+package com.rigandbarter.repository.document.mongodb;
 
 import com.rigandbarter.model.Listing;
 import org.springframework.data.mongodb.repository.MongoRepository;
