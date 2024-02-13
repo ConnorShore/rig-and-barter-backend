@@ -1,23 +1,20 @@
-package com.rigandbarter.listingservice.model;
+package com.rigandbarter.listingservice.dto;
 
+import com.rigandbarter.listingservice.model.ComponentCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Document(value = "Listing")
-@Builder
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Listing {
-
-    @Id
+public class ListingResponse {
     private String id;
     private String userId;
     private String title;
@@ -26,10 +23,4 @@ public class Listing {
     private Double price;
     private List<String> imageUrls;
     private ComponentCategory componentCategory;
-
-    // private ComponentCondition componentCondition;
-    // private Set<String> tags;  ?? Not sure if needed
-    // private ComponentType componentType;
-    // private ComponentSpecifications componentSpecifications;
-
 }

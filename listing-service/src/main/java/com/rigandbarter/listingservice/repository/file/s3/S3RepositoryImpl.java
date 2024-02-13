@@ -1,8 +1,10 @@
 package com.rigandbarter.listingservice.repository.file.s3;
 
 import com.rigandbarter.listingservice.repository.file.IFileRepository;
+import io.awspring.cloud.autoconfigure.s3.S3TransferManagerAutoConfiguration;
 import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Template;
+import io.awspring.cloud.s3.TransferManagerS3OutputStreamProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -13,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 
 import java.io.IOException;
+import java.util.List;
 
 @Repository
 @ConditionalOnProperty(value = "rb.storage.file", havingValue = "aws-s3")

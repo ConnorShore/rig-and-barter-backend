@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @ConditionalOnProperty(value = "rb.storage.document", havingValue = "mongodb")
 public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Listing, String> implements IListingRepository {
@@ -18,5 +20,10 @@ public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Listing,
     @Override
     public Listing saveListing(Listing listing) {
         return super.save(listing);
+    }
+
+    @Override
+    public List<Listing> getAllListings() {
+        return super.findAll();
     }
 }
