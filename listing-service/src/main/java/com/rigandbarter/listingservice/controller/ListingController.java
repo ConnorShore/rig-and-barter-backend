@@ -1,5 +1,7 @@
 package com.rigandbarter.listingservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.listingservice.service.ListingService;
 import org.springframework.http.HttpStatus;
@@ -15,11 +17,12 @@ public class ListingController {
 
     private final ListingService listingService;
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    public void createListing(@RequestPart(name = "listing") ListingRequest listingRequest,
-                                @RequestPart(name = "image") MultipartFile image) {
-        listingService.createListing(listingRequest, image);
+    public void createListing(@RequestPart(name = "listing") String listingRequest,
+                              @RequestPart(name = "image") MultipartFile image) throws JsonProcessingException {
+        ListingRequest listingRequestObj = new ObjectMapper().readValue(listingRequest, ListingRequest.class);
+        listingService.createListing(listingRequestObj, image);
     }
 
     @GetMapping("status")

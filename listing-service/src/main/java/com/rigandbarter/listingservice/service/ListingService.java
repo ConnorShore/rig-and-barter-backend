@@ -40,7 +40,7 @@ public class ListingService {
                 .title(listingRequest.getTitle())
                 .description(listingRequest.getDescription())
                 .creationDate(LocalDateTime.now())
-                .componentCategory(ComponentCategory.CPU)
+                .componentCategory(listingRequest.getComponentCategory())
                 .imageId(imageUrl)
                 .build();
 
