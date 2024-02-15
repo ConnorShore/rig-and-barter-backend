@@ -1,11 +1,12 @@
 package com.rigandbarter.apigateway.config;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -13,10 +14,12 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
-public class CorsConfig extends CorsConfiguration
-{
+@EnableWebFluxSecurity
+public class SecurityConfig {
+
     @Value("${rb.front-end.url}")
     private String FRONT_END_URL;
+
     @Bean
     public CorsWebFilter corsFilter()
     {
@@ -31,4 +34,15 @@ public class CorsConfig extends CorsConfiguration
 
         return new CorsWebFilter( source );
     }
+
+    @Bean
+    SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        return http
+                .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/**").permitAll()
+                        .anyExchange().authenticated())
+                .oauth2Login(Customizer.withDefaults())
+                .build();
+    }
+
 }
