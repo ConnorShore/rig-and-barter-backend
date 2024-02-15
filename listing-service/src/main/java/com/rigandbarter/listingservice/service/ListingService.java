@@ -28,7 +28,7 @@ public class ListingService {
      * @param listingRequest The listing metadata to save to document db
      * @param images The listing's images to save to blob storage
      */
-    public void createListing(ListingRequest listingRequest, List<MultipartFile> images) {
+    public void createListing(ListingRequest listingRequest, List<MultipartFile> images, String userId) {
         // Save the listing image to file service
         List<String> imageUrls = new ArrayList<>();
         for(MultipartFile image : images) {
@@ -40,7 +40,7 @@ public class ListingService {
         // Save the listing data to the document db
         var listing = Listing.builder()
                 .id(UUID.randomUUID().toString())
-                .userId("DevTest")
+                .userId(userId)
                 .title(listingRequest.getTitle())
                 .description(listingRequest.getDescription())
                 .creationDate(LocalDateTime.now())
