@@ -43,6 +43,7 @@ public class ListingService {
                 .userId(userId)
                 .title(listingRequest.getTitle())
                 .description(listingRequest.getDescription())
+                .price(listingRequest.getPrice())
                 .creationDate(LocalDateTime.now())
                 .componentCategory(listingRequest.getComponentCategory())
                 .imageUrls(imageUrls)

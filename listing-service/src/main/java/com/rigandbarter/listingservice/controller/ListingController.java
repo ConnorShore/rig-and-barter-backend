@@ -8,15 +8,11 @@ import com.rigandbarter.listingservice.service.ListingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,7 +32,12 @@ public class ListingController {
         listingService.createListing(listingRequestObj, Arrays.asList(images), principal.getId());
     }
 
-    @GetMapping("view")
+    /**
+     * TODO: Refactor view listings to only return necessary info for the gallery card
+     *      Only need to return one photo (and maybe return the base64 for the photo in the payload so frontend
+     *      doesn't need to make request to the url)
+     */
+    @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public List<ListingResponse> getAllListings() {
         return listingService.getAllListings();
