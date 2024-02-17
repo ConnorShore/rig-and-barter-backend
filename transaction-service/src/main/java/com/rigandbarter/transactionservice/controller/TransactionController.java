@@ -1,29 +1,26 @@
 package com.rigandbarter.transactionservice.controller;
 
+import com.rigandbarter.transactionservice.dto.TransactionRequest;
+import com.rigandbarter.transactionservice.service.TransactionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/transaction")
+@RequestMapping("api/transaction")
+@RequiredArgsConstructor
 public class TransactionController {
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public String base() {
-        return "Test endpoint hit";
-    }
+    private final TransactionService transactionService;
 
-
-    @GetMapping(path = "/test")
-    @ResponseStatus(HttpStatus.OK)
-    public String test() {
-        System.out.println("\n\n\n\nTEST ENDPINT HIT\n\n\n\n");
-        return "true";
-    }
-
-    @GetMapping(path = "/get/{val}")
-    @ResponseStatus(HttpStatus.OK)
-    public String testVal(@PathVariable(name = "val") int val) {
-        return "You requested " + val;
+    @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createTransaction(@AuthenticationPrincipal Jwt principal,
+                                    @RequestBody TransactionRequest transactionRequest) {
+        return transactionService.createTransaction(transactionRequest, principal.getId())
+                .getId()
+                .toString();
     }
 }

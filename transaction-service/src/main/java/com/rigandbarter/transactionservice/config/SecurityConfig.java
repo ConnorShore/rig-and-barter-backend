@@ -15,14 +15,13 @@ public class SecurityConfig {
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     String issuerUri;
 
-    @Value("${rb.security.permitted-urls}")
-    String[] permittedUrls;
+//    @Value("${rb.security.permitted-urls}")
+//    String[] permittedUrls;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(permittedUrls).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))))
