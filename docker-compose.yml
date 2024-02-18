@@ -56,7 +56,7 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - "8180:8180"
+      - "8080:8080"
     volumes:
       - ./realms/:/opt/keycloak/data/import/
     depends_on:
@@ -97,6 +97,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - mongo
+      - keycloak
       - discovery-service
       - api-gateway
 
@@ -107,8 +108,8 @@ services:
     pull_policy: always
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-transaction:5431/transaction-service
     depends_on:
       - postgres-transaction
+      - keycloak
       - discovery-service
       - api-gateway
