@@ -23,4 +23,10 @@ public class TransactionController {
                 .getId()
                 .toString();
     }
+
+    @GetMapping("test")
+    @ResponseStatus(HttpStatus.OK)
+    public String testEndpoint() {
+        return "Successfully hit test endpoint";
+    }
 }

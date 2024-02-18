@@ -41,7 +41,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: keycloak
       MYSQL_USER: keycloak
-      MYSQL_PASSWORD: keycloak
+      MYSQL_PASSWORD: password
 
   keycloak:
     container_name: keycloak
@@ -50,7 +50,7 @@ services:
     environment:
       DB_VENDOR: MYSQL
       DB_ADDR: mysql
-      DB_DATABASE: mysql
+      DB_DATABASE: keycloak
       DB_USER: keycloak
       DB_PASSWORD: password
       KEYCLOAK_ADMIN: admin
@@ -97,7 +97,6 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - mongo
-      - keycloak
       - discovery-service
       - api-gateway
 
@@ -110,6 +109,5 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - postgres-transaction
-      - keycloak
       - discovery-service
       - api-gateway
