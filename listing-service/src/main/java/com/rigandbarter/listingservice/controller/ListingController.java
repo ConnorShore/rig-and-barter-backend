@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.listingservice.dto.ListingResponse;
 import com.rigandbarter.listingservice.service.ListingService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/listing")
 @RequiredArgsConstructor
+@Slf4j
 public class ListingController {
 
     private final ListingService listingService;
@@ -29,6 +31,8 @@ public class ListingController {
                               @RequestPart(name = "listing") String listingRequest,
                               @RequestPart(name = "images") MultipartFile[] images) throws JsonProcessingException {
         ListingRequest listingRequestObj = new ObjectMapper().readValue(listingRequest, ListingRequest.class);
+
+        log.info("Creating new listing requested for user: " + principal.getId());
         listingService.createListing(listingRequestObj, Arrays.asList(images), principal.getId());
     }
 
@@ -40,12 +44,14 @@ public class ListingController {
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public List<ListingResponse> getAllListings() {
+        log.info("Retrieving all listings");
         return listingService.getAllListings();
     }
 
     @GetMapping("{listingId}")
     @ResponseStatus(HttpStatus.OK)
     public ListingResponse getListingById(@PathVariable String listingId) {
+        log.info("Retrieving listing: " + listingId);
         return listingService.getListingById(listingId);
     }
 
