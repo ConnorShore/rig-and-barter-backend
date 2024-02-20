@@ -5,6 +5,7 @@ import com.rigandbarter.transactionservice.model.Transaction;
 import com.rigandbarter.transactionservice.model.TransactionState;
 import com.rigandbarter.transactionservice.repository.ITransactionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TransactionService {
 
     private final ITransactionRepository transactionRepository;

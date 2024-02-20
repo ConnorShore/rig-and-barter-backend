@@ -5,6 +5,7 @@ import io.awspring.cloud.autoconfigure.s3.S3TransferManagerAutoConfiguration;
 import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Template;
 import io.awspring.cloud.s3.TransferManagerS3OutputStreamProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Repository
 @ConditionalOnProperty(value = "rb.storage.file", havingValue = "aws-s3")
+@Slf4j
 public class S3RepositoryImpl implements IFileRepository {
 
     @Autowired
@@ -41,10 +43,12 @@ public class S3RepositoryImpl implements IFileRepository {
             var resource = s3Template.upload(LISTING_IMAGES_BUCKET, key, file.getInputStream(), metaData);
             resourceUrl = resource.getURL().toString();
         } catch (IOException e) {
+            log.error("Failed to upload listing image to S3: " + e.toString());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "An exception occurred when uploading listing image to S3");
         }
 
+        log.info("Successfully uploaded file to S3");
         // Return s3 resource url
         return resourceUrl;
     }

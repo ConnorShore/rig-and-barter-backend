@@ -7,6 +7,7 @@ import com.rigandbarter.listingservice.model.Listing;
 import com.rigandbarter.listingservice.repository.document.IListingRepository;
 import com.rigandbarter.listingservice.repository.file.IFileRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ListingService {
 
     private final IListingRepository listingRepository;
@@ -50,6 +52,7 @@ public class ListingService {
                 .build();
 
         listingRepository.saveListing(listing);
+        log.info("Successfully created listing");
     }
 
     /**
