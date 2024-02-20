@@ -43,6 +43,12 @@ public class ListingController {
         return listingService.getAllListings();
     }
 
+    @GetMapping("{listingId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ListingResponse getListingById(@PathVariable String listingId) {
+        return listingService.getListingById(listingId);
+    }
+
     @GetMapping("status")
     @ResponseStatus(HttpStatus.OK)
     public String healthCheck() {

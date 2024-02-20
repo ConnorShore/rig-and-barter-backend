@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -25,5 +26,11 @@ public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Listing,
     @Override
     public List<Listing> getAllListings() {
         return super.findAll();
+    }
+
+    @Override
+    public Listing getListingById(String listingId) {
+        var listingOptional =  super.findById(listingId);
+        return listingOptional.orElse(null);
     }
 }

@@ -62,6 +62,16 @@ public class ListingService {
     }
 
     /**
+     * Gets a specific listing by its id
+     * @param listingId The id of the listing to retrieve
+     * @return The listing with id equal to listingId
+     */
+    public ListingResponse getListingById(String listingId) {
+        Listing listing = listingRepository.getListingById(listingId);
+        return convertListingToListingResponse(listing);
+    }
+
+    /**
      * Helper to convert Listing to ListingResponse
      * @param listing The db Listing item
      * @return A ListingResponse object
