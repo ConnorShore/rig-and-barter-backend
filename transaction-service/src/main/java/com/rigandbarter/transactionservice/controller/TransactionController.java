@@ -19,8 +19,6 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     public String createTransaction(@AuthenticationPrincipal Jwt principal,
                                     @RequestBody TransactionRequest transactionRequest) {
-        return transactionService.createTransaction(transactionRequest, principal.getId())
-                .getId()
-                .toString();
+        return transactionService.createTransaction(transactionRequest, principal.getId()).getUniqueId();
     }
 }

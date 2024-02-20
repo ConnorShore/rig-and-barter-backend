@@ -4,5 +4,4 @@ import com.rigandbarter.listingservice.model.Listing;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface MongoDbListingRepository extends MongoRepository<Listing, String> {
-    // Don't need to do anything with this interface
 }

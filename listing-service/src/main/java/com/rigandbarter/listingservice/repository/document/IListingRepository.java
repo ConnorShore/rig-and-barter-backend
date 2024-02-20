@@ -9,4 +9,6 @@ public interface IListingRepository {
     Listing saveListing(Listing listing);
 
     List<Listing> getAllListings();
+
+    Listing getListingById(String listingId);
 }
