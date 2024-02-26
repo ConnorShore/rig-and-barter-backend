@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class KafkaEventProducerImpl extends RBEventProducer {
 
-    @Value("${rb.event.producer.kafka.url")
+    @Value("${rb.event.kafka.url")
     private final String kafkaUrl = "localhost:55899";
 
     private final KafkaTemplate<String, String> kafkaTemplate;
@@ -51,7 +51,7 @@ public class KafkaEventProducerImpl extends RBEventProducer {
             return;
         }
 
-        CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send("TestEvent", value);
+        CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, value);
         future.whenComplete((result, ex) -> {
             System.out.println("Result: " + result);
             System.out.println("Exception: " + ex);

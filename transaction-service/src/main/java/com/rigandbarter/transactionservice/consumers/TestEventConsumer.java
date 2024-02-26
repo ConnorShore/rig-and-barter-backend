@@ -5,40 +5,39 @@ import com.rigandbarter.eventservice.model.RBEvent;
 import com.rigandbarter.eventservice.model.RBEventConsumer;
 import com.rigandbarter.eventservice.model.RBEventConsumerFactory;
 import com.rigandbarter.transactionservice.model.TestEvent;
-import lombok.RequiredArgsConstructor;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class TestEventConsumer {
 
-//    private final RBEventConsumer testEventConsumer;
-    private final ObjectMapper objectMapper;
+    private final RBEventConsumer testEventConsumer;
+//    private ObjectMapper objectMapper;
 
-//    public TestEventConsumer(ObjectMapper objectMapper) {
-//        testEventConsumer = RBEventConsumerFactory.createConsumer(TestEvent.class, TestEventConsumer::handle);
-//    }
+    public TestEventConsumer() {
+        testEventConsumer = RBEventConsumerFactory.createConsumer(TestEvent.class, TestEventConsumer::handle);
+        testEventConsumer.start();
+        System.out.println();
+//        objectMapper = new ObjectMapper();
+//        objectMapper.findAndRegisterModules();
+    }
 
     private static Void handle(RBEvent evt) {
-        if(!(evt instanceof TestEvent testEvent)) {
-            System.out.println("INCORRECT EVENT TYPE: " + evt.getClass().getSimpleName());
+        if(!(evt instanceof TestEvent))
             return null;
-        }
 
-        System.out.println("Recieved event: " + testEvent.getId());
-        System.out.println("Event info: " + testEvent.getAdditionalInfo());
+        TestEvent testEvent = (TestEvent)evt;
+        System.out.println("Id: " + testEvent.getId());
+        System.out.println(testEvent.getAdditionalInfo());
         return null;
     }
 
-    @KafkaListener(topics="TestEvent")
-    public void handleEvent(String serializedEvent) {
-        try {
-            TestEvent testEvent = objectMapper.readValue(serializedEvent, TestEvent.class);
-            System.out.println("Here");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    @KafkaListener(topics="TestEvent")
+//    public void handleEvent(String serializedEvent) {
+//        try {
+//            TestEvent testEvent = objectMapper.readValue(serializedEvent, TestEvent.class);
+//            System.out.println("Here");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
