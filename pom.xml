@@ -20,7 +20,7 @@
 		<module>listing-service</module>
 		<module>transaction-service</module>
 		<module>api-gateway</module>
-        <module>event-service</module>
+        <module>event-library</module>
     </modules>
 
 	<properties>

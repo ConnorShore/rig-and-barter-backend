@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.rigandbarter</groupId>
-            <artifactId>event-service</artifactId>
+            <artifactId>event-library</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
