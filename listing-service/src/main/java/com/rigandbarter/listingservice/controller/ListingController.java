@@ -31,8 +31,8 @@ import java.util.UUID;
 public class ListingController {
 
     private final ListingService listingService;
-    private final KafkaTemplate<String, String> kafkaTemplate;
-    private final ObjectMapper objectMapper;
+//    private final KafkaTemplate<String, String> kafkaTemplate;
+//    private final ObjectMapper objectMapper;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
@@ -75,18 +75,18 @@ public class ListingController {
                 .additionalInfo("Here is a brand new event!")
                 .build();
 
-        try {
-            String serializedTestEvent = objectMapper.writeValueAsString(testEvent);
-            var value = kafkaTemplate.send("TestEvent", serializedTestEvent);
-            var results = value.get();
-            System.out.println("Results: " + results.toString());
-        } catch (Exception e) {
-            System.out.println("Excep: " + e);
-        }
+//        try {
+//            String serializedTestEvent = objectMapper.writeValueAsString(testEvent);
+//            var value = kafkaTemplate.send("TestEvent", serializedTestEvent);
+//            var results = value.get();
+//            System.out.println("Results: " + results.toString());
+//        } catch (Exception e) {
+//            System.out.println("Excep: " + e);
+//        }
 
-//        RBEventProducer testProducer = RBEventProducerFactory.createProducer(TestEvent.class);
-//        if(testProducer != null)
-//            testProducer.send(testEvent);
+        RBEventProducer testProducer = RBEventProducerFactory.createProducer(TestEvent.class);
+        if(testProducer != null)
+            testProducer.send(testEvent);
 
         return "Listing Service is running...";
     }
