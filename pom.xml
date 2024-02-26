@@ -20,7 +20,8 @@
 		<module>listing-service</module>
 		<module>transaction-service</module>
 		<module>api-gateway</module>
-	</modules>
+        <module>event-service</module>
+    </modules>
 
 	<properties>
 		<java.version>17</java.version>
@@ -63,22 +64,5 @@
 		</dependency>
 
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>
