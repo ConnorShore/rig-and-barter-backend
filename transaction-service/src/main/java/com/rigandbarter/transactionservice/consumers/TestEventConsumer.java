@@ -1,27 +1,36 @@
 package com.rigandbarter.transactionservice.consumers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rigandbarter.eventservice.events.DemoEvent;
+import com.rigandbarter.eventservice.events.TestEvent;
 import com.rigandbarter.eventservice.model.RBEvent;
-import com.rigandbarter.eventservice.model.RBEventConsumer;
-import com.rigandbarter.eventservice.model.RBEventConsumerFactory;
-import com.rigandbarter.transactionservice.model.TestEvent;
-import org.springframework.stereotype.Component;
+import com.rigandbarter.eventservice.components.RBEventConsumer;
+import com.rigandbarter.eventservice.components.RBEventConsumerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class TestEventConsumer {
 
-    private final RBEventConsumer testEventConsumer;
-//    private ObjectMapper objectMapper;
+    @Autowired
+    RBEventConsumerFactory rbEventConsumerFactory;
 
-    public TestEventConsumer() {
-        testEventConsumer = RBEventConsumerFactory.createConsumer(TestEvent.class, TestEventConsumer::handle);
-        testEventConsumer.start();
-        System.out.println();
-//        objectMapper = new ObjectMapper();
-//        objectMapper.findAndRegisterModules();
+    private RBEventConsumer testEventConsumer;
+    private RBEventConsumer demoEventConsumer;
+
+    public TestEventConsumer(RBEventConsumerFactory rbEventConsumerFactory) {
+        this.rbEventConsumerFactory = rbEventConsumerFactory;
+        initConsumers();
     }
 
-    private static Void handle(RBEvent evt) {
+    public void initConsumers() {
+        testEventConsumer = rbEventConsumerFactory.createConsumer(TestEvent.class, TestEventConsumer::handleTest);
+        demoEventConsumer = rbEventConsumerFactory.createConsumer(DemoEvent.class, TestEventConsumer::handleDemo);
+
+        testEventConsumer.start();
+        demoEventConsumer.start();
+    }
+
+    private static Void handleTest(RBEvent evt) {
         if(!(evt instanceof TestEvent))
             return null;
 
@@ -31,13 +40,13 @@ public class TestEventConsumer {
         return null;
     }
 
-//    @KafkaListener(topics="TestEvent")
-//    public void handleEvent(String serializedEvent) {
-//        try {
-//            TestEvent testEvent = objectMapper.readValue(serializedEvent, TestEvent.class);
-//            System.out.println("Here");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private static Void handleDemo(RBEvent evt) {
+        if(!(evt instanceof DemoEvent))
+            return null;
+
+        DemoEvent demoEvent = (DemoEvent) evt;
+        System.out.println("Id: " + demoEvent.getId());
+        System.out.println(demoEvent.getAdditionalNumber());
+        return null;
+    }
 }

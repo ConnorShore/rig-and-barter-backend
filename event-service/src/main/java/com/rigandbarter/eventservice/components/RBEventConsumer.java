@@ -1,4 +1,6 @@
-package com.rigandbarter.eventservice.model;
+package com.rigandbarter.eventservice.components;
+
+import com.rigandbarter.eventservice.model.RBEvent;
 
 import java.util.function.Function;
 

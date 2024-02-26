@@ -2,17 +2,16 @@ package com.rigandbarter.listingservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rigandbarter.eventservice.model.RBEvent;
-import com.rigandbarter.eventservice.model.RBEventProducer;
-import com.rigandbarter.eventservice.model.RBEventProducerFactory;
+import com.rigandbarter.eventservice.events.DemoEvent;
+import com.rigandbarter.eventservice.events.TestEvent;
+import com.rigandbarter.eventservice.components.RBEventProducer;
+import com.rigandbarter.eventservice.components.RBEventProducerFactory;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.listingservice.dto.ListingResponse;
-import com.rigandbarter.listingservice.model.TestEvent;
 import com.rigandbarter.listingservice.service.ListingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +30,7 @@ import java.util.UUID;
 public class ListingController {
 
     private final ListingService listingService;
-//    private final KafkaTemplate<String, String> kafkaTemplate;
-//    private final ObjectMapper objectMapper;
+    private final RBEventProducerFactory rbEventProducerFactory;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
@@ -75,18 +73,19 @@ public class ListingController {
                 .additionalInfo("Here is a brand new event!")
                 .build();
 
-//        try {
-//            String serializedTestEvent = objectMapper.writeValueAsString(testEvent);
-//            var value = kafkaTemplate.send("TestEvent", serializedTestEvent);
-//            var results = value.get();
-//            System.out.println("Results: " + results.toString());
-//        } catch (Exception e) {
-//            System.out.println("Excep: " + e);
-//        }
+        RBEventProducer testProducer = rbEventProducerFactory.createProducer(TestEvent.class);
+        testProducer.send(testEvent);
 
-        RBEventProducer testProducer = RBEventProducerFactory.createProducer(TestEvent.class);
-        if(testProducer != null)
-            testProducer.send(testEvent);
+        DemoEvent demoEvent = DemoEvent.builder()
+                .userId("UserIDValue")
+                .id(UUID.randomUUID().toString())
+                .source(ListingService.class.getSimpleName())
+                .creationDate(LocalDateTime.now())
+                .additionalNumber(12)
+                .build();
+
+        RBEventProducer demoProducer = rbEventProducerFactory.createProducer(DemoEvent.class);
+        demoProducer.send(demoEvent);
 
         return "Listing Service is running...";
     }

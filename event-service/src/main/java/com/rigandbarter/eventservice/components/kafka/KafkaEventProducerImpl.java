@@ -1,33 +1,38 @@
-package com.rigandbarter.eventservice.model;
+package com.rigandbarter.eventservice.components.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+import com.rigandbarter.eventservice.components.RBEventProducer;
+import com.rigandbarter.eventservice.config.RBEventProperties;
+import com.rigandbarter.eventservice.model.RBEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-@Service
+@Component
 public class KafkaEventProducerImpl extends RBEventProducer {
-
-    @Value("${rb.event.kafka.url")
-    private final String kafkaUrl = "localhost:55899";
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
-    public KafkaEventProducerImpl(Class<? extends RBEvent> eventType, ObjectMapper objectMapper) {
+    public KafkaEventProducerImpl(Class<? extends RBEvent> eventType,
+                                  Environment environment,
+                                  ObjectMapper objectMapper) {
         super(eventType);
         this.objectMapper = objectMapper;
+
+        String kafkaUrl = environment.getProperty(RBEventProperties.RB_EVENT_BROKER_URL);
+        if(kafkaUrl == null)
+            throw new RuntimeException("RB Event Broker URL Not Set");
 
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaUrl);
@@ -55,8 +60,6 @@ public class KafkaEventProducerImpl extends RBEventProducer {
         future.whenComplete((result, ex) -> {
             System.out.println("Result: " + result);
             System.out.println("Exception: " + ex);
-//            if(ex != null)
-//                log.error("Failed to send event: " + event.getId().toString() + "; " + ex.getMessage());
         });
     }
 }

@@ -1,15 +1,18 @@
-package com.rigandbarter.eventservice.model;
+package com.rigandbarter.eventservice.components.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rigandbarter.eventservice.components.RBEventConsumer;
+import com.rigandbarter.eventservice.config.RBEventProperties;
+import com.rigandbarter.eventservice.model.RBEvent;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -17,28 +20,28 @@ import java.util.function.Function;
 import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.CommonClientConfigs.GROUP_ID_CONFIG;
 
-@Service
+@Component
 public class KakfaEventConsumerImpl extends RBEventConsumer {
-
-
-    @Value("${rb.event.kafka.url")
-    private final String kafkaUrl = "localhost:55899-var";
-
     private final String queueName;
     private final ObjectMapper objectMapper;
+    private final ConcurrentMessageListenerContainer listenerContainer;
 
-    private ConcurrentMessageListenerContainer listenerContainer;
+    public KakfaEventConsumerImpl(String queueName,
+                                  Function<RBEvent, Void> handlerFunction, Class<? extends RBEvent> type,
+                                  Environment environment,
+                                  ObjectMapper objectMapper) {
 
-    public KakfaEventConsumerImpl(String queueName, Function<RBEvent, Void> handlerFunction, Class<? extends RBEvent> type) {
         super(handlerFunction, type);
-
         this.queueName = queueName;
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.findAndRegisterModules();
+        this.objectMapper = objectMapper;
+
+        String kafkaUrl = environment.getProperty(RBEventProperties.RB_EVENT_BROKER_URL);
+        if(kafkaUrl == null)
+            throw new RuntimeException("RB Event Broker URL Not Set");
 
         Map<String, Object> consumerConfig = Map.of(
-                BOOTSTRAP_SERVERS_CONFIG, "http://localhost:55899",
-                GROUP_ID_CONFIG, "TestEventId"
+                BOOTSTRAP_SERVERS_CONFIG, kafkaUrl,
+                GROUP_ID_CONFIG, "RigAndBarterEventId"
         );
 
         DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory =
@@ -56,18 +59,6 @@ public class KakfaEventConsumerImpl extends RBEventConsumer {
                         containerProperties);
     }
 
-
-//    @KafkaListener(topics = "#queueName")
-//    @KafkaListener(topics = "TestEvent")
-    public void handleSerializedEvent(String event) {
-        try {
-            var evt = objectMapper.readValue(event, this.eventType);
-            handleEvent(evt);
-        } catch(JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void handleEvent(RBEvent event) {
         this.handlerFunction.apply(event);
@@ -81,5 +72,18 @@ public class KakfaEventConsumerImpl extends RBEventConsumer {
     @Override
     public void stop() {
         listenerContainer.stop();
+    }
+
+    private void handleSerializedEvent(String event) {
+        try {
+            var evt = objectMapper.readValue(event, this.eventType);
+            handleEvent(evt);
+        } catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getQueueName() {
+        return this.queueName;
     }
 }

@@ -1,7 +1,10 @@
-package com.rigandbarter.listingservice.model;
+package com.rigandbarter.eventservice.events;
 
 import com.rigandbarter.eventservice.model.RBEvent;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
