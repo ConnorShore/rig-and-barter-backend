@@ -27,7 +27,8 @@ public class KakfaEventConsumerImpl extends RBEventConsumer {
     private final ConcurrentMessageListenerContainer listenerContainer;
 
     public KakfaEventConsumerImpl(String queueName,
-                                  Function<RBEvent, RBEventResult> handlerFunction, Class<? extends RBEvent> type,
+                                  Function<RBEvent, Void> handlerFunction,
+                                  Class<? extends RBEvent> type,
                                   Environment environment,
                                   ObjectMapper objectMapper) {
 
@@ -60,7 +61,7 @@ public class KakfaEventConsumerImpl extends RBEventConsumer {
     }
 
     @Override
-    public void handleEvent(RBEvent event) {
+    protected void handleEvent(RBEvent event) {
         this.handlerFunction.apply(event);
     }
 

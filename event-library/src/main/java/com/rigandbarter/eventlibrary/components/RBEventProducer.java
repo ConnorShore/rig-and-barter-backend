@@ -1,6 +1,10 @@
 package com.rigandbarter.eventlibrary.components;
 
 import com.rigandbarter.eventlibrary.model.RBEvent;
+import com.rigandbarter.eventlibrary.model.RBEventResult;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 public abstract class RBEventProducer {
 
@@ -10,4 +14,5 @@ public abstract class RBEventProducer {
         this.eventType = eventType;
     }
     public abstract void send(RBEvent event);
+    public abstract void send(RBEvent event, Function<String, Void> onErrorCallback);
 }

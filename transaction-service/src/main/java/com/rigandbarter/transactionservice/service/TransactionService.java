@@ -44,8 +44,13 @@ public class TransactionService {
                 .source(EVENT_SOURCE)
                 .build();
 
-        transactionCreatedProducer.send(event);
+        transactionCreatedProducer.send(event, this::handleFailedEventSend);
 
         return transaction;
+    }
+
+    private Void handleFailedEventSend(String error) {
+        log.error("Failed to send Transaction Created Event with error: " + error);
+        return null;
     }
 }

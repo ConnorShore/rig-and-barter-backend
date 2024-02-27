@@ -41,9 +41,15 @@ public class EventHandler extends RBEventHandler {
         transactionCreatedConsumer.stop();
     }
 
-    private RBEventResult handleTransactionCreatedEvent(RBEvent evt) {
+    private Void handleTransactionCreatedEvent(RBEvent evt) {
         log.info("Received transaction created event: " + evt.getId());
+
         TransactionCreatedEvent event = (TransactionCreatedEvent)evt;
-        return eventHandlerService.handleTransactionCreatedEvent(event);
+        RBEventResult result = eventHandlerService.handleTransactionCreatedEvent(event);
+
+        if (!result.isSuccess())
+            log.error("Failed to handle Transaction Created Event: " + result.getErrorMessage());
+
+        return null;
     }
 }
