@@ -1,10 +1,12 @@
-package com.rigandbarter.notificationservice.service;
+package com.rigandbarter.notificationservice.service.impl;
 
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
 import com.rigandbarter.eventlibrary.model.RBEventResult;
 import com.rigandbarter.notificationservice.dto.ListingResponse;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
 import com.rigandbarter.notificationservice.repository.mapper.FrontEndNotificationMapper;
+import com.rigandbarter.notificationservice.service.IEventHandlerService;
+import com.rigandbarter.notificationservice.service.INotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,9 +15,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class EventHandlerService {
+public class EventHandlerServiceImpl implements IEventHandlerService {
 
-    private final NotificationService notificationService;
+    private final INotificationService notificationService;
     private final WebClient.Builder webClientBuilder;
 
     private final String FRONT_END_NOTIFICATION_TITLE = "New Transaction Request!";
@@ -26,9 +28,6 @@ public class EventHandlerService {
     //TODO: Get this from config file
     private String FRONTEND_LISTING_URL = "http://localhost:4200/listings/";
 
-    /**
-     * TODO: See if this is good practice or if this should just be in NotificationService.java
-     */
     public RBEventResult handleTransactionCreatedEvent(TransactionCreatedEvent event) {
         /**
          * TODO: Need to add a common library with ways to access Auth object (like buyer and sellers's name, email, etc)
@@ -57,7 +56,7 @@ public class EventHandlerService {
         );
 
         notificationService.saveNotification(frontEndNotification);
-        notificationService.initiateFrontendNotification(frontEndNotification);
+        notificationService.initiateFrontEndNotification(frontEndNotification);
 
         // Create and send email notification
         // Etc
