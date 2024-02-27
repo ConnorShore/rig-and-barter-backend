@@ -21,7 +21,8 @@
 		<module>transaction-service</module>
 		<module>api-gateway</module>
         <module>event-library</module>
-    </modules>
+		<module>notification-service</module>
+	</modules>
 
 	<properties>
 		<java.version>17</java.version>

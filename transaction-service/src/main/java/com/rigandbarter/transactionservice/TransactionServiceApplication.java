@@ -1,6 +1,6 @@
 package com.rigandbarter.transactionservice;
 
-import com.rigandbarter.eventservice.EnableRBEvents;
+import com.rigandbarter.eventlibrary.EnableRBEvents;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

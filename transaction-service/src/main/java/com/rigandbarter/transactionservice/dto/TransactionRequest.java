@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TransactionRequest {
     private String listingId;
+    private String buyerId;
     private String sellerId;
     private String title;
 }

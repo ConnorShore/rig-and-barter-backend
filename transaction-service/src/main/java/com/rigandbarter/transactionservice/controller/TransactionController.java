@@ -21,7 +21,12 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     public String createTransaction(@AuthenticationPrincipal Jwt principal,
                                     @RequestBody TransactionRequest transactionRequest) {
-        log.info("Create transaction requested for user: " + principal.getId());
-        return transactionService.createTransaction(transactionRequest, principal.getId()).getUniqueId();
+        log.info("Create transaction requested for user: " + principal.getId() + "; with buyerId: " + transactionRequest.getBuyerId());
+        return transactionService.createTransaction(transactionRequest).getUniqueId();
+    }
+
+    @GetMapping("status")
+    public String healthCheck() {
+        return "Transaction service is running...";
     }
 }
