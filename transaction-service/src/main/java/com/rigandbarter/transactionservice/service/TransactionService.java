@@ -48,17 +48,4 @@ public class TransactionService {
 
         return transaction;
     }
-
-    public void createEvent() {
-        TransactionCreatedEvent event = TransactionCreatedEvent.builder()
-                .id(UUID.randomUUID().toString())
-                .userId("userId")
-                .buyerId("buyerId")
-                .listingId("listingId")
-                .creationDate(LocalDateTime.now())
-                .source(EVENT_SOURCE)
-                .build();
-
-        transactionCreatedProducer.send(event);
-    }
 }

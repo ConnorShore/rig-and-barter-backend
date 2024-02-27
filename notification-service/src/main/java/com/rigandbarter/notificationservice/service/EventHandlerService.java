@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,28 +28,27 @@ public class EventHandlerService {
         /**
          * TODO: Need to add a common library with ways to access Auth object (like buyer and sellers's name, email, etc)
          */
-//        ListingResponse listingResponse = webClientBuilder.build()
-//                .get()
-//                .uri("http://listing-service/api/listing/{listingId}", event.getListingId())
-//                .retrieve()
-//                .bodyToMono(ListingResponse.class)
-//                .block();
-//
-//        if (listingResponse == null) {
-//            String msg = "Failed to retrieve listing from listing service: " + event.getListingId();
-//            log.error(msg);
-//            return new RBEventResult(false, msg);
-//        }
-//
+        ListingResponse listingResponse = webClientBuilder.build()
+                .get()
+                .uri("http://listing-service/api/listing/{listingId}", event.getListingId())
+                .retrieve()
+                .bodyToMono(ListingResponse.class)
+                .block();
+
+        if (listingResponse == null) {
+            String msg = "Failed to retrieve listing from listing service: " + event.getListingId();
+            log.error(msg);
+            return new RBEventResult(false, msg);
+        }
+
         FrontEndNotification frontEndNotification = FrontEndNotificationMapper.fromEvent(
                     event,
                     FRONT_END_NOTIFICATION_TITLE,
-                    String.format(FRONT_END_NOTIFICATION_BODY, "Test Person", "Test Item")
-//                    String.format(FRONT_END_NOTIFICATION_BODY, "Test Person", listingResponse.getTitle())
+                    String.format(FRONT_END_NOTIFICATION_BODY, "Test Person", listingResponse.getTitle())
         );
 
         notificationService.saveNotification(frontEndNotification);
-//        notificationService.initiateFrontendNotification(frontEndNotification);
+        notificationService.initiateFrontendNotification(frontEndNotification);
 
         // Create and send email notification
         // Etc

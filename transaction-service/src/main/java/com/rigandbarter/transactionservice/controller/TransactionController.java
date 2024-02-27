@@ -27,7 +27,6 @@ public class TransactionController {
 
     @GetMapping("status")
     public String healthCheck() {
-        transactionService.createEvent();
         return "Transaction service is running...";
     }
 }
