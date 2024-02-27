@@ -1,6 +1,6 @@
-package com.rigandbarter.eventservice;
+package com.rigandbarter.eventlibrary;
 
-import com.rigandbarter.eventservice.config.RBEventConfiguration;
+import com.rigandbarter.eventlibrary.config.RBEventConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;

@@ -1,7 +1,6 @@
-package com.rigandbarter.eventservice.components;
+package com.rigandbarter.eventlibrary.components;
 
-import com.rigandbarter.eventservice.model.RBEvent;
-import org.springframework.stereotype.Component;
+import com.rigandbarter.eventlibrary.model.RBEvent;
 
 public abstract class RBEventProducer {
 

@@ -1,12 +1,11 @@
-package com.rigandbarter.eventservice.components.kafka;
+package com.rigandbarter.eventlibrary.components.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rigandbarter.eventservice.components.RBEventConsumer;
-import com.rigandbarter.eventservice.config.RBEventProperties;
-import com.rigandbarter.eventservice.model.RBEvent;
+import com.rigandbarter.eventlibrary.components.RBEventConsumer;
+import com.rigandbarter.eventlibrary.config.RBEventProperties;
+import com.rigandbarter.eventlibrary.model.RBEvent;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;

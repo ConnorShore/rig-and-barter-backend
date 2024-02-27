@@ -1,4 +1,4 @@
-package com.rigandbarter.transactionservice.config;
+package com.rigandbarter.notificationservice.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +13,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * TODO: Potentially move SecurityConfig to common library if they are all the same and have some default rb properties
+     */
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     String issuerUri;
 

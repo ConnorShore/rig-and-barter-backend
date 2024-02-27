@@ -12,6 +12,7 @@
         <module name="listing-service" />
         <module name="event-library" />
         <module name="discovery-service" />
+        <module name="notification-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -21,6 +22,7 @@
       <module name="discovery-service" options="-parameters" />
       <module name="event-library" options="-parameters" />
       <module name="listing-service" options="-parameters" />
+      <module name="notification-service" options="-parameters" />
       <module name="rig-and-barter-backend" options="" />
       <module name="transaction-service" options="-parameters" />
     </option>

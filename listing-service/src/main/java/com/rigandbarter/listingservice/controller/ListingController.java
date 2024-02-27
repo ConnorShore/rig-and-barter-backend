@@ -2,10 +2,6 @@ package com.rigandbarter.listingservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rigandbarter.eventservice.events.DemoEvent;
-import com.rigandbarter.eventservice.events.TestEvent;
-import com.rigandbarter.eventservice.components.RBEventProducer;
-import com.rigandbarter.eventservice.components.RBEventProducerFactory;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.listingservice.dto.ListingResponse;
 import com.rigandbarter.listingservice.service.ListingService;
@@ -18,10 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("api/listing")
@@ -30,7 +24,6 @@ import java.util.UUID;
 public class ListingController {
 
     private final ListingService listingService;
-    private final RBEventProducerFactory rbEventProducerFactory;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,28 +58,6 @@ public class ListingController {
     @GetMapping("status")
     @ResponseStatus(HttpStatus.OK)
     public String healthCheck() {
-        TestEvent testEvent = TestEvent.builder()
-                .userId("UserIDValue")
-                .id(UUID.randomUUID().toString())
-                .source(ListingService.class.getSimpleName())
-                .creationDate(LocalDateTime.now())
-                .additionalInfo("Here is a brand new event!")
-                .build();
-
-        RBEventProducer testProducer = rbEventProducerFactory.createProducer(TestEvent.class);
-        testProducer.send(testEvent);
-
-        DemoEvent demoEvent = DemoEvent.builder()
-                .userId("UserIDValue")
-                .id(UUID.randomUUID().toString())
-                .source(ListingService.class.getSimpleName())
-                .creationDate(LocalDateTime.now())
-                .additionalNumber(12)
-                .build();
-
-        RBEventProducer demoProducer = rbEventProducerFactory.createProducer(DemoEvent.class);
-        demoProducer.send(demoEvent);
-
         return "Listing Service is running...";
     }
 }

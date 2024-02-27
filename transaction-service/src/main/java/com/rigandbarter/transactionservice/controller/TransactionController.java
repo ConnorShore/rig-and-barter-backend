@@ -24,4 +24,10 @@ public class TransactionController {
         log.info("Create transaction requested for user: " + principal.getId());
         return transactionService.createTransaction(transactionRequest, principal.getId()).getUniqueId();
     }
+
+    @GetMapping("status")
+    public String healthCheck() {
+        transactionService.createEvent();
+        return "Transaction service is running...";
+    }
 }

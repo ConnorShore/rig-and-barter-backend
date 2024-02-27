@@ -1,6 +1,5 @@
-package com.rigandbarter.eventservice.events;
+package com.rigandbarter.notificationservice.model;
 
-import com.rigandbarter.eventservice.model.RBEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,10 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
-@SuperBuilder
 @Data
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TestEvent extends RBEvent {
-    private String additionalInfo;
+public class FrontEndNotification extends Notification {
+    private String title;
+    private String body;
+    private boolean seenByUser;
 }

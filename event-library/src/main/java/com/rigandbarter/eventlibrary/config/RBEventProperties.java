@@ -1,4 +1,4 @@
-package com.rigandbarter.eventservice.config;
+package com.rigandbarter.eventlibrary.config;
 
 public class RBEventProperties {
     public static final String RB_EVENT_BROKER = "rb.event.broker";

@@ -1,14 +1,13 @@
-package com.rigandbarter.eventservice.components;
+package com.rigandbarter.eventlibrary.components;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rigandbarter.eventservice.components.kafka.KafkaEventProducerImpl;
-import com.rigandbarter.eventservice.config.RBEventProperties;
-import com.rigandbarter.eventservice.model.RBEvent;
+import com.rigandbarter.eventlibrary.components.kafka.KafkaEventProducerImpl;
+import com.rigandbarter.eventlibrary.config.RBEventProperties;
+import com.rigandbarter.eventlibrary.model.RBEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 @RequiredArgsConstructor

@@ -1,6 +1,6 @@
-package com.rigandbarter.eventservice.events;
+package com.rigandbarter.eventlibrary.events;
 
-import com.rigandbarter.eventservice.model.RBEvent;
+import com.rigandbarter.eventlibrary.model.RBEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,6 +12,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DemoEvent extends RBEvent {
-    private int additionalNumber;
+public class TestEvent extends RBEvent {
+    private String additionalInfo;
 }
