@@ -1,11 +1,9 @@
 package com.rigandbarter.notificationservice.service;
 
-import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
 import com.rigandbarter.notificationservice.model.Notification;
 import com.rigandbarter.notificationservice.model.notification.EmailNotification;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
 import com.rigandbarter.notificationservice.repository.document.INotificationRepository;
-import com.rigandbarter.notificationservice.repository.mapper.FrontEndNotificationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -19,7 +19,12 @@ public class EventHandlerService {
     private final WebClient.Builder webClientBuilder;
 
     private final String FRONT_END_NOTIFICATION_TITLE = "New Transaction Request!";
-    private final String FRONT_END_NOTIFICATION_BODY = "User [%s] is interested in purchasing: %s";
+
+    // TODO: Move this to an html template class maybe?
+    private final String FRONT_END_NOTIFICATION_BODY = "User \"%s\" is interested in purchasing: %s\n\nListing Url: [%s]";
+
+    //TODO: Get this from config file
+    private String FRONTEND_LISTING_URL = "http://localhost:4200/listings/";
 
     /**
      * TODO: See if this is good practice or if this should just be in NotificationService.java
@@ -44,7 +49,11 @@ public class EventHandlerService {
         FrontEndNotification frontEndNotification = FrontEndNotificationMapper.fromEvent(
                     event,
                     FRONT_END_NOTIFICATION_TITLE,
-                    String.format(FRONT_END_NOTIFICATION_BODY, "Test Person", listingResponse.getTitle())
+                    String.format(FRONT_END_NOTIFICATION_BODY,
+                            "Test Person",
+                            listingResponse.getTitle(),
+                            FRONTEND_LISTING_URL + listingResponse.getId()
+                    )
         );
 
         notificationService.saveNotification(frontEndNotification);

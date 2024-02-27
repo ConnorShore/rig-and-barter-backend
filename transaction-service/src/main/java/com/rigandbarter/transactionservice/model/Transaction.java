@@ -1,6 +1,5 @@
 package com.rigandbarter.transactionservice.model;
 
-import com.rigandbarter.transactionservice.dto.TransactionRequest;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -12,7 +12,7 @@ public class FrontEndNotificationMapper {
                 .id(UUID.randomUUID().toString())
                 .eventId(event.getId())
                 .targetUser(event.getUserId())
-                .title(title)   // Maybe let teh front end assign the title/body of the notification?? (maybe not though idk)
+                .title(title)
                 .body(body)
                 .seenByUser(false)
                 .build();
