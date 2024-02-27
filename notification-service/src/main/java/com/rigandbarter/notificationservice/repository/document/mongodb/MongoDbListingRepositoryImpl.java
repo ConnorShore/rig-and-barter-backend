@@ -18,7 +18,7 @@ public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Notifica
     }
 
     @Override
-    public void saveNotification(Notification notification) {
-        super.save(notification);
+    public Notification saveNotification(Notification notification) {
+        return super.save(notification);
     }
 }

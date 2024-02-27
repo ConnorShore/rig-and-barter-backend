@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.config.RBEventProperties;
 import com.rigandbarter.eventlibrary.model.RBEvent;
+import com.rigandbarter.eventlibrary.model.RBEventResult;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.core.env.Environment;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 @Component
 public class KafkaEventProducerImpl extends RBEventProducer {
@@ -43,30 +45,44 @@ public class KafkaEventProducerImpl extends RBEventProducer {
         this.kafkaTemplate = new KafkaTemplate<>(factory);
     }
 
-    /**
-     * TODO: Add return type to tell if message send is successful/failure
-     */
     @Override
     public void send(RBEvent event) {
-        if(event.getClass() != this.eventType)
+        send(event, null);
+    }
+
+    @Override
+    public void send(RBEvent event, Function<String, Void> onErrorFunc) {
+        if(event.getClass() != this.eventType) {
+            String msg = String.format(
+                    "Incompatible event types: [%s] != [%s]",
+                    event.getClass().getSimpleName(),
+                    this.eventType.getSimpleName()
+            );
+
+            if(onErrorFunc != null)
+                onErrorFunc.apply(msg);
             return;
+        }
 
         String topic = event.getClass().getSimpleName();
         String value;
         try {
             value = objectMapper.writeValueAsString(event);
         } catch (JsonProcessingException e) {
-            System.out.println("Error serializing object: " + event.getId());
+            if(onErrorFunc != null)
+                onErrorFunc.apply(e.getMessage());
+            return;
+        }
+
+        if(onErrorFunc == null) {
+            kafkaTemplate.send(topic, value);
             return;
         }
 
         CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, value);
         future.whenComplete((result, ex) -> {
-            /**
-             * Todo: Better handling of completion/exception
-             */
-            System.out.println("Result: " + result);
-            System.out.println("Exception: " + ex);
+            if(ex != null)
+                onErrorFunc.apply(ex.getMessage());
         });
     }
 }

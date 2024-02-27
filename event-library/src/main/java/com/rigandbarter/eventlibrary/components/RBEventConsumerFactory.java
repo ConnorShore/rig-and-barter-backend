@@ -20,7 +20,7 @@ public class RBEventConsumerFactory {
 
     private final ObjectMapper objectMapper;
 
-    public RBEventConsumer createConsumer(Class<? extends RBEvent> eventType, Function<RBEvent, RBEventResult> handle) {
+    public RBEventConsumer createConsumer(Class<? extends RBEvent> eventType, Function<RBEvent, Void> handle) {
         String brokerEnv = environment.getProperty(RBEventProperties.RB_EVENT_BROKER);
 
         if(brokerEnv == null)
