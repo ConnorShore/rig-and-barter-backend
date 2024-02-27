@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rigandbarter.listingservice.controller.IListingController;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.listingservice.dto.ListingResponse;
-import com.rigandbarter.listingservice.service.impl.ListingServiceImpl;
+import com.rigandbarter.listingservice.service.IListingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class ListingControllerImpl implements IListingController {
 
-    private final ListingServiceImpl listingService;
+    private final IListingService listingService;
 
     @Override
     public void createListing(Jwt principal, String listingRequest, MultipartFile[] images) throws JsonProcessingException {
