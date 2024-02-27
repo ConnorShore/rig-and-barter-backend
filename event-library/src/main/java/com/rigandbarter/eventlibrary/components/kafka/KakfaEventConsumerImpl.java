@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rigandbarter.eventlibrary.components.RBEventConsumer;
 import com.rigandbarter.eventlibrary.config.RBEventProperties;
 import com.rigandbarter.eventlibrary.model.RBEvent;
+import com.rigandbarter.eventlibrary.model.RBEventResult;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -26,7 +27,7 @@ public class KakfaEventConsumerImpl extends RBEventConsumer {
     private final ConcurrentMessageListenerContainer listenerContainer;
 
     public KakfaEventConsumerImpl(String queueName,
-                                  Function<RBEvent, Void> handlerFunction, Class<? extends RBEvent> type,
+                                  Function<RBEvent, RBEventResult> handlerFunction, Class<? extends RBEvent> type,
                                   Environment environment,
                                   ObjectMapper objectMapper) {
 

@@ -29,7 +29,7 @@ public abstract class RBEventHandler {
 
     @PreDestroy
     public void onDestroy() {
-        startConsumers();
+        stopConsumers();
     }
 
     public abstract void initializeConsumers();

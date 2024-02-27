@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rigandbarter.eventlibrary.components.kafka.KakfaEventConsumerImpl;
 import com.rigandbarter.eventlibrary.config.RBEventProperties;
 import com.rigandbarter.eventlibrary.model.RBEvent;
+import com.rigandbarter.eventlibrary.model.RBEventResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -19,7 +20,7 @@ public class RBEventConsumerFactory {
 
     private final ObjectMapper objectMapper;
 
-    public RBEventConsumer createConsumer(Class<? extends RBEvent> eventType, Function<RBEvent, Void> handle) {
+    public RBEventConsumer createConsumer(Class<? extends RBEvent> eventType, Function<RBEvent, RBEventResult> handle) {
         String brokerEnv = environment.getProperty(RBEventProperties.RB_EVENT_BROKER);
 
         if(brokerEnv == null)

@@ -5,8 +5,8 @@ import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
 import com.rigandbarter.transactionservice.dto.TransactionRequest;
 import com.rigandbarter.transactionservice.model.Transaction;
-import com.rigandbarter.transactionservice.model.TransactionState;
 import com.rigandbarter.transactionservice.repository.ITransactionRepository;
+import com.rigandbarter.transactionservice.repository.mapper.TransactionMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,8 @@ public class TransactionService {
     private final ITransactionRepository transactionRepository;
     private final RBEventProducer transactionCreatedProducer;
 
+    private final String EVENT_SOURCE = "TransactionService";
+
     public TransactionService(
             ITransactionRepository transactionRepository,
             RBEventProducerFactory rbEventProducerFactory) {
@@ -28,28 +30,18 @@ public class TransactionService {
         transactionCreatedProducer = rbEventProducerFactory.createProducer(TransactionCreatedEvent.class);
     }
 
-    public Transaction createTransaction(TransactionRequest transactionRequest, String buyerId) {
+    public Transaction createTransaction(TransactionRequest transactionRequest) {
         // Save the transaction to the database
-        Transaction transaction = this.transactionRepository.save(
-            Transaction.builder()
-                .uniqueId(UUID.randomUUID().toString())
-                .buyerId(buyerId)
-                .sellerId(transactionRequest.getSellerId())
-                .listingId(transactionRequest.getListingId())
-                .title(transactionRequest.getTitle())
-                .creationDate(LocalDateTime.now())
-                .state(TransactionState.REQUESTED)
-                .build()
-        );
+        Transaction transaction = this.transactionRepository.save(TransactionMapper.fromRequestDto(transactionRequest));
 
         // Create and send TransactionCreatedEvent
         TransactionCreatedEvent event = TransactionCreatedEvent.builder()
                 .id(UUID.randomUUID().toString())
                 .userId(transaction.getSellerId())
-                .buyerId(buyerId)
+                .buyerId(transaction.getBuyerId())
                 .listingId(transaction.getListingId())
                 .creationDate(LocalDateTime.now())
-                .source("TransactionService")
+                .source(EVENT_SOURCE)
                 .build();
 
         transactionCreatedProducer.send(event);
@@ -64,7 +56,7 @@ public class TransactionService {
                 .buyerId("buyerId")
                 .listingId("listingId")
                 .creationDate(LocalDateTime.now())
-                .source("TransactionService")
+                .source(EVENT_SOURCE)
                 .build();
 
         transactionCreatedProducer.send(event);

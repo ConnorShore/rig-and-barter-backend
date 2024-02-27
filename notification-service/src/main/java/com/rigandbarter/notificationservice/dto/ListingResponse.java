@@ -1,6 +1,5 @@
-package com.rigandbarter.listingservice.dto;
+package com.rigandbarter.notificationservice.dto;
 
-import com.rigandbarter.listingservice.model.ComponentCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +20,4 @@ public class ListingResponse {
     private LocalDateTime creationDate;
     private Double price;
     private List<String> imageUrls;
-    private ComponentCategory componentCategory;
 }

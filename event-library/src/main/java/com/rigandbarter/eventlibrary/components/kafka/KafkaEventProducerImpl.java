@@ -30,6 +30,7 @@ public class KafkaEventProducerImpl extends RBEventProducer {
         super(eventType);
         this.objectMapper = objectMapper;
 
+        //TODO: Separate out config to method/class
         String kafkaUrl = environment.getProperty(RBEventProperties.RB_EVENT_BROKER_URL);
         if(kafkaUrl == null)
             throw new RuntimeException("RB Event Broker URL Not Set");
@@ -42,6 +43,9 @@ public class KafkaEventProducerImpl extends RBEventProducer {
         this.kafkaTemplate = new KafkaTemplate<>(factory);
     }
 
+    /**
+     * TODO: Add return type to tell if message send is successful/failure
+     */
     @Override
     public void send(RBEvent event) {
         if(event.getClass() != this.eventType)
@@ -58,6 +62,9 @@ public class KafkaEventProducerImpl extends RBEventProducer {
 
         CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, value);
         future.whenComplete((result, ex) -> {
+            /**
+             * Todo: Better handling of completion/exception
+             */
             System.out.println("Result: " + result);
             System.out.println("Exception: " + ex);
         });
