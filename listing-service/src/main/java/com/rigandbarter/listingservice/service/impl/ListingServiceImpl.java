@@ -5,6 +5,7 @@ import com.rigandbarter.listingservice.dto.ListingResponse;
 import com.rigandbarter.listingservice.model.Listing;
 import com.rigandbarter.listingservice.repository.document.IListingRepository;
 import com.rigandbarter.listingservice.repository.file.IFileRepository;
+import com.rigandbarter.listingservice.repository.mapper.ListingMapper;
 import com.rigandbarter.listingservice.service.IListingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,48 +37,20 @@ public class ListingServiceImpl implements IListingService {
         }
 
         // Save the listing data to the document db
-        var listing = Listing.builder()
-                .id(UUID.randomUUID().toString())
-                .userId(userId)
-                .title(listingRequest.getTitle())
-                .description(listingRequest.getDescription())
-                .price(listingRequest.getPrice())
-                .creationDate(LocalDateTime.now())
-                .componentCategory(listingRequest.getComponentCategory())
-                .imageUrls(imageUrls)
-                .build();
 
-        listingRepository.saveListing(listing);
+        listingRepository.saveListing(ListingMapper.dtoToEntity(listingRequest, userId, imageUrls));
         log.info("Successfully created listing");
     }
 
     @Override
     public List<ListingResponse> getAllListings() {
         List<Listing> dbListings = listingRepository.getAllListings();
-        return dbListings.stream().map(this::convertListingToListingResponse).toList();
+        return dbListings.stream().map(ListingMapper::entityToDto).toList();
     }
 
     @Override
     public ListingResponse getListingById(String listingId) {
         Listing listing = listingRepository.getListingById(listingId);
-        return convertListingToListingResponse(listing);
-    }
-
-    /**
-     * Helper to convert Listing to ListingResponse
-     * @param listing The db Listing item
-     * @return A ListingResponse object
-     */
-    private ListingResponse convertListingToListingResponse(Listing listing) {
-        return ListingResponse.builder()
-                .id(listing.getId())
-                .userId(listing.getUserId())
-                .title(listing.getTitle())
-                .description(listing.getDescription())
-                .price(listing.getPrice())
-                .creationDate(listing.getCreationDate())
-                .componentCategory(listing.getComponentCategory())
-                .imageUrls(listing.getImageUrls())
-                .build();
+        return ListingMapper.entityToDto(listing);
     }
 }

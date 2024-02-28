@@ -33,7 +33,7 @@ public class TransactionServiceImpl implements ITransactionService {
     @Override
     public Transaction createTransaction(TransactionRequest transactionRequest) {
         // Save the transaction to the database
-        Transaction transaction = this.transactionRepository.save(TransactionMapper.fromRequestDto(transactionRequest));
+        Transaction transaction = this.transactionRepository.save(TransactionMapper.dtoToEntity(transactionRequest));
 
         // Create and send TransactionCreatedEvent
         TransactionCreatedEvent event = TransactionCreatedEvent.builder()
