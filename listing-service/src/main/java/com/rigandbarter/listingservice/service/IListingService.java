@@ -13,8 +13,9 @@ public interface IListingService {
      * Creates a new listing in the database and uploads images to blob storage
      * @param listingRequest The listing metadata to save to document db
      * @param images The listing's images to save to blob storage
+     * @return The created listing
      */
-    void createListing(ListingRequest listingRequest, List<MultipartFile> images, String userId);
+    Listing createListing(ListingRequest listingRequest, List<MultipartFile> images, String userId);
 
     /**
      * Gets all the listings currently active

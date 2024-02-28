@@ -8,6 +8,7 @@ import com.rigandbarter.transactionservice.model.Transaction;
 import com.rigandbarter.transactionservice.repository.ITransactionRepository;
 import com.rigandbarter.transactionservice.repository.mapper.TransactionMapper;
 import com.rigandbarter.transactionservice.service.ITransactionService;
+import jakarta.ws.rs.InternalServerErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,8 @@ public class TransactionServiceImpl implements ITransactionService {
     public Transaction createTransaction(TransactionRequest transactionRequest) {
         // Save the transaction to the database
         Transaction transaction = this.transactionRepository.save(TransactionMapper.dtoToEntity(transactionRequest));
+        if(transaction == null)
+            throw new InternalServerErrorException("Failed to create transaciton in database");
 
         // Create and send TransactionCreatedEvent
         TransactionCreatedEvent event = TransactionCreatedEvent.builder()
@@ -46,7 +49,6 @@ public class TransactionServiceImpl implements ITransactionService {
                 .build();
 
         transactionCreatedProducer.send(event, this::handleFailedTransactionCreatedEventSend);
-
         return transaction;
     }
 

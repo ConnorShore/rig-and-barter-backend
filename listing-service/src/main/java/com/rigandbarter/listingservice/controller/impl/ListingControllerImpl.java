@@ -2,6 +2,7 @@ package com.rigandbarter.listingservice.controller.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.listingservice.controller.IListingController;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.listingservice.dto.ListingResponse;
@@ -23,11 +24,10 @@ public class ListingControllerImpl implements IListingController {
     private final IListingService listingService;
 
     @Override
-    public void createListing(Jwt principal, String listingRequest, MultipartFile[] images) throws JsonProcessingException {
+    public String createListing(Jwt principal, String listingRequest, MultipartFile[] images) throws JsonProcessingException {
         ListingRequest listingRequestObj = new ObjectMapper().readValue(listingRequest, ListingRequest.class);
-
         log.info("Creating new listing requested for user: " + principal.getId());
-        listingService.createListing(listingRequestObj, Arrays.asList(images), principal.getId());
+        return listingService.createListing(listingRequestObj, Arrays.asList(images), principal.getId()).getId();
     }
 
     @Override
