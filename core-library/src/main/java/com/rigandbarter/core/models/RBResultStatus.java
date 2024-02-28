@@ -1,12 +1,12 @@
-package com.rigandbarter.eventlibrary.model;
+package com.rigandbarter.core.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class RBEventResult {
-    public RBEventResult(boolean success) {
+public class RBResultStatus {
+    public RBResultStatus(boolean success) {
         this.success = success;
         this.errorMessage = null;
     }

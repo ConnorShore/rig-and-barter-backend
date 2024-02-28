@@ -1,7 +1,6 @@
 package com.rigandbarter.eventlibrary.components;
 
 import com.rigandbarter.eventlibrary.model.RBEvent;
-import com.rigandbarter.eventlibrary.model.RBEventResult;
 
 import java.util.function.Function;
 

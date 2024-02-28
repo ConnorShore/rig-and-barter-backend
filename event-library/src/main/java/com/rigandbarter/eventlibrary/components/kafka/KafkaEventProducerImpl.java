@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.config.RBEventProperties;
 import com.rigandbarter.eventlibrary.model.RBEvent;
-import com.rigandbarter.eventlibrary.model.RBEventResult;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.core.env.Environment;

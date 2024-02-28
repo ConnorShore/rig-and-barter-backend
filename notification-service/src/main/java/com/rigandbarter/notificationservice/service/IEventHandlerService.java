@@ -1,7 +1,7 @@
 package com.rigandbarter.notificationservice.service;
 
+import com.rigandbarter.core.models.RBReturnStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
-import com.rigandbarter.eventlibrary.model.RBEventResult;
 
 public interface IEventHandlerService {
 
@@ -10,5 +10,5 @@ public interface IEventHandlerService {
      * @param event The transaciton created event to handle
      * @return The result of handling the event
      */
-    RBEventResult handleTransactionCreatedEvent(TransactionCreatedEvent event);
+    RBReturnStatus handleTransactionCreatedEvent(TransactionCreatedEvent event);
 }
