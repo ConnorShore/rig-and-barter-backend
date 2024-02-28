@@ -27,7 +27,7 @@ public class ListingServiceImpl implements IListingService {
     private final IFileRepository fileRepository;
 
     @Override
-    public void createListing(ListingRequest listingRequest, List<MultipartFile> images, String userId) {
+    public Listing createListing(ListingRequest listingRequest, List<MultipartFile> images, String userId) {
         // Save the listing image to file service
         List<String> imageUrls = new ArrayList<>();
         for(MultipartFile image : images) {
@@ -37,9 +37,10 @@ public class ListingServiceImpl implements IListingService {
         }
 
         // Save the listing data to the document db
-        Listing ret = listingRepository.saveListing(ListingMapper.dtoToEntity(listingRequest, userId, imageUrls));
-        if(ret == null)
+        Listing listing = listingRepository.saveListing(ListingMapper.dtoToEntity(listingRequest, userId, imageUrls));
+        if(listing == null)
             throw new InternalServerErrorException("Failed to save listing to the database");
+        return listing;
     }
 
     @Override

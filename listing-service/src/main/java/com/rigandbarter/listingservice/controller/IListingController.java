@@ -20,11 +20,12 @@ public interface IListingController {
      * @param principal The auth principal (user)
      * @param listingRequest The request object to create a listing from
      * @param images The list of images to include in the listing
+     * @return The id of the created listing
      * @throws JsonProcessingException Exception when dealing with serialization
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    void createListing(@AuthenticationPrincipal Jwt principal,
+    String createListing(@AuthenticationPrincipal Jwt principal,
                                  @RequestPart(name = "listing") String listingRequest,
                                  @RequestPart(name = "images") MultipartFile[] images) throws JsonProcessingException;
 
