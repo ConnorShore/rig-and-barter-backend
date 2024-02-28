@@ -1,6 +1,6 @@
 package com.rigandbarter.notificationservice.service.impl;
 
-import com.rigandbarter.core.models.RBReturnStatus;
+import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
 import com.rigandbarter.notificationservice.dto.ListingResponse;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
@@ -28,7 +28,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
     //TODO: Get this from config file
     private String FRONTEND_LISTING_URL = "http://localhost:4200/listings/";
 
-    public RBReturnStatus handleTransactionCreatedEvent(TransactionCreatedEvent event) {
+    public RBResultStatus handleTransactionCreatedEvent(TransactionCreatedEvent event) {
         /**
          * TODO: Need to add a common library with ways to access Auth object (like buyer and sellers's name, email, etc)
          */
@@ -42,7 +42,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
         if (listingResponse == null) {
             String msg = "Failed to retrieve listing from listing service: " + event.getListingId();
             log.error(msg);
-            return new RBReturnStatus(false, msg);
+            return new RBResultStatus(false, msg);
         }
 
         FrontEndNotification frontEndNotification = FrontEndNotificationMapper.fromEvent(
@@ -61,6 +61,6 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
         // Create and send email notification
         // Etc
 
-        return new RBReturnStatus(true);
+        return new RBResultStatus(true);
     }
 }

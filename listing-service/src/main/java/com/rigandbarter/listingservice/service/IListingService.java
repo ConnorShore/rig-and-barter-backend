@@ -2,7 +2,6 @@ package com.rigandbarter.listingservice.service;
 
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.listingservice.dto.ListingResponse;
-import com.rigandbarter.listingservice.model.Listing;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

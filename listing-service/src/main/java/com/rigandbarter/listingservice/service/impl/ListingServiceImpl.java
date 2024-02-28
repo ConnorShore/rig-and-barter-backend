@@ -7,13 +7,13 @@ import com.rigandbarter.listingservice.repository.document.IListingRepository;
 import com.rigandbarter.listingservice.repository.file.IFileRepository;
 import com.rigandbarter.listingservice.repository.mapper.ListingMapper;
 import com.rigandbarter.listingservice.service.IListingService;
+import jakarta.ws.rs.InternalServerErrorException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,9 +37,9 @@ public class ListingServiceImpl implements IListingService {
         }
 
         // Save the listing data to the document db
-
-        listingRepository.saveListing(ListingMapper.dtoToEntity(listingRequest, userId, imageUrls));
-        log.info("Successfully created listing");
+        Listing ret = listingRepository.saveListing(ListingMapper.dtoToEntity(listingRequest, userId, imageUrls));
+        if(ret == null)
+            throw new InternalServerErrorException("Failed to save listing to the database");
     }
 
     @Override

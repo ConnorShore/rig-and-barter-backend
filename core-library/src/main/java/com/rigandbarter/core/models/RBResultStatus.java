@@ -6,11 +6,12 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class RBResultStatus {
+
+    protected boolean success;
+    protected String errorMessage;
+
     public RBResultStatus(boolean success) {
         this.success = success;
         this.errorMessage = null;
     }
-
-    private boolean success;
-    private String errorMessage;
 }

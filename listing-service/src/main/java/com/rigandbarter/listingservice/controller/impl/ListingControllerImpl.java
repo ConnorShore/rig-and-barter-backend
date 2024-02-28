@@ -2,6 +2,7 @@ package com.rigandbarter.listingservice.controller.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.listingservice.controller.IListingController;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.listingservice.dto.ListingResponse;
