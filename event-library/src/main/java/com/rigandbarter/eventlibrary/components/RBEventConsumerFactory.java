@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rigandbarter.eventlibrary.components.kafka.KakfaEventConsumerImpl;
 import com.rigandbarter.eventlibrary.config.RBEventProperties;
 import com.rigandbarter.eventlibrary.model.RBEvent;
-import com.rigandbarter.eventlibrary.model.RBEventResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;

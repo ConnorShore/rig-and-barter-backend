@@ -1,11 +1,11 @@
 package com.rigandbarter.notificationservice.consumer.impl;
 
+import com.rigandbarter.core.models.RBReturnStatus;
 import com.rigandbarter.eventlibrary.components.RBEventConsumer;
 import com.rigandbarter.eventlibrary.components.RBEventConsumerFactory;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
 import com.rigandbarter.eventlibrary.model.RBEvent;
 import com.rigandbarter.eventlibrary.model.RBEventHandler;
-import com.rigandbarter.eventlibrary.model.RBEventResult;
 import com.rigandbarter.notificationservice.consumer.IEventHandler;
 import com.rigandbarter.notificationservice.service.impl.EventHandlerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +47,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Received transaction created event: " + event.getId());
 
         TransactionCreatedEvent transactionCreatedEvent = (TransactionCreatedEvent)event;
-        RBEventResult result = eventHandlerService.handleTransactionCreatedEvent(transactionCreatedEvent);
+        RBReturnStatus result = eventHandlerService.handleTransactionCreatedEvent(transactionCreatedEvent);
 
         if (!result.isSuccess())
             log.error("Failed to handle Transaction Created Event: " + result.getErrorMessage());

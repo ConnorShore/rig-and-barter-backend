@@ -22,6 +22,7 @@
 		<module>api-gateway</module>
         <module>event-library</module>
 		<module>notification-service</module>
+		<module>core-library</module>
 	</modules>
 
 	<properties>

@@ -1,9 +1,7 @@
 package com.rigandbarter.eventlibrary.components;
 
 import com.rigandbarter.eventlibrary.model.RBEvent;
-import com.rigandbarter.eventlibrary.model.RBEventResult;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public abstract class RBEventProducer {
