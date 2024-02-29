@@ -26,8 +26,10 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest()
+                        .permitAll())
+//                        .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
+//                        .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))))
                 .build();
