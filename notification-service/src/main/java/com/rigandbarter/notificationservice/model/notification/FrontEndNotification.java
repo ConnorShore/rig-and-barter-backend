@@ -18,7 +18,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class FrontEndNotification extends Notification {
     private String title;
     private String body;
+    private String actionUrl;
     private boolean seenByUser;
+    private FrontEndNotificationType notificationType;
 
     @Override
     public NotificationType getType() {

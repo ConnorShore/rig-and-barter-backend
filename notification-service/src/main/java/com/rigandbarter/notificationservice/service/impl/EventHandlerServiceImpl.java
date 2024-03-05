@@ -4,6 +4,7 @@ import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
 import com.rigandbarter.notificationservice.dto.ListingResponse;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
+import com.rigandbarter.notificationservice.model.notification.FrontEndNotificationType;
 import com.rigandbarter.notificationservice.repository.mapper.FrontEndNotificationMapper;
 import com.rigandbarter.notificationservice.service.IEventHandlerService;
 import com.rigandbarter.notificationservice.service.INotificationService;
@@ -23,7 +24,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
     private final String FRONT_END_NOTIFICATION_TITLE = "New Transaction Request!";
 
     // TODO: Move this to an html template class maybe?
-    private final String FRONT_END_NOTIFICATION_BODY = "User \"%s\" is interested in purchasing: %s\n\nListing Url: [%s]";
+    private final String FRONT_END_NOTIFICATION_BODY = "User \"%s\" is interested in purchasing: %s";
 
     //TODO: Get this from config file
     private String FRONTEND_LISTING_URL = "http://localhost:4200/listings/";
@@ -50,9 +51,10 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
                     FRONT_END_NOTIFICATION_TITLE,
                     String.format(FRONT_END_NOTIFICATION_BODY,
                             "Test Person",
-                            listingResponse.getTitle(),
-                            FRONTEND_LISTING_URL + listingResponse.getId()
-                    )
+                            listingResponse.getTitle()
+                    ),
+                FRONTEND_LISTING_URL + listingResponse.getId(),
+                    FrontEndNotificationType.INFO
         );
 
         notificationService.saveNotification(frontEndNotification);

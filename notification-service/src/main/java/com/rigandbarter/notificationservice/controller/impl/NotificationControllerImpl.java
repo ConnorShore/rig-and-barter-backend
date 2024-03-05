@@ -12,11 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class NotificationControllerImpl implements INotificationController {
 
-    private final WebSocketService webSocketService;
-
     @Override
     public String healthCheck() {
-        webSocketService.sendMessage("Test message from backend");
         return "Notification service is running...";
     }
 }

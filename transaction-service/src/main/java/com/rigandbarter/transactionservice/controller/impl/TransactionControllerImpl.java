@@ -17,7 +17,7 @@ public class TransactionControllerImpl implements ITransactionController {
 
     @Override
     public String createTransaction(Jwt principal, TransactionRequest transactionRequest) {
-        log.info("Create transaction requested for user: " + principal.getId() + "; with buyerId: " + transactionRequest.getBuyerId());
+        log.info("Create transaction requested for user: " + principal.getSubject() + "; with buyerId: " + transactionRequest.getBuyerId());
         return transactionService.createTransaction(transactionRequest).getUniqueId();
     }
 
