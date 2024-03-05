@@ -21,29 +21,6 @@ public class SecurityConfig {
     private String FRONT_END_URL;
 
     @Bean
-    public CorsWebFilter corsFilter()
-    {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials( true );
-        config.setAllowedOriginPatterns( List.of( "*" ) );
-        config.setAllowedMethods( List.of( "GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD" ) );
-        config.setAllowedHeaders( List.of( "origin", "content-type", "accept", "authorization", "cookie" ) );
-//
-        CorsConfiguration config2 = new CorsConfiguration();
-        config2.setAllowCredentials( false );
-        config2.setAllowedOriginPatterns( List.of( "*" ) );
-        config2.setAllowedMethods( List.of( "*" ) );
-        config2.setAllowedHeaders( List.of( "*" ) );
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration( "/api/**", config );
-        source.registerCorsConfiguration( "/**", config );
-        source.registerCorsConfiguration( "/socket/**", config2 );
-
-        return new CorsWebFilter( source );
-    }
-
-    @Bean
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
