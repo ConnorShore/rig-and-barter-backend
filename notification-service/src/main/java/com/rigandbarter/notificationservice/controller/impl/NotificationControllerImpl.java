@@ -1,16 +1,32 @@
 package com.rigandbarter.notificationservice.controller.impl;
 
 import com.rigandbarter.notificationservice.controller.INotificationController;
-import com.rigandbarter.notificationservice.service.WebSocketService;
+import com.rigandbarter.notificationservice.dto.FrontEndNotificationResponse;
+import com.rigandbarter.notificationservice.service.INotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationControllerImpl implements INotificationController {
+
+    private final INotificationService notificationService;
+
+    @Override
+    public List<FrontEndNotificationResponse> getNotificationsForUser(Jwt principal) {
+        List<FrontEndNotificationResponse> vals = notificationService.getAllNotificationsForUser(principal.getSubject());
+        return vals;
+    }
+
+    @Override
+    public void deleteNotification(String notificationId, Jwt principal) {
+
+    }
 
     @Override
     public String healthCheck() {

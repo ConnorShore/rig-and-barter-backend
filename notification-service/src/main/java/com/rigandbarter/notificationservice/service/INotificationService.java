@@ -1,8 +1,11 @@
 package com.rigandbarter.notificationservice.service;
 
+import com.rigandbarter.notificationservice.dto.FrontEndNotificationResponse;
 import com.rigandbarter.notificationservice.model.Notification;
 import com.rigandbarter.notificationservice.model.notification.EmailNotification;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
+
+import java.util.List;
 
 public interface INotificationService {
 
@@ -11,6 +14,13 @@ public interface INotificationService {
      * @param notification The notification to save
      */
     void saveNotification(Notification notification);
+
+    /**
+     * Gets all front end notifications for the specified user
+     * @param userId User id for whom to get notifications for
+     * @return All active notifications for the user
+     */
+    List<FrontEndNotificationResponse> getAllNotificationsForUser(String userId);
 
     /**
      * Sends notification to the front end
