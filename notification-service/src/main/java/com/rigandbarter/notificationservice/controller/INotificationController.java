@@ -20,12 +20,10 @@ public interface INotificationController {
     /**
      * Delete the notification from the db
      * @param notificationId The notification to remove
-     * @param principal The auth principal for current user
-     * @return Successful status if deleted, failure status if not
      */
     @DeleteMapping("{notificationId}")
     @ResponseStatus(HttpStatus.OK)
-    void deleteNotification(@PathVariable String notificationId, @AuthenticationPrincipal Jwt principal);
+    void deleteNotification(@PathVariable String notificationId);
 
     /**
      * Status endpoint to see if the service is running

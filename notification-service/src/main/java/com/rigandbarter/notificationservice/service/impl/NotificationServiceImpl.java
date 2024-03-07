@@ -28,6 +28,11 @@ public class NotificationServiceImpl implements INotificationService {
         log.info("Saved notification in repository");
     }
 
+    public void deleteNotification(String notificationId) {
+        notificationRepository.deleteNotification(notificationId);
+        log.info("Deleted notification: " + notificationId);
+    }
+
     @Override
     public List<FrontEndNotificationResponse> getAllNotificationsForUser(String userId) {
         List<Notification> userNotifications = notificationRepository.getAllFrontEndNotificationsForUser(userId);

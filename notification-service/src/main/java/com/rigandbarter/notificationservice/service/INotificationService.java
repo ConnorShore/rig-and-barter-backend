@@ -16,6 +16,12 @@ public interface INotificationService {
     void saveNotification(Notification notification);
 
     /**
+     * Delete the notification to the database
+     * @param notificationId The id of the notification to delete
+     */
+    void deleteNotification(String notificationId);
+
+    /**
      * Gets all front end notifications for the specified user
      * @param userId User id for whom to get notifications for
      * @return All active notifications for the user

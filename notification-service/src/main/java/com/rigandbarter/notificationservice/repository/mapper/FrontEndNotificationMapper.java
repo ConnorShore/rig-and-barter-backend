@@ -43,6 +43,7 @@ public class FrontEndNotificationMapper {
                 .body(notification.getBody())
                 .seenByUser(notification.isSeenByUser())
                 .actionUrl(notification.getActionUrl())
+                .notificationType(notification.getNotificationType())
                 .creationDate(notification.getCreationDate())
                 .build();
     }

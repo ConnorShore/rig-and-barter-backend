@@ -23,8 +23,8 @@ public class NotificationControllerImpl implements INotificationController {
     }
 
     @Override
-    public void deleteNotification(String notificationId, Jwt principal) {
-
+    public void deleteNotification(String notificationId) {
+        notificationService.deleteNotification(notificationId);
     }
 
     @Override
