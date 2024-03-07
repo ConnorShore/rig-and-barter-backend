@@ -19,8 +19,7 @@ public class NotificationControllerImpl implements INotificationController {
 
     @Override
     public List<FrontEndNotificationResponse> getNotificationsForUser(Jwt principal) {
-        List<FrontEndNotificationResponse> vals = notificationService.getAllNotificationsForUser(principal.getSubject());
-        return vals;
+        return notificationService.getAllNotificationsForUser(principal.getSubject());
     }
 
     @Override

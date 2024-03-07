@@ -27,6 +27,7 @@ public class FrontEndNotificationMapper {
                 .actionUrl(actionUrl)
                 .notificationType(notificationType)
                 .seenByUser(false)
+                .creationDate(event.getCreationDate())
                 .build();
     }
 
@@ -37,10 +38,12 @@ public class FrontEndNotificationMapper {
      */
     public static FrontEndNotificationResponse entityToDto(FrontEndNotification notification) {
         return FrontEndNotificationResponse.builder()
+                .id(notification.getId())
                 .title(notification.getTitle())
                 .body(notification.getBody())
                 .seenByUser(notification.isSeenByUser())
                 .actionUrl(notification.getActionUrl())
+                .creationDate(notification.getCreationDate())
                 .build();
     }
 }
