@@ -17,4 +17,6 @@ public interface INotificationRepository {
     List<Notification> getAllFrontEndNotificationsForUser(String userId);
 
     void deleteNotification(String notificationId);
+
+    void markNotificationAsSeen(String notificationId);
 }

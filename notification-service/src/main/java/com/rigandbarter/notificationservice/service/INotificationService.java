@@ -29,6 +29,12 @@ public interface INotificationService {
     List<FrontEndNotificationResponse> getAllNotificationsForUser(String userId);
 
     /**
+     * Marks the notification as seen
+     * @param notificationId The id of the notification to mark as seen
+     */
+    void markNotificationAsSeen(String notificationId);
+
+    /**
      * Sends notification to the front end
      * @param notification The notification to send
      */

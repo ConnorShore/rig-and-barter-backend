@@ -25,6 +25,10 @@ public interface INotificationController {
     @ResponseStatus(HttpStatus.OK)
     void deleteNotification(@PathVariable String notificationId);
 
+    @PatchMapping("{notificationId}/seen")
+    @ResponseStatus(HttpStatus.OK)
+    void markNotificationAsSeen(@PathVariable String notificationId);
+
     /**
      * Status endpoint to see if the service is running
      */

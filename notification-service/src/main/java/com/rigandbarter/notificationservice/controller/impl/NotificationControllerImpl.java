@@ -28,6 +28,11 @@ public class NotificationControllerImpl implements INotificationController {
     }
 
     @Override
+    public void markNotificationAsSeen(String notificationId) {
+        notificationService.markNotificationAsSeen(notificationId);
+    }
+
+    @Override
     public String healthCheck() {
         return "Notification service is running...";
     }
