@@ -1,6 +1,7 @@
 package com.rigandbarter.notificationservice.repository.mapper;
 
 import com.rigandbarter.eventlibrary.model.RBEvent;
+import com.rigandbarter.notificationservice.dto.FrontEndNotificationResponse;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotificationType;
 
@@ -26,6 +27,24 @@ public class FrontEndNotificationMapper {
                 .actionUrl(actionUrl)
                 .notificationType(notificationType)
                 .seenByUser(false)
+                .creationDate(event.getCreationDate())
+                .build();
+    }
+
+    /**
+     * Converts FrontEndNotification to a response to be used by front end
+     * @param notification The FrontEndNotification entity to convert
+     * @return A FrontEndNotification to be sent to the front end
+     */
+    public static FrontEndNotificationResponse entityToDto(FrontEndNotification notification) {
+        return FrontEndNotificationResponse.builder()
+                .id(notification.getId())
+                .title(notification.getTitle())
+                .body(notification.getBody())
+                .seenByUser(notification.isSeenByUser())
+                .actionUrl(notification.getActionUrl())
+                .notificationType(notification.getNotificationType())
+                .creationDate(notification.getCreationDate())
                 .build();
     }
 }
