@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.stereotype.Repository;
@@ -55,5 +56,16 @@ public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Notifica
         FrontEndNotification frontEndNotification = (FrontEndNotification) notificationOptional.get();
         frontEndNotification.setSeenByUser(true);
         super.save(frontEndNotification);
+    }
+
+    @Override
+    public void markAllUserNotificationsAsSeen(String userId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("targetUser").is(userId));
+
+        Update updateSeen = new Update();
+        updateSeen.set("seenByUser", true);
+
+        mongoTemplate.updateMulti(query, updateSeen, Notification.class);
     }
 }

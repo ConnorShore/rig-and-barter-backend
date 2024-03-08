@@ -40,6 +40,11 @@ public class NotificationServiceImpl implements INotificationService {
     }
 
     @Override
+    public void markAllUserNotificationsAsSeen(String userId) {
+        notificationRepository.markAllUserNotificationsAsSeen(userId);
+    }
+
+    @Override
     public List<FrontEndNotificationResponse> getAllNotificationsForUser(String userId) {
         List<Notification> userNotifications = notificationRepository.getAllFrontEndNotificationsForUser(userId);
         return userNotifications

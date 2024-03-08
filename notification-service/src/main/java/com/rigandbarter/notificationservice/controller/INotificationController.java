@@ -25,9 +25,22 @@ public interface INotificationController {
     @ResponseStatus(HttpStatus.OK)
     void deleteNotification(@PathVariable String notificationId);
 
+    /**
+     * Marks a notificaiton as seen
+     * @param notificationId The notificaiton to mark as seen
+     */
     @PatchMapping("{notificationId}/seen")
     @ResponseStatus(HttpStatus.OK)
     void markNotificationAsSeen(@PathVariable String notificationId);
+
+
+    /**
+     * Marks all user's notifications as seen
+     * @param principal The auth principal of the user for whom to mark notifications as seen for
+     */
+    @PatchMapping("/seen")
+    @ResponseStatus(HttpStatus.OK)
+    void markAllUserNotificationAsSeen(@AuthenticationPrincipal Jwt principal);
 
     /**
      * Status endpoint to see if the service is running

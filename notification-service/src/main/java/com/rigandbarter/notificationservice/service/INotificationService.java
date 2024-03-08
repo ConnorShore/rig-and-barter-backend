@@ -35,6 +35,12 @@ public interface INotificationService {
     void markNotificationAsSeen(String notificationId);
 
     /**
+     * Marks all the notifications as seen for the current user
+     * @param userId The id of the user for whom to mark all notifications as seen
+     */
+    void markAllUserNotificationsAsSeen(String userId);
+
+    /**
      * Sends notification to the front end
      * @param notification The notification to send
      */

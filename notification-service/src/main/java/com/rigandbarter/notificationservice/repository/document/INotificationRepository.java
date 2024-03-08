@@ -14,9 +14,28 @@ public interface INotificationRepository {
      */
     Notification saveNotification(Notification notification);
 
+    /**
+     * Returns all notifications for the current user
+     * @param userId The user to retrieve notificaitons for
+     * @return All notifications for the user
+     */
     List<Notification> getAllFrontEndNotificationsForUser(String userId);
 
+    /**
+     * Deletes a notification
+     * @param notificationId The id of the notification to delete
+     */
     void deleteNotification(String notificationId);
 
+    /**
+     * Marks the frontend notification as Seen By User
+     * @param notificationId The id of the notification to mark as seen
+     */
     void markNotificationAsSeen(String notificationId);
+
+    /**
+     * Marks all frontend notifications as seen for the current user
+     * @param userId The id of the user for whom to mark all notifications as seen for
+     */
+    void markAllUserNotificationsAsSeen(String userId);
 }

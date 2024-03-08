@@ -33,6 +33,11 @@ public class NotificationControllerImpl implements INotificationController {
     }
 
     @Override
+    public void markAllUserNotificationAsSeen(Jwt principal) {
+        notificationService.markAllUserNotificationsAsSeen(principal.getSubject());
+    }
+
+    @Override
     public String healthCheck() {
         return "Notification service is running...";
     }
