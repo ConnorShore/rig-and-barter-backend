@@ -13,17 +13,22 @@ import java.util.List;
 @RequestMapping("api/notification")
 public interface INotificationController {
 
+    /**
+     * Gets all the notifications for the current user
+     * @param principal The principal auth for the user to get notifications for
+     * @return The list of notifications for the current user
+     */
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     List<FrontEndNotificationResponse> getNotificationsForUser(@AuthenticationPrincipal Jwt principal);
 
     /**
-     * Delete the notification from the db
-     * @param notificationId The notification to remove
+     * Deletes the specified notifications from the db
+     * @param notificationIds The list of ids for notification to remove
      */
-    @DeleteMapping("{notificationId}")
+    @DeleteMapping()
     @ResponseStatus(HttpStatus.OK)
-    void deleteNotification(@PathVariable String notificationId);
+    void deleteNotifications(@RequestParam("ids") List<String> notificationIds);
 
     /**
      * Marks a notificaiton as seen

@@ -16,10 +16,10 @@ public interface INotificationService {
     void saveNotification(Notification notification);
 
     /**
-     * Delete the notification to the database
-     * @param notificationId The id of the notification to delete
+     * Deletes the specified notifications from the database
+     * @param notificationIds The list of ids for the notifications to delete
      */
-    void deleteNotification(String notificationId);
+    void deleteNotifications(List<String> notificationIds);
 
     /**
      * Gets all front end notifications for the specified user

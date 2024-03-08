@@ -22,10 +22,10 @@ public interface INotificationRepository {
     List<Notification> getAllFrontEndNotificationsForUser(String userId);
 
     /**
-     * Deletes a notification
-     * @param notificationId The id of the notification to delete
+     * Deletes the specified notifications from the db
+     * @param notificationIds The list of ids for the notifications to delete
      */
-    void deleteNotification(String notificationId);
+    void deleteNotifications(List<String> notificationIds);
 
     /**
      * Marks the frontend notification as Seen By User

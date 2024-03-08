@@ -3,7 +3,6 @@ package com.rigandbarter.notificationservice.repository.document.mongodb;
 import com.rigandbarter.notificationservice.model.Notification;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
 import com.rigandbarter.notificationservice.repository.document.INotificationRepository;
-import com.rigandbarter.notificationservice.repository.mapper.FrontEndNotificationMapper;
 import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -43,8 +42,8 @@ public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Notifica
     }
 
     @Override
-    public void deleteNotification(String notificationId) {
-        super.deleteById(notificationId);
+    public void deleteNotifications(List<String> notificationIds) {
+        super.deleteAllById(notificationIds);
     }
 
     @Override
