@@ -31,7 +31,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
 
     public RBResultStatus handleTransactionCreatedEvent(TransactionCreatedEvent event) {
         /**
-         * TODO: Need to add a common library with ways to access Auth object (like buyer and sellers's name, email, etc)
+         * TODO: Get user information from JWT decode or from principal on
          */
         ListingResponse listingResponse = webClientBuilder.build()
                 .get()
