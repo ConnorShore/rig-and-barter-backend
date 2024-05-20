@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class KeycloakUserRepresentation {
     private boolean enabled;
+    private String id;
     private String username;
     private String email;
     private String firstName;

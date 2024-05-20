@@ -5,6 +5,7 @@ import com.rigandbarter.userservice.dto.UserRegisterRequest;
 import com.rigandbarter.userservice.dto.UserResponse;
 import com.rigandbarter.userservice.service.IKeycloakService;
 import com.rigandbarter.userservice.service.IUserService;
+import com.rigandbarter.userservice.util.exceptions.UserRegistrationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -20,20 +21,13 @@ public class UserControllerImpl implements IUserController {
     private final IUserService userService;
 
     @Override
-    public String registerUser(UserRegisterRequest userRegisterRequest) {
-        System.out.println();
+    public UserResponse registerUser(UserRegisterRequest userRegisterRequest) throws UserRegistrationException {
         return this.userService.registerUser(userRegisterRequest);
     }
 
     @Override
-    public String getUserTest(Jwt principal) {
-        System.out.println();
-        return "get user test ret";
-    }
-
-    @Override
     public UserResponse getUser(String userId) {
-        return null;
+        return this.userService.getUserByEmail(userId);
     }
 
     @Override

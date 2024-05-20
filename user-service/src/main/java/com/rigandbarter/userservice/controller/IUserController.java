@@ -2,6 +2,7 @@ package com.rigandbarter.userservice.controller;
 
 import com.rigandbarter.userservice.dto.UserRegisterRequest;
 import com.rigandbarter.userservice.dto.UserResponse;
+import com.rigandbarter.userservice.util.exceptions.UserRegistrationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -12,8 +13,6 @@ import java.util.Map;
 @RequestMapping("api/user")
 public interface IUserController {
 
-    // TODO: THis may need to be a callback method instead for keycloak to callback to once user is registered
-
     /**
      * Registers a new user in the user service and database
      * @param userRegisterRequest The info with the user to create (includes keycloak id)
@@ -21,15 +20,7 @@ public interface IUserController {
      */
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public String registerUser(@RequestBody UserRegisterRequest userRegisterRequest);
-
-    /**
-     * Gets all the user's info
-     * @return The user's info
-     */
-    @GetMapping()
-    @ResponseStatus(HttpStatus.OK)
-    public String getUserTest(@AuthenticationPrincipal Jwt principal);
+    public UserResponse registerUser(@RequestBody UserRegisterRequest userRegisterRequest) throws UserRegistrationException;
 
     /**
      * Gets all the user's info

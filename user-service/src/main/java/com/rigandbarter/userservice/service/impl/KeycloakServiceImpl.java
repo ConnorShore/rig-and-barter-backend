@@ -1,105 +1,118 @@
 package com.rigandbarter.userservice.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rigandbarter.userservice.dto.KeycloakUser;
 import com.rigandbarter.userservice.dto.KeycloakUserCredentialsResponse;
 import com.rigandbarter.userservice.dto.UserRegisterRequest;
-import com.rigandbarter.userservice.model.AccessTokenRequest;
 import com.rigandbarter.userservice.model.AccessTokenResponse;
 import com.rigandbarter.userservice.model.KeycloakCredentials;
 import com.rigandbarter.userservice.model.KeycloakUserRepresentation;
 import com.rigandbarter.userservice.service.IKeycloakService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Slf4j
 public class KeycloakServiceImpl implements IKeycloakService {
 
     private final WebClient.Builder webClientBuilder;   // TODO: Move to core-library
 
-    private String getAccessToken() {
+    @Value("${rb.keycloak.url}")
+    private String KEYCLOAK_URL;
 
-        String url = "http://localhost:8180/realms/rig-and-barter-realm/protocol/openid-connect/token";
-//        AccessTokenRequest request = AccessTokenRequest.builder()
-//                .grant_type("client_credentials")
-//                .client_id("rig-and-barter-client")
-//                .client_secret("dE7irq4Kj44QbiftdLvi1q9tHLpWMlRL")
-//                .build();
+    @Value("${rb.keycloak.admin_client_id}")
+    private String ADMIN_CLIENT_ID;
 
-//        var ret = webClientBuilder.build()
-//                .post()
-//                .uri(url)
-//                .body(BodyInserters.fromFormData("grant_type", "client_credentials")
-//                        .with("client_id", "rig-and-barter-client")
-//                        .with("client_secret", "dE7irq4Kj44QbiftdLvi1q9tHLpWMlRL"))
-//                .body(BodyInserters.fromFormData("grant_type", "password")
-//                        .with("client_id", "rig-and-barter-client")
-//                        .with("username", "admin")
-//                        .with("password", "admin")
-//                        .with("scope", "openid"))
-//                .retrieve()
-//                .bodyToMono(AccessTokenResponse.class)
-//                .block();
+    @Value("${rb.keycloak.admin_client_secret}")
+    private String ADMIN_CLIENT_SECRET;
 
-        var ret = webClientBuilder.build()
-                .post()
-                .uri(url)
-                .body(BodyInserters.fromFormData("grant_type", "client_credentials")
-                        .with("client_id", "admin-cli")
-                        .with("client_secret", "t8TYbmn5YFt68dBMgcJzQEIKJQi7sJYz"))
-//                        .with("scope", "openid"))
-                .retrieve()
-                .bodyToMono(AccessTokenResponse.class)
-                .block();
+    public String registerUser(UserRegisterRequest userRegisterRequest) {
+        final String userEndpoint = "/admin/realms/rig-and-barter-realm/users";
+        String url = KEYCLOAK_URL + userEndpoint;
 
-        return ret.getAccess_token();
-    }
-
-    public void registerUser(UserRegisterRequest userRegisterRequest) {
         var accessToken = getAccessToken();
 
-        String url = "http://localhost:8180/admin/realms/rig-and-barter-realm/users";
-        KeycloakCredentials creds = (KeycloakCredentials.builder()
+        KeycloakCredentials userCredentials = (KeycloakCredentials.builder()
                 .type("password")
                 .temporary(false)
                 .value(userRegisterRequest.getPassword())
                 .build());
-        List<KeycloakCredentials> allCreds = new ArrayList<>();
-        allCreds.add(creds);
+
+        String uid = UUID.randomUUID().toString();
         KeycloakUserRepresentation userRep = KeycloakUserRepresentation.builder()
                 .enabled(true)
+                .id(uid)
                 .username(userRegisterRequest.getEmail())
                 .email(userRegisterRequest.getEmail())
                 .firstName(userRegisterRequest.getFirstName())
                 .lastName(userRegisterRequest.getLastName())
-                .credentials(allCreds)
+                .credentials(List.of(userCredentials))
                 .build();
 
-        String strBody = null;
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            strBody = mapper.writeValueAsString(userRep);
-            System.out.println();
+            webClientBuilder.build()
+                    .post()
+                    .uri(url)
+                    .headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
+                    .bodyValue(userRep)
+                    .retrieve()
+                    .bodyToMono(KeycloakUserCredentialsResponse.class)
+                    .block();
         } catch (Exception e) {
-            System.out.println();
+            log.error("Failed to register user with keycloak: " + e.getMessage());
+            return null;
         }
 
-        var val = webClientBuilder.build()
-                .post()
+        return uid;
+    }
+
+    @Override
+    public KeycloakUser getUserByEmail(String email) {
+        final String userEndpoint = "/admin/realms/rig-and-barter-realm/users?email=" + email;
+        String url = KEYCLOAK_URL + userEndpoint;
+
+        var accessToken = getAccessToken();
+
+        List<KeycloakUser> keycloakUserList = webClientBuilder.build()
+                .get()
                 .uri(url)
                 .headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
-                .bodyValue(userRep);
-//                .bodyValue(BodyInserters.fromValue(userRep));
-
-        var ret = val.retrieve()
-                .bodyToMono(KeycloakUserCredentialsResponse.class)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<KeycloakUser>>() { })
                 .block();
 
-        System.out.println();
+        assert keycloakUserList != null && !keycloakUserList.isEmpty();
+        return keycloakUserList.get(0);
+    }
+
+
+    /**
+     * TODO: Maybe move this to a bean?
+     */
+    private String getAccessToken() {
+        final String TOKEN_ENDPOINT = "/realms/rig-and-barter-realm/protocol/openid-connect/token";
+
+        String url = KEYCLOAK_URL + TOKEN_ENDPOINT;
+
+        var credentialData = webClientBuilder.build()
+                .post()
+                .uri(url)
+                .body(BodyInserters.fromFormData("grant_type", "client_credentials")
+                        .with("client_id", ADMIN_CLIENT_ID)
+                        .with("client_secret", ADMIN_CLIENT_SECRET))
+                .retrieve()
+                .bodyToMono(AccessTokenResponse.class)
+                .block();
+
+        assert credentialData != null;
+        return credentialData.getAccess_token();
     }
 }

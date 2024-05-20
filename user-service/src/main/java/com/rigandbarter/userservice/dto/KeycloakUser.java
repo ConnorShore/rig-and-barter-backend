@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
+public class KeycloakUser {
     private String id;
     private String email;
     private String firstName;
     private String lastName;
-    private String profilePictureUrl;
 }
