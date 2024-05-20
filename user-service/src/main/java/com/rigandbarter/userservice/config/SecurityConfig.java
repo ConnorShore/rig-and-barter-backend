@@ -1,4 +1,4 @@
-package com.rigandbarter.listingservice.config;
+package com.rigandbarter.userservice.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,10 +19,16 @@ public class SecurityConfig {
     @Value("${rb.security.permitted-get-urls}")
     String[] permittedGetUrls;
 
+    @Value("${rb.security.permitted-post-urls}")
+    String[] permittedPostUrls;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers(permittedPostUrls))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/user/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, permittedPostUrls).permitAll()
                         .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
