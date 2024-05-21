@@ -57,13 +57,15 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserResponse getUserByEmail(String email) {
-        KeycloakUser keycloakUser = this.keycloakService.getUserByEmail(email);
+        UserEntity userEntity = this.userRepository.findByEmail(email);
+
+        // TODO: Get user profile picture from file db
 
         return UserResponse.builder()
-                .id(keycloakUser.getId())
-                .email(keycloakUser.getEmail())
-                .firstName(keycloakUser.getFirstName())
-                .lastName(keycloakUser.getLastName())
+                .id(userEntity.getUserId())
+                .email(userEntity.getEmail())
+                .firstName(userEntity.getFirstName())
+                .lastName(userEntity.getLastName())
                 .profilePictureUrl(null)
                 .build();
     }
