@@ -11,4 +11,10 @@ public interface IProfilePictureRepository {
      * TODO: Maybe need to make return object so can get both id and url
      */
     String uploadProfilePicture(String key, MultipartFile file);
+
+    /**
+     * Removes a file from the blob/file storage
+     * @param key The key of the file to remove
+     */
+    void removeFile(String key);
 }
