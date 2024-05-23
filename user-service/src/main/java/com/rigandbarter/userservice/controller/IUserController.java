@@ -1,12 +1,16 @@
 package com.rigandbarter.userservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.rigandbarter.userservice.dto.UserBasicInfoRequest;
 import com.rigandbarter.userservice.dto.UserRegisterRequest;
 import com.rigandbarter.userservice.dto.UserResponse;
+import com.rigandbarter.userservice.util.exceptions.UpdateUserException;
 import com.rigandbarter.userservice.util.exceptions.UserRegistrationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -20,7 +24,7 @@ public interface IUserController {
      */
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse registerUser(@RequestBody UserRegisterRequest userRegisterRequest) throws UserRegistrationException;
+    UserResponse registerUser(@RequestBody UserRegisterRequest userRegisterRequest) throws UserRegistrationException;
 
     /**
      * Gets all the user's info
@@ -29,12 +33,22 @@ public interface IUserController {
      */
     @GetMapping("{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public UserResponse getUser(@PathVariable String userId);
+    UserResponse getUser(@PathVariable String userId);
+
+    /**
+     * Sets the user's basic profile information
+     * @return
+     */
+    @PostMapping("{userId}/info/basic")
+    @ResponseStatus(HttpStatus.OK)
+    UserResponse setUserBasicInfo(@PathVariable String userId,
+                                  @RequestPart(name = "userInfo") String userInfoJson,
+                                  @RequestPart(name = "profilePic") MultipartFile profilePic) throws UpdateUserException, JsonProcessingException;
 
     /**
      * Health check for the service
      */
     @GetMapping("status")
     @ResponseStatus(HttpStatus.OK)
-    public String healthCheck();
+    String healthCheck();
 }

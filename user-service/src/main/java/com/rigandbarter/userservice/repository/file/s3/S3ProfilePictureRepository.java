@@ -25,6 +25,7 @@ public class S3ProfilePictureRepository implements IProfilePictureRepository {
 
     @Value("${aws.s3.bucket-name}")
     private String PROFILE_IMAGES_BUCKET;
+
     @Override
     public String uploadProfilePicture(String key, MultipartFile file) {
         // Set metadata
@@ -38,8 +39,8 @@ public class S3ProfilePictureRepository implements IProfilePictureRepository {
         try {
             var resource = s3Template.upload(PROFILE_IMAGES_BUCKET, key, file.getInputStream(), metaData);
             resourceUrl = resource.getURL().toString();
-        } catch (IOException e) {
-            log.error("Failed to upload listing image to S3: " + e.toString());
+        } catch (Exception e) {
+            log.error("Failed to upload listing image to S3: " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "An exception occurred when uploading listing image to S3");
         }
@@ -47,5 +48,18 @@ public class S3ProfilePictureRepository implements IProfilePictureRepository {
         log.info("Successfully uploaded file to S3");
         // Return s3 resource url
         return resourceUrl;
+    }
+
+    @Override
+    public void removeFile(String key) {
+        try {
+            s3Template.deleteObject(PROFILE_IMAGES_BUCKET, key);
+        } catch (Exception e) {
+            log.error("Failed to remove image from S3: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "An exception occurred when uploading listing image to S3");
+        }
+
+        log.info("Successfully removed file: " + key + " from S3");
     }
 }

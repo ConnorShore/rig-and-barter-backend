@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterRequest {
+public class UserBasicInfoRequest {
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
+//    private String password;  // TODO: Be able to reset password in user basic info
 }
