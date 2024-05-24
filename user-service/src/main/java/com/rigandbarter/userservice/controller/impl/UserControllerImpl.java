@@ -53,6 +53,7 @@ public class UserControllerImpl implements IUserController {
         if(!principal.getClaimAsString("sub").equals(userId))
             throw new UserAuthorizationException("Current user does not have permission to modify another user's info");
 
+        // TODO: Validate billing info is in valid format before attempting to save (i.e. not missing fields, not enough card digits, etc)
         log.info("Updating billing info for user: " + userId);
         return this.userService.setUserBillingInfo(userId, userBillingInfoRequest);
     }

@@ -71,8 +71,6 @@ public class UserServiceImpl implements IUserService {
         UserEntity userEntity = this.userRepository.findByUserId(userId);
         BillingInfoEntity billingInfoEntity = this.billingInfoRepository.findByUserId(userId);
 
-        // TODO: Get billing info as well and attach to user
-
         UserBasicInfoResponse basicInfo = UserBasicInfoResponse.builder()
                 .email(userEntity.getEmail())
                 .firstName(userEntity.getFirstName())
@@ -80,10 +78,20 @@ public class UserServiceImpl implements IUserService {
                 .profilePictureUrl(userEntity.getProfilePictureUrl())
                 .build();
 
+        UserBillingInfoResponse billingInfo = null;
+        if(billingInfoEntity != null) {
+            billingInfo = UserBillingInfoResponse.builder()
+                    .nameOnCard(billingInfoEntity.getNameOnCard())
+                    .cardNumber(billingInfoEntity.getCardNumber())
+                    .expirationDate(billingInfoEntity.getExpirationDate())
+                    .cvv(billingInfoEntity.getCvv())
+                    .build();
+        }
+
         return UserResponse.builder()
                 .id(userId)
                 .basicInfo(basicInfo)
-                .billingInfo(null)
+                .billingInfo(billingInfo)
                 .build();
     }
 
@@ -138,13 +146,21 @@ public class UserServiceImpl implements IUserService {
     public UserBillingInfoResponse setUserBillingInfo(String userId, UserBillingInfoRequest userBillingInfoRequest)
             throws UpdateUserException{
         try {
-            BillingInfoEntity billingInfoEntity = BillingInfoEntity.builder()
-                    .userId(userId)
-                    .nameOnCard(userBillingInfoRequest.getNameOnCard())
-                    .cardNumber(userBillingInfoRequest.getCardNumber())
-                    .expirationDate(userBillingInfoRequest.getExpirationDate())
-                    .cvv(userBillingInfoRequest.getCvv())
-                    .build();
+            BillingInfoEntity billingInfoEntity = this.billingInfoRepository.findByUserId(userId);
+            if(billingInfoEntity == null) {
+                billingInfoEntity = BillingInfoEntity.builder()
+                        .userId(userId)
+                        .nameOnCard(userBillingInfoRequest.getNameOnCard())
+                        .cardNumber(userBillingInfoRequest.getCardNumber())
+                        .expirationDate(userBillingInfoRequest.getExpirationDate())
+                        .cvv(userBillingInfoRequest.getCvv())
+                        .build();
+            } else {
+                billingInfoEntity.setNameOnCard(userBillingInfoRequest.getNameOnCard());
+                billingInfoEntity.setCardNumber(userBillingInfoRequest.getCardNumber());
+                billingInfoEntity.setExpirationDate(userBillingInfoRequest.getExpirationDate());
+                billingInfoEntity.setCvv(userBillingInfoRequest.getCvv());
+            }
 
             this.billingInfoRepository.save(billingInfoEntity);
 
