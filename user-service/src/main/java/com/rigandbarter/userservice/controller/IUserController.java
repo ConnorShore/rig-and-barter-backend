@@ -1,9 +1,7 @@
 package com.rigandbarter.userservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.rigandbarter.userservice.dto.UserBasicInfoRequest;
-import com.rigandbarter.userservice.dto.UserRegisterRequest;
-import com.rigandbarter.userservice.dto.UserResponse;
+import com.rigandbarter.userservice.dto.*;
 import com.rigandbarter.userservice.util.exceptions.UpdateUserException;
 import com.rigandbarter.userservice.util.exceptions.UserRegistrationException;
 import org.springframework.http.HttpStatus;
@@ -33,7 +31,7 @@ public interface IUserController {
      */
     @GetMapping("{userId}")
     @ResponseStatus(HttpStatus.OK)
-    UserResponse getUser(@PathVariable String userId);
+    UserResponse getUser(@PathVariable String userId, @AuthenticationPrincipal Jwt principal);
 
     /**
      * Sets the user's basic profile information
@@ -41,9 +39,16 @@ public interface IUserController {
      */
     @PostMapping("{userId}/info/basic")
     @ResponseStatus(HttpStatus.OK)
-    UserResponse setUserBasicInfo(@PathVariable String userId,
-                                  @RequestPart(name = "userInfo") String userInfoJson,
-                                  @RequestPart(name = "profilePic") MultipartFile profilePic) throws UpdateUserException, JsonProcessingException;
+    UserBasicInfoResponse setUserBasicInfo(@PathVariable String userId,
+                                           @RequestPart(name = "userInfo") String userInfoJson,
+                                           @RequestPart(name = "profilePic") MultipartFile profilePic,
+                                           @AuthenticationPrincipal Jwt principal) throws UpdateUserException, JsonProcessingException;
+
+    @PostMapping("{userId}/info/billing")
+    @ResponseStatus(HttpStatus.OK)
+    UserBillingInfoResponse setUserBillingInfo(@PathVariable String userId,
+                                           @RequestBody UserBillingInfoRequest userBillingInfoRequest,
+                                           @AuthenticationPrincipal Jwt principal) throws UpdateUserException;
 
     /**
      * Health check for the service

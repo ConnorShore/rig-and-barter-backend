@@ -16,7 +16,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -46,10 +45,8 @@ public class KeycloakServiceImpl implements IKeycloakService {
                 .value(userRegisterRequest.getPassword())
                 .build());
 
-        String uid = UUID.randomUUID().toString();
         KeycloakUserRepresentation userRep = KeycloakUserRepresentation.builder()
                 .enabled(true)
-                .id(uid)
                 .username(userRegisterRequest.getEmail())
                 .email(userRegisterRequest.getEmail())
                 .firstName(userRegisterRequest.getFirstName())
@@ -57,6 +54,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
                 .credentials(List.of(userCredentials))
                 .build();
 
+        String userId;
         try {
             webClientBuilder.build()
                     .post()
@@ -66,12 +64,15 @@ public class KeycloakServiceImpl implements IKeycloakService {
                     .retrieve()
                     .bodyToMono(KeycloakUserCredentialsResponse.class)
                     .block();
+
+            KeycloakUser createdUser = getUserByEmail(userRep.getEmail());
+            userId = createdUser.getId();
         } catch (Exception e) {
             log.error("Failed to register user with keycloak: " + e.getMessage());
             return null;
         }
 
-        return uid;
+        return userId;
     }
 
     @Override

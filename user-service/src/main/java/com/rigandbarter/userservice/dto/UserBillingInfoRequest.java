@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
-    private String id;
-    private UserBasicInfoResponse basicInfo;
-    private UserBillingInfoResponse billingInfo;
+public class UserBillingInfoRequest {
+    private String nameOnCard;
+    private String cardNumber;
+    private String expirationDate;
+    private String cvv;
 }
