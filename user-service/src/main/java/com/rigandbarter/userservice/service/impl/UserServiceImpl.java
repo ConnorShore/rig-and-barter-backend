@@ -1,13 +1,11 @@
 package com.rigandbarter.userservice.service.impl;
 
-import com.rigandbarter.userservice.dto.KeycloakUser;
-import com.rigandbarter.userservice.dto.UserBasicInfoRequest;
-import com.rigandbarter.userservice.dto.UserResponse;
-import com.rigandbarter.userservice.mapper.UserMapper;
+import com.rigandbarter.userservice.dto.*;
+import com.rigandbarter.userservice.model.BillingInfoEntity;
 import com.rigandbarter.userservice.model.UserEntity;
-import com.rigandbarter.userservice.repository.relational.IUserRepository;
-import com.rigandbarter.userservice.dto.UserRegisterRequest;
 import com.rigandbarter.userservice.repository.file.IProfilePictureRepository;
+import com.rigandbarter.userservice.repository.relational.IBillingInfoRepository;
+import com.rigandbarter.userservice.repository.relational.IUserRepository;
 import com.rigandbarter.userservice.service.IKeycloakService;
 import com.rigandbarter.userservice.service.IUserService;
 import com.rigandbarter.userservice.util.exceptions.UpdateUserException;
@@ -29,6 +27,7 @@ public class UserServiceImpl implements IUserService {
 
     private final IUserRepository userRepository;
     private final IProfilePictureRepository profilePictureRepository;
+    private final IBillingInfoRepository billingInfoRepository;
 
     @Override
     public UserResponse registerUser(UserRegisterRequest userRegisterRequest) throws UserRegistrationException {
@@ -53,32 +52,53 @@ public class UserServiceImpl implements IUserService {
             throw new UserRegistrationException("Failed to create user in database: " + userRegisterRequest.getEmail());
         }
 
-        return UserResponse.builder()
-                .id(userId)
+        // TODO: Convert all these returns to use mappers instead
+        UserBasicInfoResponse basicInfo = UserBasicInfoResponse.builder()
                 .email(userRegisterRequest.getEmail())
                 .firstName(userRegisterRequest.getFirstName())
                 .lastName(userRegisterRequest.getLastName())
                 .profilePictureUrl(null)
                 .build();
+
+        return UserResponse.builder()
+                .basicInfo(basicInfo)
+                .billingInfo(null)
+                .build();
     }
 
     @Override
-    public UserResponse getUserByEmail(String email) {
-        UserEntity userEntity = this.userRepository.findByEmail(email);
+    public UserResponse getUserById(String userId) {
+        UserEntity userEntity = this.userRepository.findByUserId(userId);
+        BillingInfoEntity billingInfoEntity = this.billingInfoRepository.findByUserId(userId);
 
-        return UserResponse.builder()
-                .id(userEntity.getUserId())
+        UserBasicInfoResponse basicInfo = UserBasicInfoResponse.builder()
                 .email(userEntity.getEmail())
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
                 .profilePictureUrl(userEntity.getProfilePictureUrl())
                 .build();
+
+        UserBillingInfoResponse billingInfo = null;
+        if(billingInfoEntity != null) {
+            billingInfo = UserBillingInfoResponse.builder()
+                    .nameOnCard(billingInfoEntity.getNameOnCard())
+                    .cardNumber(billingInfoEntity.getCardNumber())
+                    .expirationDate(billingInfoEntity.getExpirationDate())
+                    .cvv(billingInfoEntity.getCvv())
+                    .build();
+        }
+
+        return UserResponse.builder()
+                .id(userId)
+                .basicInfo(basicInfo)
+                .billingInfo(billingInfo)
+                .build();
     }
 
     @Override
-    public UserResponse setUserBasicInfo(String userId,
-                                         UserBasicInfoRequest userBasicInfoRequest,
-                                         MultipartFile profilePic) throws UpdateUserException {
+    public UserBasicInfoResponse setUserBasicInfo(String userId,
+                                                    UserBasicInfoRequest userBasicInfoRequest,
+                                                    MultipartFile profilePic) throws UpdateUserException {
         try {
             var userEntity = this.userRepository.findByUserId(userId);
 
@@ -91,8 +111,12 @@ public class UserServiceImpl implements IUserService {
                 profilePicId = UUID.randomUUID() + "." + fileExtension;
                 profilePicUrl = profilePictureRepository.uploadProfilePicture(profilePicId, profilePic);
 
-                // Remove existing profile picture
-                profilePictureRepository.removeFile(userEntity.getProfilePictureId());
+                // Remove existing profile picture (silently fail as it may not exist)
+                try {
+                    profilePictureRepository.removeFile(userEntity.getProfilePictureId());
+                } catch (Exception e) {
+                    log.warn("Failed to remove profile picture with id: " + userEntity.getProfilePictureId());
+                }
             }
 
             // Update user info table
@@ -106,8 +130,7 @@ public class UserServiceImpl implements IUserService {
 
             this.userRepository.save(userEntity);
 
-            return UserResponse.builder()
-                    .id(userEntity.getUserId())
+            return UserBasicInfoResponse.builder()
                     .email(userEntity.getEmail())
                     .firstName(userEntity.getFirstName())
                     .lastName(userEntity.getLastName())
@@ -117,5 +140,40 @@ public class UserServiceImpl implements IUserService {
         } catch (Exception e) {
             throw new UpdateUserException("Failed to update user basic info");
         }
+    }
+
+    @Override
+    public UserBillingInfoResponse setUserBillingInfo(String userId, UserBillingInfoRequest userBillingInfoRequest)
+            throws UpdateUserException{
+        try {
+            BillingInfoEntity billingInfoEntity = this.billingInfoRepository.findByUserId(userId);
+            if(billingInfoEntity == null) {
+                billingInfoEntity = BillingInfoEntity.builder()
+                        .userId(userId)
+                        .nameOnCard(userBillingInfoRequest.getNameOnCard())
+                        .cardNumber(userBillingInfoRequest.getCardNumber())
+                        .expirationDate(userBillingInfoRequest.getExpirationDate())
+                        .cvv(userBillingInfoRequest.getCvv())
+                        .build();
+            } else {
+                billingInfoEntity.setNameOnCard(userBillingInfoRequest.getNameOnCard());
+                billingInfoEntity.setCardNumber(userBillingInfoRequest.getCardNumber());
+                billingInfoEntity.setExpirationDate(userBillingInfoRequest.getExpirationDate());
+                billingInfoEntity.setCvv(userBillingInfoRequest.getCvv());
+            }
+
+            this.billingInfoRepository.save(billingInfoEntity);
+
+            return UserBillingInfoResponse.builder()
+                    .nameOnCard(billingInfoEntity.getNameOnCard())
+                    .cardNumber(billingInfoEntity.getCardNumber())
+                    .expirationDate(billingInfoEntity.getExpirationDate())
+                    .cvv(billingInfoEntity.getCvv())
+                    .build();
+
+        } catch (Exception e) {
+            throw new UpdateUserException("Failed to save user's billing information");
+        }
+
     }
 }
