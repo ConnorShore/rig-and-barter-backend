@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="core-library" />
+        <module name="payment-service" />
         <module name="event-library" />
         <module name="api-gateway" />
         <module name="transaction-service" />
@@ -26,6 +27,7 @@
       <module name="event-library" options="-parameters" />
       <module name="listing-service" options="-parameters" />
       <module name="notification-service" options="-parameters" />
+      <module name="payment-service" options="-parameters" />
       <module name="rig-and-barter-backend" options="" />
       <module name="transaction-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
