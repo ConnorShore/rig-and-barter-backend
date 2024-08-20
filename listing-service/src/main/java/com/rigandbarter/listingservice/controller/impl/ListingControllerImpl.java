@@ -27,7 +27,7 @@ public class ListingControllerImpl implements IListingController {
     public String createListing(Jwt principal, String listingRequest, MultipartFile[] images) throws JsonProcessingException {
         ListingRequest listingRequestObj = new ObjectMapper().readValue(listingRequest, ListingRequest.class);
         log.info("Creating new listing requested for user: " + principal.getSubject());
-        return listingService.createListing(listingRequestObj, Arrays.asList(images), principal.getSubject()).getId();
+        return listingService.createListing(listingRequestObj, Arrays.asList(images), principal).getId();
     }
 
     @Override

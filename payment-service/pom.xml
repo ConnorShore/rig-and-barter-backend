@@ -21,6 +21,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>25.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.rigandbarter</groupId>
             <artifactId>event-library</artifactId>
             <version>${project.version}</version>
