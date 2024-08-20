@@ -24,6 +24,7 @@
 		<module>notification-service</module>
 		<module>core-library</module>
         <module>user-service</module>
+        <module>payment-service</module>
     </modules>
 
 	<properties>

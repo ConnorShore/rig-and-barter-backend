@@ -32,16 +32,18 @@ public class ListingMapper {
      * Mapper for ListingRequest to Listing
      * @param listingRequest The initial listing request
      * @param userId The user id of the request
+     * @param stripeId The id of the product in stripe
      * @param imageUrls The urls to the listing's images
      * @return The created listing
      */
-    public static Listing dtoToEntity(ListingRequest listingRequest, String userId, List<String> imageUrls) {
+    public static Listing dtoToEntity(ListingRequest listingRequest, String userId, String stripeId, List<String> imageUrls) {
         return Listing.builder()
                 .id(UUID.randomUUID().toString())
                 .userId(userId)
                 .title(listingRequest.getTitle())
                 .description(listingRequest.getDescription())
                 .price(listingRequest.getPrice())
+                .stripeId(stripeId)
                 .creationDate(LocalDateTime.now())
                 .componentCategory(listingRequest.getComponentCategory())
                 .imageUrls(imageUrls)
