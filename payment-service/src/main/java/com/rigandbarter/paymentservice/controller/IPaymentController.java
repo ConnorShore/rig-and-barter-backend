@@ -17,8 +17,7 @@ public interface IPaymentController {
      */
     @PostMapping("product")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createProduct(@RequestBody StripeProductRequest productRequest) throws StripeException;
-
+    String createProduct(@RequestBody StripeProductRequest productRequest) throws StripeException;
 
     /**
      * Status endpoint to see if service is running
