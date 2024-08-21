@@ -37,6 +37,11 @@ public class UserControllerImpl implements IUserController {
     }
 
     @Override
+    public UserBasicInfoResponse getUserBasicInfo(String userId, Jwt principal) {
+        return this.userService.getUserBasicInfoById(userId);
+    }
+
+    @Override
     public UserBasicInfoResponse setUserBasicInfo(String userId, String userInfoJson, MultipartFile profilePic, Jwt principal)
             throws UpdateUserException, JsonProcessingException {
         if(!principal.getClaimAsString("sub").equals(userId))

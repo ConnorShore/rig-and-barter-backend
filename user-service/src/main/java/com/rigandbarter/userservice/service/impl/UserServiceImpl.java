@@ -96,6 +96,17 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public UserBasicInfoResponse getUserBasicInfoById(String userId) {
+        UserEntity userEntity = this.userRepository.findByUserId(userId);
+        return UserBasicInfoResponse.builder()
+                .email(userEntity.getEmail())
+                .firstName(userEntity.getFirstName())
+                .lastName(userEntity.getLastName())
+                .profilePictureUrl(userEntity.getProfilePictureUrl())
+                .build();
+    }
+
+    @Override
     public UserBasicInfoResponse setUserBasicInfo(String userId,
                                                     UserBasicInfoRequest userBasicInfoRequest,
                                                     MultipartFile profilePic) throws UpdateUserException {

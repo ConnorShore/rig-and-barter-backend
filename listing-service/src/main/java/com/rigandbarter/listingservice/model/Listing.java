@@ -1,5 +1,6 @@
 package com.rigandbarter.listingservice.model;
 
+import com.rigandbarter.core.models.UserBasicInfoPublic;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class Listing {
     private String stripeId;
     private List<String> imageUrls;
     private ComponentCategory componentCategory;
+    private UserBasicInfoPublic userInfo;
 
     // private ComponentCondition componentCondition;
     // private Set<String> tags;  ?? Not sure if needed

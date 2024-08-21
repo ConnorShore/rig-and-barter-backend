@@ -1,21 +1,18 @@
-package com.rigandbarter.transactionservice.model;
+package com.rigandbarter.transactionservice.dto;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.rigandbarter.transactionservice.model.TransactionState;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "t_transaction")
+@Data
 @Builder
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class TransactionResponse {
     private String uniqueId;
     private String title;
     private String buyerId;

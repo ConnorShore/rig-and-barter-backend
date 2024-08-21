@@ -22,6 +22,13 @@ public interface IUserService {
     UserResponse getUserById(String userId);
 
     /**
+     * Returns the user's (with the specified uid) basic info
+     * @param userId The uid of the user to return
+     * @return The user with the specified uid, null if none exist
+     */
+    UserBasicInfoResponse getUserBasicInfoById(String userId);
+
+    /**
      * Updates the user info and returns the updated user
      * @param userId The id of the user to update
      * @param userBasicInfoRequest The basic info of the user
