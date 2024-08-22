@@ -4,7 +4,6 @@ import com.rigandbarter.transactionservice.controller.ITransactionController;
 import com.rigandbarter.transactionservice.dto.TransactionRequest;
 import com.rigandbarter.transactionservice.dto.TransactionResponse;
 import com.rigandbarter.transactionservice.service.ITransactionService;
-import com.rigandbarter.transactionservice.service.impl.TransactionServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;

@@ -1,6 +1,6 @@
 package com.rigandbarter.listingservice.dto;
 
-import com.rigandbarter.core.models.UserBasicInfoPublic;
+import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.listingservice.model.ComponentCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,5 +23,5 @@ public class ListingResponse {
     private Double price;
     private List<String> imageUrls;
     private ComponentCategory componentCategory;
-    private UserBasicInfoPublic userInfo;
+    private UserBasicInfo userInfo;
 }

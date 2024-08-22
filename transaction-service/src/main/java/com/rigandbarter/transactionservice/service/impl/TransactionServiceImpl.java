@@ -2,7 +2,9 @@ package com.rigandbarter.transactionservice.service.impl;
 
 import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
+import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
+import com.rigandbarter.eventlibrary.events.TransactionInProgressEvent;
 import com.rigandbarter.transactionservice.dto.TransactionRequest;
 import com.rigandbarter.transactionservice.dto.TransactionResponse;
 import com.rigandbarter.transactionservice.model.Transaction;
@@ -26,14 +28,16 @@ public class TransactionServiceImpl implements ITransactionService {
 
     private final ITransactionRepository transactionRepository;
     private final RBEventProducer transactionCreatedProducer;
+    private final RBEventProducer transactionInProgressProducer;
+    private final RBEventProducer transactionCompletedProducer;
     private final String EVENT_SOURCE = "TransactionService";
 
-    public TransactionServiceImpl(
-            ITransactionRepository transactionRepository,
-            RBEventProducerFactory rbEventProducerFactory) {
+    public TransactionServiceImpl(ITransactionRepository transactionRepository, RBEventProducerFactory rbEventProducerFactory) {
         this.transactionRepository = transactionRepository;
 
         transactionCreatedProducer = rbEventProducerFactory.createProducer(TransactionCreatedEvent.class);
+        transactionInProgressProducer = rbEventProducerFactory.createProducer(TransactionInProgressEvent.class);
+        transactionCompletedProducer = rbEventProducerFactory.createProducer(TransactionCreatedEvent.class);
     }
 
     @Override
@@ -70,12 +74,30 @@ public class TransactionServiceImpl implements ITransactionService {
     public void acceptTransaction(String transactionId, String userId) throws NotAuthorizedException {
         Transaction transaction = this.transactionRepository.findByUniqueId(transactionId);
 
+        // Set buyer/seller accepted depending on which the user is
         if(userId.equals(transaction.getBuyerId()))
             transaction.setBuyerAccepted(true);
         else if(userId.equals(transaction.getSellerId()))
             transaction.setSellerAccepted(true);
         else
             throw new NotAuthorizedException("User is not associated with the transaction");
+
+        // If both buyer and seller has accepted, the transaction is now in progress awaiting completing
+        if(transaction.isBuyerAccepted() && transaction.isSellerAccepted()) {
+            transaction.setState(TransactionState.IN_PROGRESS);
+
+            TransactionInProgressEvent event = TransactionInProgressEvent.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(transaction.getSellerId())
+                    .buyerId(transaction.getBuyerId())
+                    .sellerId(transaction.getSellerId())
+                    .listingId(transaction.getListingId())
+                    .creationDate(LocalDateTime.now())
+                    .source(EVENT_SOURCE)
+                    .build();
+
+            transactionInProgressProducer.send(event, this::handleFailedTransactionInProgressEventSend);
+        }
 
         this.transactionRepository.save(transaction);
     }
@@ -91,9 +113,17 @@ public class TransactionServiceImpl implements ITransactionService {
         transaction.setState(TransactionState.COMPLETED);
         transaction.setCompletionDate(LocalDateTime.now());
 
-        // TODO: Send out an event that the transaction is completed
-        //  Should be consumed by the payment service so it can process payment stuff
-        //  Also send out notifications to buyer and seller (front end, email, etc)
+        TransactionCompletedEvent event = TransactionCompletedEvent.builder()
+                .id(UUID.randomUUID().toString())
+                .userId(transaction.getSellerId())
+                .buyerId(transaction.getBuyerId())
+                .sellerId(transaction.getSellerId())
+                .listingId(transaction.getListingId())
+                .creationDate(LocalDateTime.now())
+                .source(EVENT_SOURCE)
+                .build();
+
+        transactionCompletedProducer.send(event, this::handleFailedTransactionCompletedEventSend);
 
         this.transactionRepository.save(transaction);
     }
@@ -104,6 +134,24 @@ public class TransactionServiceImpl implements ITransactionService {
      */
     private Void handleFailedTransactionCreatedEventSend(String error) {
         log.error("Failed to send Transaction Created Event with error: " + error);
+        return null;
+    }
+
+    /**
+     * Handler for when a transaction created event fails to send
+     * @param error The error from the sending failure
+     */
+    private Void handleFailedTransactionInProgressEventSend(String error) {
+        log.error("Failed to send Transaction In Progress Event with error: " + error);
+        return null;
+    }
+
+    /**
+     * Handler for when a transaction created event fails to send
+     * @param error The error from the sending failure
+     */
+    private Void handleFailedTransactionCompletedEventSend(String error) {
+        log.error("Failed to send Transaction Completed Event with error: " + error);
         return null;
     }
 }

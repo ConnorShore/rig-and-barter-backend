@@ -1,6 +1,6 @@
 package com.rigandbarter.listingservice.service.impl;
 
-import com.rigandbarter.core.models.UserBasicInfoPublic;
+import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.listingservice.dto.ListingResponse;
 import com.rigandbarter.listingservice.dto.StripeProductRequest;
@@ -37,16 +37,17 @@ public class ListingServiceImpl implements IListingService {
         String userId = principal.getSubject();
 
         // Get the info for the user
-        UserBasicInfoPublic userBasicInfo = webClientBuilder.build()
+        UserBasicInfo userBasicInfo = webClientBuilder.build()
                 .get()
                 .uri("http://user-service/api/user/" + userId + "/info/basic")
                 .headers(h -> h.setBearerAuth(principal.getTokenValue()))
                 .retrieve()
-                .bodyToMono(UserBasicInfoPublic.class)
+                .bodyToMono(UserBasicInfo.class)
                 .block();
 
         // Create a product in stripe for the listing
         StripeProductRequest stripeProductRequest = StripeProductRequest.builder()
+                .userId(userId)
                 .name(listingRequest.getTitle())
                 .description(listingRequest.getDescription())
                 .productPrice(listingRequest.getPrice())

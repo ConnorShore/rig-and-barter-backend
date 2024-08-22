@@ -1,6 +1,6 @@
 package com.rigandbarter.listingservice.repository.mapper;
 
-import com.rigandbarter.core.models.UserBasicInfoPublic;
+import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.listingservice.dto.ListingResponse;
 import com.rigandbarter.listingservice.model.Listing;
@@ -40,7 +40,7 @@ public class ListingMapper {
      * @return The created listing
      */
     public static Listing dtoToEntity(ListingRequest listingRequest, String userId,
-                                      String stripeId, List<String> imageUrls, UserBasicInfoPublic userInfo) {
+                                      String stripeId, List<String> imageUrls, UserBasicInfo userInfo) {
         return Listing.builder()
                 .id(UUID.randomUUID().toString())
                 .userId(userId)

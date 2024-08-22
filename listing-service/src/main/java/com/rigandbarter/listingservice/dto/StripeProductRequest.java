@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StripeProductRequest {
+    private String userId;
     private String name;
     private String description;
     private Double productPrice;

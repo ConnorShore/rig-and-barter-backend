@@ -1,6 +1,13 @@
 package com.rigandbarter.userservice.service.impl;
 
+import com.rigandbarter.core.models.UserBasicInfo;
+import com.rigandbarter.core.models.UserBillingInfo;
+import com.rigandbarter.eventlibrary.components.RBEventProducer;
+import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
+import com.rigandbarter.eventlibrary.events.BillingInfoUpdatedEvent;
+import com.rigandbarter.eventlibrary.events.UserCreatedEvent;
 import com.rigandbarter.userservice.dto.*;
+import com.rigandbarter.userservice.mapper.UserMapper;
 import com.rigandbarter.userservice.model.BillingInfoEntity;
 import com.rigandbarter.userservice.model.UserEntity;
 import com.rigandbarter.userservice.repository.file.IProfilePictureRepository;
@@ -10,24 +17,39 @@ import com.rigandbarter.userservice.service.IKeycloakService;
 import com.rigandbarter.userservice.service.IUserService;
 import com.rigandbarter.userservice.util.exceptions.UpdateUserException;
 import com.rigandbarter.userservice.util.exceptions.UserRegistrationException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements IUserService {
-
     private final IKeycloakService keycloakService;
-
     private final IUserRepository userRepository;
     private final IProfilePictureRepository profilePictureRepository;
     private final IBillingInfoRepository billingInfoRepository;
+    private final RBEventProducer userCreatedProducer;;
+    private final RBEventProducer billingInfoUpdatedProducer;
+    private final String EVENT_SOURCE = "UserService";
+
+    public UserServiceImpl(IKeycloakService keycloakService,
+                           IUserRepository userRepository,
+                           IProfilePictureRepository profilePictureRepository,
+                           IBillingInfoRepository billingInfoRepository,
+                           RBEventProducerFactory rbEventProducerFactory)
+    {
+        this.keycloakService = keycloakService;
+        this.userRepository = userRepository;
+        this.profilePictureRepository = profilePictureRepository;
+        this.billingInfoRepository = billingInfoRepository;
+
+        this.userCreatedProducer = rbEventProducerFactory.createProducer(UserCreatedEvent.class);
+        this.billingInfoUpdatedProducer = rbEventProducerFactory.createProducer(BillingInfoUpdatedEvent.class);
+    }
 
     @Override
     public UserResponse registerUser(UserRegisterRequest userRegisterRequest) throws UserRegistrationException {
@@ -37,8 +59,9 @@ public class UserServiceImpl implements IUserService {
             throw new UserRegistrationException("Failed to register user with keycloak: " + userRegisterRequest.getEmail());
 
         // Add user to database
+        UserEntity userEntity = null;
         try {
-            UserEntity userEntity = UserEntity.builder()
+            userEntity = UserEntity.builder()
                     .userId(userId)
                     .email(userRegisterRequest.getEmail())
                     .firstName(userRegisterRequest.getFirstName())
@@ -52,6 +75,9 @@ public class UserServiceImpl implements IUserService {
             throw new UserRegistrationException("Failed to create user in database: " + userRegisterRequest.getEmail());
         }
 
+        // Send the user created event
+        sendUserCreatedEvent(userEntity);
+
         // TODO: Convert all these returns to use mappers instead
         UserBasicInfoResponse basicInfo = UserBasicInfoResponse.builder()
                 .email(userRegisterRequest.getEmail())
@@ -64,6 +90,23 @@ public class UserServiceImpl implements IUserService {
                 .basicInfo(basicInfo)
                 .billingInfo(null)
                 .build();
+    }
+
+
+    /**
+     * Sends the created user event
+     * @param user The user entity to send the event for
+     */
+    private void sendUserCreatedEvent(UserEntity user) {
+        UserBasicInfo userInfo = UserMapper.entityToBasicInfo(user);
+        UserCreatedEvent event = UserCreatedEvent.builder()
+                .userInfo(userInfo)
+                .id(UUID.randomUUID().toString())
+                .source(EVENT_SOURCE)
+                .creationDate(LocalDateTime.now())
+                .build();
+
+        userCreatedProducer.send(event, this::handleFailedUserCreatedEvent);
     }
 
     @Override
@@ -108,9 +151,10 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserBasicInfoResponse setUserBasicInfo(String userId,
-                                                    UserBasicInfoRequest userBasicInfoRequest,
-                                                    MultipartFile profilePic) throws UpdateUserException {
+                                                  UserBasicInfoRequest userBasicInfoRequest,
+                                                  MultipartFile profilePic) throws UpdateUserException {
         try {
+            // Create user entity in db
             var userEntity = this.userRepository.findByUserId(userId);
 
             // Update profile picture
@@ -157,6 +201,7 @@ public class UserServiceImpl implements IUserService {
     public UserBillingInfoResponse setUserBillingInfo(String userId, UserBillingInfoRequest userBillingInfoRequest)
             throws UpdateUserException{
         try {
+            // Add the billing info to the db
             BillingInfoEntity billingInfoEntity = this.billingInfoRepository.findByUserId(userId);
             if(billingInfoEntity == null) {
                 billingInfoEntity = BillingInfoEntity.builder()
@@ -175,6 +220,9 @@ public class UserServiceImpl implements IUserService {
 
             this.billingInfoRepository.save(billingInfoEntity);
 
+            // Send billing info updated event
+            sendBillingInfoUpdatedEvent(billingInfoEntity, userId);
+
             return UserBillingInfoResponse.builder()
                     .nameOnCard(billingInfoEntity.getNameOnCard())
                     .cardNumber(billingInfoEntity.getCardNumber())
@@ -185,6 +233,41 @@ public class UserServiceImpl implements IUserService {
         } catch (Exception e) {
             throw new UpdateUserException("Failed to save user's billing information");
         }
+    }
 
+    /**
+     * Sends the billing info updated event
+     * @param billingInfoEntity The billing info entity to send the event for
+     * @param userId The id of the user whose billing info this is
+     */
+    private void sendBillingInfoUpdatedEvent(BillingInfoEntity billingInfoEntity, String userId) {
+        UserBillingInfo billingInfo = UserMapper.entityToBillingInfo(billingInfoEntity);
+        BillingInfoUpdatedEvent event = BillingInfoUpdatedEvent.builder()
+                .billingInfo(billingInfo)
+                .userId(userId)
+                .id(UUID.randomUUID().toString())
+                .source(EVENT_SOURCE)
+                .creationDate(LocalDateTime.now())
+                .build();
+
+        billingInfoUpdatedProducer.send(event, this::handleFailedBillingInfoUpdatedEvent);
+    }
+
+    /**
+     * Handler for when a transaction created event fails to send
+     * @param error The error from the sending failure
+     */
+    private Void handleFailedUserCreatedEvent(String error) {
+        log.error("Failed to send User Created Event with error: " + error);
+        return null;
+    }
+
+    /**
+     * Handler for when a transaction created event fails to send
+     * @param error The error from the sending failure
+     */
+    private Void handleFailedBillingInfoUpdatedEvent(String error) {
+        log.error("Failed to send Billing Info Updated Event with error: " + error);
+        return null;
     }
 }

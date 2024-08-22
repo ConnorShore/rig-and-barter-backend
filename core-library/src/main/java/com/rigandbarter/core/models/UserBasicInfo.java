@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserBasicInfoPublic {
+public class UserBasicInfo {
+    private String userId;
     private String firstName;
     private String lastName;
+    private String email;
     private String profilePictureUrl;
 }
