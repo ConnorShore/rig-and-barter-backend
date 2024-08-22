@@ -122,14 +122,14 @@ public class UserServiceImpl implements IUserService {
                 .build();
 
         UserBillingInfoResponse billingInfo = null;
-        if(billingInfoEntity != null) {
-            billingInfo = UserBillingInfoResponse.builder()
-                    .nameOnCard(billingInfoEntity.getNameOnCard())
-                    .cardNumber(billingInfoEntity.getCardNumber())
-                    .expirationDate(billingInfoEntity.getExpirationDate())
-                    .cvv(billingInfoEntity.getCvv())
-                    .build();
-        }
+//        if(billingInfoEntity != null) {
+//            billingInfo = UserBillingInfoResponse.builder()
+//                    .nameOnCard(billingInfoEntity.getNameOnCard())
+//                    .cardNumber(billingInfoEntity.getCardNumber())
+//                    .expirationDate(billingInfoEntity.getExpirationDate())
+//                    .cvv(billingInfoEntity.getCvv())
+//                    .build();
+//        }
 
         return UserResponse.builder()
                 .id(userId)
@@ -206,16 +206,18 @@ public class UserServiceImpl implements IUserService {
             if(billingInfoEntity == null) {
                 billingInfoEntity = BillingInfoEntity.builder()
                         .userId(userId)
-                        .nameOnCard(userBillingInfoRequest.getNameOnCard())
-                        .cardNumber(userBillingInfoRequest.getCardNumber())
-                        .expirationDate(userBillingInfoRequest.getExpirationDate())
-                        .cvv(userBillingInfoRequest.getCvv())
+                        .stripeCardToken(userBillingInfoRequest.getStripeCardToken())
+//                        .nameOnCard(userBillingInfoRequest.getNameOnCard())
+//                        .cardNumber(userBillingInfoRequest.getCardNumber())
+//                        .expirationDate(userBillingInfoRequest.getExpirationDate())
+//                        .cvv(userBillingInfoRequest.getCvv())
                         .build();
             } else {
-                billingInfoEntity.setNameOnCard(userBillingInfoRequest.getNameOnCard());
-                billingInfoEntity.setCardNumber(userBillingInfoRequest.getCardNumber());
-                billingInfoEntity.setExpirationDate(userBillingInfoRequest.getExpirationDate());
-                billingInfoEntity.setCvv(userBillingInfoRequest.getCvv());
+                billingInfoEntity.setStripeCardToken(userBillingInfoRequest.getStripeCardToken());
+//                billingInfoEntity.setNameOnCard(userBillingInfoRequest.getNameOnCard());
+//                billingInfoEntity.setCardNumber(userBillingInfoRequest.getCardNumber());
+//                billingInfoEntity.setExpirationDate(userBillingInfoRequest.getExpirationDate());
+//                billingInfoEntity.setCvv(userBillingInfoRequest.getCvv());
             }
 
             this.billingInfoRepository.save(billingInfoEntity);
@@ -224,10 +226,10 @@ public class UserServiceImpl implements IUserService {
             sendBillingInfoUpdatedEvent(billingInfoEntity, userId);
 
             return UserBillingInfoResponse.builder()
-                    .nameOnCard(billingInfoEntity.getNameOnCard())
-                    .cardNumber(billingInfoEntity.getCardNumber())
-                    .expirationDate(billingInfoEntity.getExpirationDate())
-                    .cvv(billingInfoEntity.getCvv())
+//                    .nameOnCard(billingInfoEntity.getNameOnCard())
+//                    .cardNumber(billingInfoEntity.getCardNumber())
+//                    .expirationDate(billingInfoEntity.getExpirationDate())
+//                    .cvv(billingInfoEntity.getCvv())
                     .build();
 
         } catch (Exception e) {

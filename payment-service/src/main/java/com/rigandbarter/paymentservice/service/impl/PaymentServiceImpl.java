@@ -114,6 +114,7 @@ public class PaymentServiceImpl implements IPaymentService {
          * TODO: NEW billing info flow
          *  1) See https://docs.stripe.com/payments/payment-element
          *  2) Capture their billing info on with the form from the doco, set it to the stipe customer
+         *      - Might want to have them set their billing info when a transaction is accepted by both parties...
          *  3) Modify billingInfo db table to capture necessary info (may not need it)
          *  4) See if can use that below instead of TEST_CARD_TOKEN
          */
@@ -128,7 +129,8 @@ public class PaymentServiceImpl implements IPaymentService {
         PaymentMethodCreateParams params =
                 PaymentMethodCreateParams.builder()
                         .setType(PaymentMethodCreateParams.Type.CARD)
-                        .setCard(PaymentMethodCreateParams.Token.builder().setToken(TEST_CARD_TOKEN).build())
+                        .setCard(PaymentMethodCreateParams.Token.builder().setToken(billingInfo.getStripeCardToken()).build())
+//                        .setCard(PaymentMethodCreateParams.Token.builder().setToken(TEST_CARD_TOKEN).build())
 // TODO: Get this info from stripe front end integration maybe??
 //                        .setCard(
 //                                PaymentMethodCreateParams.CardDetails.builder()
@@ -150,10 +152,6 @@ public class PaymentServiceImpl implements IPaymentService {
 
         // Update StripeCustomer to have billing info
         customer.setPaymentId(paymentMethod.getId());
-        customer.setCardLast4(paymentMethod.getCard().getLast4());
-        customer.setExpirationMonth(paymentMethod.getCard().getExpMonth());
-        customer.setExpirationYear(paymentMethod.getCard().getExpYear());
-        customer.setCardCvv(billingInfo.getCvv());
 
         stripeCustomerRepository.save(customer);
 

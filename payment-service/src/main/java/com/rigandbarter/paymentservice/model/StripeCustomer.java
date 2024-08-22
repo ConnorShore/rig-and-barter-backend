@@ -23,8 +23,5 @@ public class StripeCustomer {
     private String email;
 
     private String paymentId;
-    private String cardLast4;
-    private Long expirationMonth;
-    private Long expirationYear;
-    private String cardCvv;
+    private String cardToken;
 }

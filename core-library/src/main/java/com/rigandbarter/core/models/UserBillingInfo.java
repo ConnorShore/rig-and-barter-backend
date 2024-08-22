@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserBillingInfo {
-    private String nameOnCard;
-    private String cardNumber;
-    private String expirationDate;
-    private String cvv;
+    private String userId;
+    private String stripeCardToken;
+//    private String cardNumber;
+//    private String expirationDate;
+//    private String cvv;
 }

@@ -44,10 +44,12 @@ public class UserMapper {
      */
     public static UserBillingInfo entityToBillingInfo(BillingInfoEntity entity) {
         return UserBillingInfo.builder()
-                .nameOnCard(entity.getNameOnCard())
-                .cardNumber(entity.getCardNumber())
-                .expirationDate(entity.getExpirationDate())
-                .cvv(entity.getCvv())
+                .userId(entity.getUserId())
+                .stripeCardToken(entity.getStripeCardToken())
+//                .nameOnCard(entity.getNameOnCard())
+//                .cardNumber(entity.getCardNumber())
+//                .expirationDate(entity.getExpirationDate())
+//                .cvv(entity.getCvv())
                 .build();
     }
 }

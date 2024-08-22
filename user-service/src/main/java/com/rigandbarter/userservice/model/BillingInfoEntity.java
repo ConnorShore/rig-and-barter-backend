@@ -3,6 +3,7 @@ package com.rigandbarter.userservice.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+//TODO: Might want to make this a paymentMethod class so user can have multiple cards and this just tracks the card
 @Entity
 @Table(name = "t_billing_info")
 @Builder
@@ -15,8 +16,6 @@ public class BillingInfoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String userId;
-    private String nameOnCard;
-    private String cardNumber;
-    private String expirationDate;
-    private String cvv;
+//    private String cardLast4;
+    private String stripeCardToken;
 }
