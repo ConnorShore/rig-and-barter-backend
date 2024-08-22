@@ -110,6 +110,14 @@ public class PaymentServiceImpl implements IPaymentService {
         if(customer == null)
             throw new RuntimeException("Failed to updated stripe customer payment info for user: " + userId + ". User not found");
 
+        /**
+         * TODO: NEW billing info flow
+         *  1) See https://docs.stripe.com/payments/payment-element
+         *  2) Capture their billing info on with the form from the doco, set it to the stipe customer
+         *  3) Modify billingInfo db table to capture necessary info (may not need it)
+         *  4) See if can use that below instead of TEST_CARD_TOKEN
+         */
+
         // Format month and year to longs
 //        String[] monthYearExpiration = billingInfo.getExpirationDate().split("/");
 //        Long month = Long.valueOf(monthYearExpiration[0]);
