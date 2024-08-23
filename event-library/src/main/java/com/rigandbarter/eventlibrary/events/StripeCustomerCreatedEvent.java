@@ -1,6 +1,6 @@
 package com.rigandbarter.eventlibrary.events;
 
-import com.rigandbarter.core.models.UserBillingInfo;
+import com.rigandbarter.core.models.StripeCustomerResponse;
 import com.rigandbarter.eventlibrary.model.RBEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +13,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BillingInfoUpdatedEvent extends RBEvent {
-    private UserBillingInfo billingInfo;
+public class StripeCustomerCreatedEvent extends RBEvent {
+    private String userId;
+    private String stripeCustomerId;
 }

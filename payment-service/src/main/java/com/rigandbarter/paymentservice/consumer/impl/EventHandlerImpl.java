@@ -3,7 +3,6 @@ package com.rigandbarter.paymentservice.consumer.impl;
 import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.components.RBEventConsumer;
 import com.rigandbarter.eventlibrary.components.RBEventConsumerFactory;
-import com.rigandbarter.eventlibrary.events.BillingInfoUpdatedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionInProgressEvent;
 import com.rigandbarter.eventlibrary.events.UserCreatedEvent;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
     private final IEventHandlerService eventHandlerService;
     private RBEventConsumer userCreatedConsumer;
-    private RBEventConsumer billingInfoUpdatedConsumer;
     private RBEventConsumer transactionInProgressConsumer;
     private RBEventConsumer transactionCompletedConsumer;
 
@@ -33,7 +31,6 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Initializing consumers");
 
         userCreatedConsumer = rbEventConsumerFactory.createConsumer(UserCreatedEvent.class, this::handleUserCreatedEvent);
-        billingInfoUpdatedConsumer = rbEventConsumerFactory.createConsumer(BillingInfoUpdatedEvent.class, this::handleBillingInfoUpdatedEvent);
         transactionInProgressConsumer = rbEventConsumerFactory.createConsumer(TransactionInProgressEvent.class, this::handleTransactionInProgressEvent);
         transactionCompletedConsumer = rbEventConsumerFactory.createConsumer(TransactionCompletedEvent.class, this::handleTransactionCompletedEvent);
     }
@@ -43,7 +40,6 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Starting consumers");
 
         userCreatedConsumer.start();
-        billingInfoUpdatedConsumer.start();;
         transactionInProgressConsumer.start();
         transactionCompletedConsumer.start();
     }
@@ -53,7 +49,6 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Stopping consumers");
 
         userCreatedConsumer.stop();
-        billingInfoUpdatedConsumer.stop();
         transactionInProgressConsumer.stop();
         transactionCompletedConsumer.stop();
     }
@@ -67,19 +62,6 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
 
         if (!result.isSuccess())
             log.error("Failed to handle User Created Event: " + result.getErrorMessage());
-
-        return null;
-    }
-
-    @Override
-    public Void handleBillingInfoUpdatedEvent(RBEvent event) {
-        log.info("Received billing info updated event: " + event.getId());
-
-        BillingInfoUpdatedEvent billingInfoUpdatedEvent = (BillingInfoUpdatedEvent)event;
-        RBResultStatus<Void>result = eventHandlerService.handleBillingInfoUpdatedEvent(billingInfoUpdatedEvent);
-
-        if (!result.isSuccess())
-            log.error("Failed to handle Billing Info Updated Event: " + result.getErrorMessage());
 
         return null;
     }

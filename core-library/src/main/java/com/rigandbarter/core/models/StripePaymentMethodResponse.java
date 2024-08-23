@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserBillingInfo {
-    private String userId;
-    private String stripeCardToken;
+public class StripePaymentMethodResponse {
+    private String stripePaymentId;
+    private String cardToken;
     private String nameOnCard;
     private String last4Digits;
+    private Long expirationMonth;
+    private Long expirationYear;
 }

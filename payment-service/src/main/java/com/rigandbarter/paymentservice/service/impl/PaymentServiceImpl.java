@@ -1,10 +1,16 @@
 package com.rigandbarter.paymentservice.service.impl;
 
 import com.rigandbarter.core.models.UserBasicInfo;
-import com.rigandbarter.core.models.UserBillingInfo;
-import com.rigandbarter.paymentservice.dto.StripeCustomerInfoResponse;
+import com.rigandbarter.eventlibrary.components.RBEventProducer;
+import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
+import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
+import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
+import com.rigandbarter.core.models.StripePaymentMethodResponse;
+import com.rigandbarter.core.models.StripeCustomerResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
+import com.rigandbarter.paymentservice.mapper.StripeMapper;
 import com.rigandbarter.paymentservice.model.StripeCustomer;
+import com.rigandbarter.paymentservice.model.StripePaymentMethod;
 import com.rigandbarter.paymentservice.model.StripeProduct;
 import com.rigandbarter.paymentservice.repository.IStripeCustomerRepository;
 import com.rigandbarter.paymentservice.repository.IStripeProductRepository;
@@ -18,8 +24,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class PaymentServiceImpl implements IPaymentService {
 
@@ -27,8 +34,20 @@ public class PaymentServiceImpl implements IPaymentService {
     private final String USD_CURRENCY = "usd";
     private final String TEST_CARD_TOKEN = "tok_visa";
 
+    private final RBEventProducer stripeCustomerCreatedProducer;
+
     private final IStripeProductRepository stripeProductRepository;
     private final IStripeCustomerRepository stripeCustomerRepository;
+
+    public PaymentServiceImpl(String stripeSecretKey,
+                              IStripeProductRepository stripeProductRepository,
+                              IStripeCustomerRepository stripeCustomerRepository,
+                              RBEventProducerFactory rbEventProducerFactory) {
+        this.stripeSecretKey = stripeSecretKey;
+        this.stripeProductRepository = stripeProductRepository;
+        this.stripeCustomerRepository = stripeCustomerRepository;
+        this.stripeCustomerCreatedProducer = rbEventProducerFactory.createProducer(StripeCustomerCreatedEvent.class);
+    }
 
     /*
         TODO:
@@ -101,6 +120,13 @@ public class PaymentServiceImpl implements IPaymentService {
 
         stripeCustomerRepository.save(stripeCustomer);
 
+        // Create event to update user object with stripe customer
+        StripeCustomerCreatedEvent stripeCustomerCreatedEvent = StripeCustomerCreatedEvent.builder()
+                .userId(stripeCustomer.getUserId())
+                .stripeCustomerId(stripeCustomer.getStripeId())
+                .build();
+        stripeCustomerCreatedProducer.send(stripeCustomerCreatedEvent);
+
         return stripeCustomer;
     }
 
@@ -155,7 +181,20 @@ public class PaymentServiceImpl implements IPaymentService {
     }
 
     @Override
-    public StripeCustomer updatedStripeCustomerPaymentInfo(String userId, UserBillingInfo billingInfo) throws StripeException {
+    public StripeCustomerResponse getStripeCustomerInfo(String userId) {
+        StripeCustomer stripeCustomer = stripeCustomerRepository.findByUserId(userId);
+        return StripeMapper.customerEntityToDto(stripeCustomer);
+    }
+
+    @Override
+    public void deleteStripeAccount(String accountId) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+        Account resource = Account.retrieve(accountId);
+        resource.delete();
+    }
+
+    @Override
+    public StripePaymentMethodResponse addPaymentMethod(String userId, StripePaymentMethodRequest paymentMethodRequest) throws StripeException {
         Stripe.apiKey = stripeSecretKey;
 
         StripeCustomer customer = this.stripeCustomerRepository.findByUserId(userId);
@@ -165,7 +204,7 @@ public class PaymentServiceImpl implements IPaymentService {
         PaymentMethodCreateParams params =
                 PaymentMethodCreateParams.builder()
                         .setType(PaymentMethodCreateParams.Type.CARD)
-                        .setCard(PaymentMethodCreateParams.Token.builder().setToken(billingInfo.getStripeCardToken()).build())
+                        .setCard(PaymentMethodCreateParams.Token.builder().setToken(paymentMethodRequest.getCardToken()).build())
                         .build();
 
         PaymentMethod paymentMethod = PaymentMethod.create(params);
@@ -177,29 +216,29 @@ public class PaymentServiceImpl implements IPaymentService {
         paymentMethod = paymentMethod.attach(paymentMethodAttachParams);
 
         // Update StripeCustomer to have billing info
-        customer.setPaymentId(paymentMethod.getId());
+        StripePaymentMethod newPaymentMethod = StripePaymentMethod.builder()
+                .userId(userId)
+                .stripePaymentId(paymentMethod.getId())
+                .cardToken(paymentMethodRequest.getCardToken())
+                .nameOnCard(paymentMethodRequest.getNameOnCard())
+                .expirationMonth(paymentMethod.getCard().getExpMonth())
+                .expirationYear(paymentMethod.getCard().getExpYear())
+                .last4Digits(paymentMethod.getCard().getLast4())
+                .build();
+
+        List<StripePaymentMethod> currentPaymentMethods = customer.getPaymentMethods();
+        currentPaymentMethods.add(newPaymentMethod);
+        customer.setPaymentMethods(currentPaymentMethods);
 
         stripeCustomerRepository.save(customer);
 
-        return null;
-    }
-
-    @Override
-    public StripeCustomerInfoResponse getStripeCustomerInfo(String userId) {
-        StripeCustomer stripeCustomer = stripeCustomerRepository.findByUserId(userId);
-
-        return StripeCustomerInfoResponse.builder()
-                .userId(userId)
-                .stripeId(stripeCustomer.getStripeId())
-                .paymentId(stripeCustomer.getPaymentId())
-                .accountId(stripeCustomer.getAccountId())
+        return StripePaymentMethodResponse.builder()
+                .stripePaymentId(newPaymentMethod.getStripePaymentId())
+                .nameOnCard(newPaymentMethod.getNameOnCard())
+                .last4Digits(newPaymentMethod.getLast4Digits())
+                .expirationMonth(newPaymentMethod.getExpirationMonth())
+                .expirationYear(newPaymentMethod.getExpirationYear())
+                .cardToken(newPaymentMethod.getCardToken())
                 .build();
-    }
-
-    @Override
-    public void deleteStripeAccount(String accountId) throws StripeException {
-        Stripe.apiKey = stripeSecretKey;
-        Account resource = Account.retrieve(accountId);
-        resource.delete();
     }
 }

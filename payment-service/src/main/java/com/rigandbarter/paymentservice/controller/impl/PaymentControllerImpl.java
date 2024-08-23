@@ -1,21 +1,17 @@
 package com.rigandbarter.paymentservice.controller.impl;
 
 import com.rigandbarter.paymentservice.controller.IPaymentController;
-import com.rigandbarter.paymentservice.dto.StripeCustomerInfoResponse;
+import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
+import com.rigandbarter.core.models.StripePaymentMethodResponse;
+import com.rigandbarter.core.models.StripeCustomerResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.rigandbarter.paymentservice.service.IPaymentService;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Price;
-import com.stripe.model.Product;
-import com.stripe.param.PriceCreateParams;
-import com.stripe.param.ProductCreateParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.http.auth.AuthenticationException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.math.BigDecimal;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +19,11 @@ import java.math.BigDecimal;
 public class PaymentControllerImpl implements IPaymentController {
 
     private final IPaymentService paymentService;
+
+    @Override
+    public StripePaymentMethodResponse addPaymentMethod(StripePaymentMethodRequest paymentMethodRequest, Jwt principal) throws StripeException {
+        return paymentService.addPaymentMethod(principal.getSubject(), paymentMethodRequest);
+    }
 
     @Override
     public String createProduct(StripeProductRequest productRequest) throws StripeException {
@@ -35,7 +36,7 @@ public class PaymentControllerImpl implements IPaymentController {
     }
 
     @Override
-    public StripeCustomerInfoResponse deleteStripeAccount(Jwt principal) {
+    public StripeCustomerResponse getStripeCustomerInfo(Jwt principal) throws AuthenticationException {
         return paymentService.getStripeCustomerInfo(principal.getSubject());
     }
 

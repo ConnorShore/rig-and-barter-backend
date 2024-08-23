@@ -1,9 +1,12 @@
 package com.rigandbarter.paymentservice.controller;
 
 
-import com.rigandbarter.paymentservice.dto.StripeCustomerInfoResponse;
+import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
+import com.rigandbarter.core.models.StripePaymentMethodResponse;
+import com.rigandbarter.core.models.StripeCustomerResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.stripe.exception.StripeException;
+import org.apache.http.auth.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -11,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("api/payment")
 public interface IPaymentController {
+
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    StripePaymentMethodResponse addPaymentMethod(@RequestBody StripePaymentMethodRequest paymentMethodRequest, @AuthenticationPrincipal Jwt principal) throws StripeException;
 
     /**
      * Creates a product in Stripe
@@ -33,12 +40,12 @@ public interface IPaymentController {
 
     /**
      * Gets the user's stripe information
-     * @param principal The user to get the info for
+     * @param principal The user auth info
      * @return the user's stripe info
      */
     @GetMapping("profile")
     @ResponseStatus(HttpStatus.OK)
-    StripeCustomerInfoResponse deleteStripeAccount(@AuthenticationPrincipal Jwt principal);
+    StripeCustomerResponse getStripeCustomerInfo(@AuthenticationPrincipal Jwt principal) throws AuthenticationException;
 
     /**
      * Deletes an account with specified id

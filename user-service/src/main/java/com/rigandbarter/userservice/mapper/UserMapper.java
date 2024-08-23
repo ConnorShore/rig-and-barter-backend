@@ -1,9 +1,7 @@
 package com.rigandbarter.userservice.mapper;
 
 import com.rigandbarter.core.models.UserBasicInfo;
-import com.rigandbarter.core.models.UserBillingInfo;
 import com.rigandbarter.userservice.dto.UserBasicInfoRequest;
-import com.rigandbarter.userservice.model.BillingInfoEntity;
 import com.rigandbarter.userservice.model.UserEntity;
 
 public class UserMapper {
@@ -34,20 +32,6 @@ public class UserMapper {
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .profilePictureUrl(entity.getProfilePictureUrl())
-                .build();
-    }
-
-    /**
-     * Maps the billing info entity to the billing info object
-     * @param entity The billing info entity to map
-     * @return The created User Billing Info object
-     */
-    public static UserBillingInfo entityToBillingInfo(BillingInfoEntity entity) {
-        return UserBillingInfo.builder()
-                .userId(entity.getUserId())
-                .nameOnCard(entity.getNameOnCard())
-                .last4Digits(entity.getLast4Digits())
-                .stripeCardToken(entity.getStripeCardToken())
                 .build();
     }
 }

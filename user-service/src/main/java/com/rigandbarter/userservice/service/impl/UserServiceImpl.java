@@ -1,26 +1,28 @@
 package com.rigandbarter.userservice.service.impl;
 
+import com.rigandbarter.core.models.RBResultStatus;
+import com.rigandbarter.core.models.StripeCustomerResponse;
 import com.rigandbarter.core.models.UserBasicInfo;
-import com.rigandbarter.core.models.UserBillingInfo;
 import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
-import com.rigandbarter.eventlibrary.events.BillingInfoUpdatedEvent;
+import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
 import com.rigandbarter.eventlibrary.events.UserCreatedEvent;
 import com.rigandbarter.userservice.dto.*;
 import com.rigandbarter.userservice.mapper.UserMapper;
-import com.rigandbarter.userservice.model.BillingInfoEntity;
 import com.rigandbarter.userservice.model.UserEntity;
 import com.rigandbarter.userservice.repository.file.IProfilePictureRepository;
-import com.rigandbarter.userservice.repository.relational.IBillingInfoRepository;
 import com.rigandbarter.userservice.repository.relational.IUserRepository;
 import com.rigandbarter.userservice.service.IKeycloakService;
 import com.rigandbarter.userservice.service.IUserService;
 import com.rigandbarter.userservice.util.exceptions.UpdateUserException;
 import com.rigandbarter.userservice.util.exceptions.UserRegistrationException;
+import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -31,24 +33,23 @@ public class UserServiceImpl implements IUserService {
     private final IKeycloakService keycloakService;
     private final IUserRepository userRepository;
     private final IProfilePictureRepository profilePictureRepository;
-    private final IBillingInfoRepository billingInfoRepository;
     private final RBEventProducer userCreatedProducer;;
-    private final RBEventProducer billingInfoUpdatedProducer;
     private final String EVENT_SOURCE = "UserService";
+
+    private final WebClient.Builder webClientBuilder;
 
     public UserServiceImpl(IKeycloakService keycloakService,
                            IUserRepository userRepository,
                            IProfilePictureRepository profilePictureRepository,
-                           IBillingInfoRepository billingInfoRepository,
-                           RBEventProducerFactory rbEventProducerFactory)
+                           RBEventProducerFactory rbEventProducerFactory,
+                           WebClient.Builder webClientBuilder)
     {
         this.keycloakService = keycloakService;
         this.userRepository = userRepository;
         this.profilePictureRepository = profilePictureRepository;
-        this.billingInfoRepository = billingInfoRepository;
 
         this.userCreatedProducer = rbEventProducerFactory.createProducer(UserCreatedEvent.class);
-        this.billingInfoUpdatedProducer = rbEventProducerFactory.createProducer(BillingInfoUpdatedEvent.class);
+        this.webClientBuilder = webClientBuilder;
     }
 
     @Override
@@ -88,7 +89,7 @@ public class UserServiceImpl implements IUserService {
 
         return UserResponse.builder()
                 .basicInfo(basicInfo)
-                .billingInfo(null)
+                .stripeInfo(null)
                 .build();
     }
 
@@ -110,9 +111,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserResponse getUserById(String userId) {
+    public UserResponse getUserById(String userId, Jwt princiapl) {
         UserEntity userEntity = this.userRepository.findByUserId(userId);
-        BillingInfoEntity billingInfoEntity = this.billingInfoRepository.findByUserId(userId);
 
         UserBasicInfoResponse basicInfo = UserBasicInfoResponse.builder()
                 .email(userEntity.getEmail())
@@ -121,20 +121,31 @@ public class UserServiceImpl implements IUserService {
                 .profilePictureUrl(userEntity.getProfilePictureUrl())
                 .build();
 
-        UserBillingInfoResponse billingInfo = null;
-//        if(billingInfoEntity != null) {
-//            billingInfo = UserBillingInfoResponse.builder()
-//                    .nameOnCard(billingInfoEntity.getNameOnCard())
-//                    .cardNumber(billingInfoEntity.getCardNumber())
-//                    .expirationDate(billingInfoEntity.getExpirationDate())
-//                    .cvv(billingInfoEntity.getCvv())
-//                    .build();
-//        }
+        // Get stripe customer info via web call to payment service
+        StripeCustomerResponse stripeCustomerInfo = null;
+        if(userEntity.getStripeCustomerId() != null) {
+            stripeCustomerInfo = webClientBuilder.build()
+                    .get()
+                    .uri("http://payment-service/api/payment/profile")
+                    .headers(httpHeaders -> httpHeaders.setBearerAuth(princiapl.getTokenValue()))
+                    .retrieve()
+                    .bodyToMono(StripeCustomerResponse.class)
+                    .block();
+
+            if (stripeCustomerInfo == null) {
+                String msg = "Failed to retrieve stripe customer info from payment service: " + userEntity.getStripeCustomerId();
+                throw new NotFoundException(msg);
+            }
+
+            if(!stripeCustomerInfo.getStripeId().equals(userEntity.getStripeCustomerId())) {
+                throw new NotFoundException("Stripe ID Mismatch on user entity and stripe customer");
+            }
+        }
 
         return UserResponse.builder()
                 .id(userId)
                 .basicInfo(basicInfo)
-                .billingInfo(billingInfo)
+                .stripeInfo(stripeCustomerInfo)
                 .build();
     }
 
@@ -197,60 +208,15 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    /**
-     * TODO: Redesign user billing info.  Since we have payment service which is responsible for all payment stuff
-     *  we may want billing info to only reside there and then the user entity has a handle on their stripe customerId
-     *  Also make it so user's can have multiple payment methods
-     */
-
     @Override
-    public UserBillingInfoResponse setUserBillingInfo(String userId, UserBillingInfoRequest userBillingInfoRequest)
-            throws UpdateUserException{
-        try {
-            // Add the billing info to the db
-            BillingInfoEntity billingInfoEntity = this.billingInfoRepository.findByUserId(userId);
-            if(billingInfoEntity == null) {
-                billingInfoEntity = BillingInfoEntity.builder()
-                        .userId(userId)
-                        .nameOnCard(userBillingInfoRequest.getNameOnCard())
-                        .stripeCardToken(userBillingInfoRequest.getStripeCardToken())
-                        .build();
-            } else {
-                billingInfoEntity.setNameOnCard(userBillingInfoRequest.getNameOnCard());
-                billingInfoEntity.setStripeCardToken(userBillingInfoRequest.getStripeCardToken());
-            }
+    public void setUserStripeCustomerInfo(StripeCustomerCreatedEvent stripeCustomerCreatedEvent) throws UpdateUserException {
+        var userEntity = this.userRepository.findByUserId(stripeCustomerCreatedEvent.getUserId());
 
-            this.billingInfoRepository.save(billingInfoEntity);
+        if(userEntity == null)
+            throw new UpdateUserException("Failed to find user with id: " + stripeCustomerCreatedEvent.getUserId());
 
-            // Send billing info updated event
-            sendBillingInfoUpdatedEvent(billingInfoEntity, userId);
-
-            return UserBillingInfoResponse.builder()
-                    .nameOnCard(billingInfoEntity.getNameOnCard())
-                    .stripeCardToken(userBillingInfoRequest.getStripeCardToken())
-                    .build();
-
-        } catch (Exception e) {
-            throw new UpdateUserException("Failed to save user's billing information");
-        }
-    }
-
-    /**
-     * Sends the billing info updated event
-     * @param billingInfoEntity The billing info entity to send the event for
-     * @param userId The id of the user whose billing info this is
-     */
-    private void sendBillingInfoUpdatedEvent(BillingInfoEntity billingInfoEntity, String userId) {
-        UserBillingInfo billingInfo = UserMapper.entityToBillingInfo(billingInfoEntity);
-        BillingInfoUpdatedEvent event = BillingInfoUpdatedEvent.builder()
-                .billingInfo(billingInfo)
-                .userId(userId)
-                .id(UUID.randomUUID().toString())
-                .source(EVENT_SOURCE)
-                .creationDate(LocalDateTime.now())
-                .build();
-
-        billingInfoUpdatedProducer.send(event, this::handleFailedBillingInfoUpdatedEvent);
+        userEntity.setStripeCustomerId(stripeCustomerCreatedEvent.getStripeCustomerId());
+        this.userRepository.save(userEntity);
     }
 
     /**
@@ -259,15 +225,6 @@ public class UserServiceImpl implements IUserService {
      */
     private Void handleFailedUserCreatedEvent(String error) {
         log.error("Failed to send User Created Event with error: " + error);
-        return null;
-    }
-
-    /**
-     * Handler for when a transaction created event fails to send
-     * @param error The error from the sending failure
-     */
-    private Void handleFailedBillingInfoUpdatedEvent(String error) {
-        log.error("Failed to send Billing Info Updated Event with error: " + error);
         return null;
     }
 }

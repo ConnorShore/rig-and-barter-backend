@@ -2,7 +2,10 @@ package com.rigandbarter.paymentservice.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
 
 // TODO: May split this out in the future to multiple classes
 
@@ -21,9 +24,11 @@ public class StripeCustomer {
     private String stripeId;
     private String name;
     private String email;
-
-    private String paymentId;
-    private String cardToken;
-
     private String accountId;
+    private boolean verified;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "userId")
+    private List<StripePaymentMethod> paymentMethods;
 }

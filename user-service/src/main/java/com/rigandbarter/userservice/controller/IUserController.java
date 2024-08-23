@@ -54,20 +54,6 @@ public interface IUserController {
     UserBasicInfoResponse getUserBasicInfo(@PathVariable String userId, @AuthenticationPrincipal Jwt principal);
 
     /**
-     * Sets the user's billing information
-     * @param userId The id of the user to set the info for
-     * @param userBillingInfoRequest The billing information
-     * @param principal The JWT info
-     * @return The user's billing information
-     * @throws UpdateUserException
-     */
-    @PostMapping("{userId}/info/billing")
-    @ResponseStatus(HttpStatus.OK)
-    UserBillingInfoResponse setUserBillingInfo(@PathVariable String userId,
-                                           @RequestBody UserBillingInfoRequest userBillingInfoRequest,
-                                           @AuthenticationPrincipal Jwt principal) throws UpdateUserException;
-
-    /**
      * Health check for the service
      */
     @GetMapping("status")

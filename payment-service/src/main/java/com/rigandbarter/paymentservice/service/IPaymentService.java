@@ -1,8 +1,9 @@
 package com.rigandbarter.paymentservice.service;
 
 import com.rigandbarter.core.models.UserBasicInfo;
-import com.rigandbarter.core.models.UserBillingInfo;
-import com.rigandbarter.paymentservice.dto.StripeCustomerInfoResponse;
+import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
+import com.rigandbarter.core.models.StripePaymentMethodResponse;
+import com.rigandbarter.core.models.StripeCustomerResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.rigandbarter.paymentservice.model.StripeCustomer;
 import com.stripe.exception.StripeException;
@@ -33,20 +34,11 @@ public interface IPaymentService {
     String createStripeCustomerAccount(String userId) throws StripeException;
 
     /**
-     * Sets the payment info for the stripe customer and in our db
-     * @param userId The id of the user to set billing info for
-     * @param billingInfo The billing info to set
-     * @return The updated stripe customer
-     * @throws StripeException Fails to create stripe payment info
-     */
-    StripeCustomer updatedStripeCustomerPaymentInfo(String userId, UserBillingInfo billingInfo) throws StripeException;
-
-    /**
      * Gets the user's stripe information
      * @param userId The id of the user to get the stripe info for
      * @return The stripe information
      */
-    StripeCustomerInfoResponse getStripeCustomerInfo(String userId);
+    StripeCustomerResponse getStripeCustomerInfo(String userId);
 
     /**
      * Deletes an account with the specified ID
@@ -54,4 +46,12 @@ public interface IPaymentService {
      * @throws StripeException
      */
     void deleteStripeAccount(String accountId) throws StripeException;
+
+    /**
+     * Adds payment method for stripe customer
+     * @param userId The id of the user to add the payment method for
+     * @param paymentMethodRequest The payment method info
+     * @return Populated payment method object
+     */
+    StripePaymentMethodResponse addPaymentMethod(String userId, StripePaymentMethodRequest paymentMethodRequest) throws StripeException;
 }

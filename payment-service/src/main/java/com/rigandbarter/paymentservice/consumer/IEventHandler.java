@@ -11,12 +11,6 @@ public interface IEventHandler {
     Void handleUserCreatedEvent(RBEvent event);
 
     /**
-     * Handles the consumption of the billing info updated event
-     * @param event The billing info updated event
-     */
-    Void handleBillingInfoUpdatedEvent(RBEvent event);
-
-    /**
      * Handles the consumption of the Transaction In Progress Event
      * @param event The Transaction In Progress Event to handle
      */

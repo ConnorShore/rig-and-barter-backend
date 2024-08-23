@@ -20,4 +20,5 @@ public class UserEntity {
     private String email;
     private String profilePictureId;
     private String profilePictureUrl;
+    private String stripeCustomerId;
 }
