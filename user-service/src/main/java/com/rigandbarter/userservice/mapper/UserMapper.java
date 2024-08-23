@@ -45,11 +45,9 @@ public class UserMapper {
     public static UserBillingInfo entityToBillingInfo(BillingInfoEntity entity) {
         return UserBillingInfo.builder()
                 .userId(entity.getUserId())
+                .nameOnCard(entity.getNameOnCard())
+                .last4Digits(entity.getLast4Digits())
                 .stripeCardToken(entity.getStripeCardToken())
-//                .nameOnCard(entity.getNameOnCard())
-//                .cardNumber(entity.getCardNumber())
-//                .expirationDate(entity.getExpirationDate())
-//                .cvv(entity.getCvv())
                 .build();
     }
 }

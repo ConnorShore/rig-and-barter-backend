@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserBillingInfoResponse {
     private String nameOnCard;
-    private String cardNumber;
-    private String expirationDate;
-    private String cvv;
+    private String last4Digits;
+    private String stripeCardToken;
 }

@@ -197,6 +197,12 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    /**
+     * TODO: Redesign user billing info.  Since we have payment service which is responsible for all payment stuff
+     *  we may want billing info to only reside there and then the user entity has a handle on their stripe customerId
+     *  Also make it so user's can have multiple payment methods
+     */
+
     @Override
     public UserBillingInfoResponse setUserBillingInfo(String userId, UserBillingInfoRequest userBillingInfoRequest)
             throws UpdateUserException{
@@ -206,18 +212,12 @@ public class UserServiceImpl implements IUserService {
             if(billingInfoEntity == null) {
                 billingInfoEntity = BillingInfoEntity.builder()
                         .userId(userId)
+                        .nameOnCard(userBillingInfoRequest.getNameOnCard())
                         .stripeCardToken(userBillingInfoRequest.getStripeCardToken())
-//                        .nameOnCard(userBillingInfoRequest.getNameOnCard())
-//                        .cardNumber(userBillingInfoRequest.getCardNumber())
-//                        .expirationDate(userBillingInfoRequest.getExpirationDate())
-//                        .cvv(userBillingInfoRequest.getCvv())
                         .build();
             } else {
+                billingInfoEntity.setNameOnCard(userBillingInfoRequest.getNameOnCard());
                 billingInfoEntity.setStripeCardToken(userBillingInfoRequest.getStripeCardToken());
-//                billingInfoEntity.setNameOnCard(userBillingInfoRequest.getNameOnCard());
-//                billingInfoEntity.setCardNumber(userBillingInfoRequest.getCardNumber());
-//                billingInfoEntity.setExpirationDate(userBillingInfoRequest.getExpirationDate());
-//                billingInfoEntity.setCvv(userBillingInfoRequest.getCvv());
             }
 
             this.billingInfoRepository.save(billingInfoEntity);
@@ -226,10 +226,8 @@ public class UserServiceImpl implements IUserService {
             sendBillingInfoUpdatedEvent(billingInfoEntity, userId);
 
             return UserBillingInfoResponse.builder()
-//                    .nameOnCard(billingInfoEntity.getNameOnCard())
-//                    .cardNumber(billingInfoEntity.getCardNumber())
-//                    .expirationDate(billingInfoEntity.getExpirationDate())
-//                    .cvv(billingInfoEntity.getCvv())
+                    .nameOnCard(billingInfoEntity.getNameOnCard())
+                    .stripeCardToken(userBillingInfoRequest.getStripeCardToken())
                     .build();
 
         } catch (Exception e) {

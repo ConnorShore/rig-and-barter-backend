@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserBillingInfoRequest {
-    private String name;
+    private String nameOnCard;
     private String stripeCardToken;
 //    private String cardNumber;
 //    private String expirationDate;

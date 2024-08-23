@@ -16,6 +16,7 @@ public class BillingInfoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String userId;
-//    private String cardLast4;
+    private String nameOnCard;
+    private String last4Digits;
     private String stripeCardToken;
 }
