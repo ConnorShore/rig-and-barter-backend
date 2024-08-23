@@ -22,9 +22,11 @@ import com.stripe.model.*;
 import com.stripe.param.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -187,10 +189,23 @@ public class PaymentServiceImpl implements IPaymentService {
     }
 
     @Override
-    public void deleteStripeAccount(String accountId) throws StripeException {
+    public void deleteStripeAccount(String accountId, String userId) throws AuthenticationException {
         Stripe.apiKey = stripeSecretKey;
-        Account resource = Account.retrieve(accountId);
-        resource.delete();
+
+        StripeCustomer customer = stripeCustomerRepository.findByUserId(userId);
+
+        if(!customer.getAccountId().equals(accountId))
+            throw new AuthenticationException("User[" + userId + "] does not have access to account: " + accountId);
+
+        try {
+            Account resource = Account.retrieve(accountId);
+            resource.delete();
+        } catch (StripeException e) {
+            // Fail silently
+        }
+
+        customer.setAccountId(null);
+        stripeCustomerRepository.save(customer);
     }
 
     @Override
@@ -220,7 +235,7 @@ public class PaymentServiceImpl implements IPaymentService {
                 .userId(userId)
                 .stripePaymentId(paymentMethod.getId())
                 .cardToken(paymentMethodRequest.getCardToken())
-                .nameOnCard(paymentMethodRequest.getNameOnCard())
+                .nickname(paymentMethodRequest.getNickname())
                 .expirationMonth(paymentMethod.getCard().getExpMonth())
                 .expirationYear(paymentMethod.getCard().getExpYear())
                 .last4Digits(paymentMethod.getCard().getLast4())
@@ -234,11 +249,39 @@ public class PaymentServiceImpl implements IPaymentService {
 
         return StripePaymentMethodResponse.builder()
                 .stripePaymentId(newPaymentMethod.getStripePaymentId())
-                .nameOnCard(newPaymentMethod.getNameOnCard())
+                .nickname(newPaymentMethod.getNickname())
                 .last4Digits(newPaymentMethod.getLast4Digits())
                 .expirationMonth(newPaymentMethod.getExpirationMonth())
                 .expirationYear(newPaymentMethod.getExpirationYear())
                 .cardToken(newPaymentMethod.getCardToken())
                 .build();
+    }
+
+    @Override
+    public void deletePaymentMethod(String paymentId, String userId) throws AuthenticationException {
+        Stripe.apiKey = stripeSecretKey;
+
+        StripeCustomer customer = stripeCustomerRepository.findByUserId(userId);
+
+        boolean userContainsPayment = customer.getPaymentMethods().stream()
+                        .anyMatch(pm -> pm.getStripePaymentId().equals(paymentId));
+        if(!userContainsPayment)
+            throw new AuthenticationException("User[" + userId + "] does not have access to payment: " + paymentId);
+
+        customer.setPaymentMethods(
+                customer.getPaymentMethods().stream()
+                    .filter(pm -> !pm.getStripePaymentId().equals(paymentId))
+                    .collect(Collectors.toList()
+                )
+        );
+
+        try {
+            PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentId);
+            paymentMethod.detach();
+        } catch (StripeException e) {
+            // Fail silently
+        }
+
+        stripeCustomerRepository.save(customer);
     }
 }

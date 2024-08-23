@@ -11,7 +11,7 @@ public class StripeMapper {
         return StripePaymentMethodResponse.builder()
                 .stripePaymentId(entity.getStripePaymentId())
                 .cardToken(entity.getCardToken())
-                .nameOnCard(entity.getNameOnCard())
+                .nickname(entity.getNickname())
                 .last4Digits(entity.getLast4Digits())
                 .expirationMonth(entity.getExpirationMonth())
                 .expirationYear(entity.getExpirationYear())

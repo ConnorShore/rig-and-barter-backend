@@ -7,6 +7,7 @@ import com.rigandbarter.core.models.StripeCustomerResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.rigandbarter.paymentservice.model.StripeCustomer;
 import com.stripe.exception.StripeException;
+import org.apache.http.auth.AuthenticationException;
 
 public interface IPaymentService {
 
@@ -41,11 +42,12 @@ public interface IPaymentService {
     StripeCustomerResponse getStripeCustomerInfo(String userId);
 
     /**
-     * Deletes an account with the specified ID
+     * Deletes an account with the specified ID for the user
      * @param accountId The id of the account to delete
+     * @param userId The user to delete the account for
      * @throws StripeException
      */
-    void deleteStripeAccount(String accountId) throws StripeException;
+    void deleteStripeAccount(String accountId, String userId) throws AuthenticationException;
 
     /**
      * Adds payment method for stripe customer
@@ -54,4 +56,11 @@ public interface IPaymentService {
      * @return Populated payment method object
      */
     StripePaymentMethodResponse addPaymentMethod(String userId, StripePaymentMethodRequest paymentMethodRequest) throws StripeException;
+
+    /**
+     * Deletes the payment from the user
+     * @param paymentId The id of the payment to delete
+     * @param userId The user to delete the payment from
+     */
+    void deletePaymentMethod(String paymentId, String userId) throws AuthenticationException;
 }

@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StripePaymentMethodRequest {
-    private String nameOnCard;
+    private String nickname;
     private String cardToken;
 }

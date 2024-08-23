@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class StripePaymentMethodResponse {
     private String stripePaymentId;
     private String cardToken;
-    private String nameOnCard;
+    private String nickname;
     private String last4Digits;
     private Long expirationMonth;
     private Long expirationYear;

@@ -26,6 +26,11 @@ public class PaymentControllerImpl implements IPaymentController {
     }
 
     @Override
+    public void deletePaymentMethod(String paymentId, Jwt principal) throws AuthenticationException {
+        paymentService.deletePaymentMethod(paymentId, principal.getSubject());
+    }
+
+    @Override
     public String createProduct(StripeProductRequest productRequest) throws StripeException {
         return paymentService.createStripeProduct(productRequest);
     }
@@ -36,13 +41,13 @@ public class PaymentControllerImpl implements IPaymentController {
     }
 
     @Override
-    public StripeCustomerResponse getStripeCustomerInfo(Jwt principal) throws AuthenticationException {
+    public StripeCustomerResponse getStripeCustomerInfo(Jwt principal) {
         return paymentService.getStripeCustomerInfo(principal.getSubject());
     }
 
     @Override
-    public void deleteStripeAccount(String accountId) throws StripeException {
-        paymentService.deleteStripeAccount(accountId);
+    public void deleteStripeAccount(String accountId, Jwt principal) throws AuthenticationException {
+        paymentService.deleteStripeAccount(accountId, principal.getSubject());
     }
 
     @Override

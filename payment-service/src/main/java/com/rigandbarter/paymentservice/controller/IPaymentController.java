@@ -15,9 +15,25 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/payment")
 public interface IPaymentController {
 
+    /**
+     * Creates a new payment method for the user
+     * @param paymentMethodRequest The payment method info
+     * @param principal The authorized user
+     * @return The stripe payment method details
+     * @throws StripeException Fails to create stripe payment method
+     */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     StripePaymentMethodResponse addPaymentMethod(@RequestBody StripePaymentMethodRequest paymentMethodRequest, @AuthenticationPrincipal Jwt principal) throws StripeException;
+
+    /**
+     * Deletes a payment method from the user
+     * @param paymentId The id of the payment to delete
+     * @param principal The authorized user
+     */
+    @DeleteMapping("{paymentId}")
+    @ResponseStatus(HttpStatus.OK)
+    void deletePaymentMethod(@PathVariable String paymentId, @AuthenticationPrincipal Jwt principal) throws AuthenticationException;
 
     /**
      * Creates a product in Stripe
@@ -52,9 +68,9 @@ public interface IPaymentController {
      * @param accountId the id of the account to delete
      * @throws StripeException Fails to delete the account
      */
-    @GetMapping("account/{accountId}")
+    @DeleteMapping("account/{accountId}")
     @ResponseStatus(HttpStatus.OK)
-    void deleteStripeAccount(@PathVariable String accountId) throws StripeException;
+    void deleteStripeAccount(@PathVariable String accountId, @AuthenticationPrincipal Jwt principal) throws AuthenticationException;
 
     /**
      * Reauth endpoint for account creation
