@@ -29,7 +29,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
     //TODO: Get this from config file
     private String FRONTEND_LISTING_URL = "http://localhost:4200/listings/";
 
-    public RBResultStatus handleTransactionCreatedEvent(TransactionCreatedEvent event) {
+    public RBResultStatus<Void>handleTransactionCreatedEvent(TransactionCreatedEvent event) {
         /**
          * TODO: Get user information from JWT decode or from principal on
          */
@@ -43,7 +43,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
         if (listingResponse == null) {
             String msg = "Failed to retrieve listing from listing service: " + event.getListingId();
             log.error(msg);
-            return new RBResultStatus(false, msg);
+            return new RBResultStatus<>(false, msg);
         }
 
         FrontEndNotification frontEndNotification = FrontEndNotificationMapper.fromEvent(
@@ -63,6 +63,6 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
         // Create and send email notification
         // Etc
 
-        return new RBResultStatus(true);
+        return new RBResultStatus<Void>(true);
     }
 }

@@ -7,11 +7,11 @@ import com.rigandbarter.eventlibrary.events.TransactionInProgressEvent;
 import com.rigandbarter.eventlibrary.events.UserCreatedEvent;
 
 public interface IEventHandlerService {
-    RBResultStatus handleUserCreatedEvent(UserCreatedEvent userCreatedEvent);
+    RBResultStatus<Void>handleUserCreatedEvent(UserCreatedEvent userCreatedEvent);
 
-    RBResultStatus handleBillingInfoUpdatedEvent(BillingInfoUpdatedEvent billingInfoUpdatedEvent);
+    RBResultStatus<Void>handleBillingInfoUpdatedEvent(BillingInfoUpdatedEvent billingInfoUpdatedEvent);
 
-    RBResultStatus handleTransactionInProgressEvent(TransactionInProgressEvent transactionCreatedEvent);
+    RBResultStatus<Void>handleTransactionInProgressEvent(TransactionInProgressEvent transactionCreatedEvent);
 
-    RBResultStatus handleTransactionCompletedEvent(TransactionCompletedEvent transactionCreatedEvent);
+    RBResultStatus<Void>handleTransactionCompletedEvent(TransactionCompletedEvent transactionCreatedEvent);
 }

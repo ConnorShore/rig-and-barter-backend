@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-// TODO: May split this out in the future to multiple clsses
+// TODO: May split this out in the future to multiple classes
 
 @Entity
 @Table(name = "t_stripe_customer")
@@ -24,4 +24,6 @@ public class StripeCustomer {
 
     private String paymentId;
     private String cardToken;
+
+    private String accountId;
 }

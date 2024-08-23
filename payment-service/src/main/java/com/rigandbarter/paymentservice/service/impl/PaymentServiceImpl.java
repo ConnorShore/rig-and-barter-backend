@@ -2,6 +2,7 @@ package com.rigandbarter.paymentservice.service.impl;
 
 import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.core.models.UserBillingInfo;
+import com.rigandbarter.paymentservice.dto.StripeCustomerInfoResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.rigandbarter.paymentservice.model.StripeCustomer;
 import com.rigandbarter.paymentservice.model.StripeProduct;
@@ -12,11 +13,9 @@ import com.stripe.Stripe;
 
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
-import com.stripe.net.StripeResponse;
 import com.stripe.param.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,10 +31,13 @@ public class PaymentServiceImpl implements IPaymentService {
     private final IStripeCustomerRepository stripeCustomerRepository;
 
     /*
-        TODO: Flow 2 (USE THIS ONE)
-            1) When user enters billing info, it creates a Stripe customer and payment method (save them locally too)
-            2) When the buyer and seller accept, create a setupIntent (or paymentIntent...not sure which one)
-            3) Once the transaction is completed, complete the payment
+        TODO:
+            1) MAY WANT TO DO THIS: https://docs.stripe.com/connect/collect-then-transfer-guide?platform=web instead of direct payments
+                -Create account when create user
+            DONE) When user enters billing info, it creates a Stripe customer and payment method (save them locally too)
+            2) When the buyer and seller accept, create a setupIntent (or paymentIntent...not sure which one) (TransactionInProgressEvent)
+            3) Once the transaction is completed, complete the payment (TransactionCompletedEvent)
+
      */
 
     @Override
@@ -103,6 +105,56 @@ public class PaymentServiceImpl implements IPaymentService {
     }
 
     @Override
+    public String createStripeCustomerAccount(String userId) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        StripeCustomer stripeCustomer = stripeCustomerRepository.findByUserId(userId);
+
+        // Get first and last name from the full name
+        String[] fullName = stripeCustomer.getName().split(" ");
+        String firstName = fullName[0];
+        String lastName = fullName.length > 1 ? fullName[1] : "";
+
+        AccountCreateParams params =
+            AccountCreateParams.builder()
+                .setBusinessType(AccountCreateParams.BusinessType.INDIVIDUAL)
+                .setType(AccountCreateParams.Type.EXPRESS)
+                .setEmail(stripeCustomer.getEmail())
+                    .setIndividual(AccountCreateParams.Individual.builder()
+                            .setEmail(stripeCustomer.getEmail())
+                            .setFirstName(firstName)
+                            .setLastName(lastName)
+                            .build()
+                    )
+                .build();
+
+        Account account = Account.create(params);
+
+        String accountId = null;
+        String redirectUrl = null;
+        try {
+            AccountLinkCreateParams linkParams =
+                    AccountLinkCreateParams.builder()
+                            .setAccount(account.getId())
+                            .setRefreshUrl("http://localhost:8080/api/payment/reauth")
+                            .setReturnUrl("http://localhost:4200")
+                            .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
+                            .build();
+
+            AccountLink accountLink = AccountLink.create(linkParams);
+            redirectUrl = accountLink.getUrl();
+            accountId = account.getId();
+        } catch (Exception e) {
+            account.delete();
+        }
+
+        stripeCustomer.setAccountId(accountId);
+        stripeCustomerRepository.save(stripeCustomer);
+
+        return redirectUrl;
+    }
+
+    @Override
     public StripeCustomer updatedStripeCustomerPaymentInfo(String userId, UserBillingInfo billingInfo) throws StripeException {
         Stripe.apiKey = stripeSecretKey;
 
@@ -130,5 +182,24 @@ public class PaymentServiceImpl implements IPaymentService {
         stripeCustomerRepository.save(customer);
 
         return null;
+    }
+
+    @Override
+    public StripeCustomerInfoResponse getStripeCustomerInfo(String userId) {
+        StripeCustomer stripeCustomer = stripeCustomerRepository.findByUserId(userId);
+
+        return StripeCustomerInfoResponse.builder()
+                .userId(userId)
+                .stripeId(stripeCustomer.getStripeId())
+                .paymentId(stripeCustomer.getPaymentId())
+                .accountId(stripeCustomer.getAccountId())
+                .build();
+    }
+
+    @Override
+    public void deleteStripeAccount(String accountId) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+        Account resource = Account.retrieve(accountId);
+        resource.delete();
     }
 }

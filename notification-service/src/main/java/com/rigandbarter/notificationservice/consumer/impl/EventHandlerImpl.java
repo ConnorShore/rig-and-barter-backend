@@ -48,7 +48,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Received transaction created event: " + event.getId());
 
         TransactionCreatedEvent transactionCreatedEvent = (TransactionCreatedEvent)event;
-        RBResultStatus result = eventHandlerService.handleTransactionCreatedEvent(transactionCreatedEvent);
+        RBResultStatus<Void>result = eventHandlerService.handleTransactionCreatedEvent(transactionCreatedEvent);
 
         if (!result.isSuccess())
             log.error("Failed to handle Transaction Created Event: " + result.getErrorMessage());

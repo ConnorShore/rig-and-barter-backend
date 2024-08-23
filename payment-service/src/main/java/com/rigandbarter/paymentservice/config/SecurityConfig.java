@@ -1,6 +1,5 @@
 package com.rigandbarter.paymentservice.config;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,10 +22,14 @@ public class SecurityConfig {
     @Value("${rb.security.permitted-get-urls}")
     String[] permittedGetUrls;
 
+//    @Value("${rb.security.permitted-delete-urls}")
+//    String[] permittedDeleteUrls;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(HttpMethod.DELETE, permittedDeleteUrls).permitAll()
                         .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2

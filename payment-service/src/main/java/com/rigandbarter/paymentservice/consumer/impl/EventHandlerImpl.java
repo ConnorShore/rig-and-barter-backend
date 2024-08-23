@@ -63,7 +63,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Received user created event: " + event.getId());
 
         UserCreatedEvent userCreatedEvent = (UserCreatedEvent)event;
-        RBResultStatus result = eventHandlerService.handleUserCreatedEvent(userCreatedEvent);
+        RBResultStatus<Void>result = eventHandlerService.handleUserCreatedEvent(userCreatedEvent);
 
         if (!result.isSuccess())
             log.error("Failed to handle User Created Event: " + result.getErrorMessage());
@@ -76,7 +76,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Received billing info updated event: " + event.getId());
 
         BillingInfoUpdatedEvent billingInfoUpdatedEvent = (BillingInfoUpdatedEvent)event;
-        RBResultStatus result = eventHandlerService.handleBillingInfoUpdatedEvent(billingInfoUpdatedEvent);
+        RBResultStatus<Void>result = eventHandlerService.handleBillingInfoUpdatedEvent(billingInfoUpdatedEvent);
 
         if (!result.isSuccess())
             log.error("Failed to handle Billing Info Updated Event: " + result.getErrorMessage());
@@ -89,7 +89,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Received transaction created event: " + event.getId());
 
         TransactionInProgressEvent transactionCreatedEvent = (TransactionInProgressEvent)event;
-        RBResultStatus result = eventHandlerService.handleTransactionInProgressEvent(transactionCreatedEvent);
+        RBResultStatus<Void>result = eventHandlerService.handleTransactionInProgressEvent(transactionCreatedEvent);
 
         if (!result.isSuccess())
             log.error("Failed to handle Transaction Created Event: " + result.getErrorMessage());
@@ -102,7 +102,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Received transaction created event: " + event.getId());
 
         TransactionCompletedEvent transactionCreatedEvent = (TransactionCompletedEvent)event;
-        RBResultStatus result = eventHandlerService.handleTransactionCompletedEvent(transactionCreatedEvent);
+        RBResultStatus<Void>result = eventHandlerService.handleTransactionCompletedEvent(transactionCreatedEvent);
 
         if (!result.isSuccess())
             log.error("Failed to handle Transaction Created Event: " + result.getErrorMessage());

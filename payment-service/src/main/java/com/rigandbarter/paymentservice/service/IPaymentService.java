@@ -1,12 +1,11 @@
 package com.rigandbarter.paymentservice.service;
 
-import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.core.models.UserBillingInfo;
+import com.rigandbarter.paymentservice.dto.StripeCustomerInfoResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.rigandbarter.paymentservice.model.StripeCustomer;
 import com.stripe.exception.StripeException;
-import com.stripe.net.StripeResponse;
 
 public interface IPaymentService {
 
@@ -27,6 +26,13 @@ public interface IPaymentService {
     StripeCustomer createStripeCustomer(UserBasicInfo basicInfo) throws StripeException;
 
     /**
+     * Creates a connected account for the user to recieve money
+     * @param userId The id for the user to create the account for
+     * @return The redirect url for the customer to etner account info
+     */
+    String createStripeCustomerAccount(String userId) throws StripeException;
+
+    /**
      * Sets the payment info for the stripe customer and in our db
      * @param userId The id of the user to set billing info for
      * @param billingInfo The billing info to set
@@ -34,4 +40,18 @@ public interface IPaymentService {
      * @throws StripeException Fails to create stripe payment info
      */
     StripeCustomer updatedStripeCustomerPaymentInfo(String userId, UserBillingInfo billingInfo) throws StripeException;
+
+    /**
+     * Gets the user's stripe information
+     * @param userId The id of the user to get the stripe info for
+     * @return The stripe information
+     */
+    StripeCustomerInfoResponse getStripeCustomerInfo(String userId);
+
+    /**
+     * Deletes an account with the specified ID
+     * @param accountId The id of the account to delete
+     * @throws StripeException
+     */
+    void deleteStripeAccount(String accountId) throws StripeException;
 }
