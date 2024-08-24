@@ -30,8 +30,13 @@ public class TransactionControllerImpl implements ITransactionController {
     }
 
     @Override
+    public void setTransactionSetupIntentId(String transactionId, String setupIntentId, Jwt principal) {
+        transactionService.setTransactionSetupIntentId(transactionId, setupIntentId);
+    }
+
+    @Override
     public void acceptTransaction(String transactionId, Jwt principal) {
-        this.transactionService.acceptTransaction(transactionId, principal.getSubject());
+        this.transactionService.acceptTransaction(transactionId, principal);
     }
 
     @Override

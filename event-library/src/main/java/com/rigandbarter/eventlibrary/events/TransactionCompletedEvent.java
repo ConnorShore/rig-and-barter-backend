@@ -13,6 +13,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionCompletedEvent extends RBEvent {
+    private String transactionId;
     private String buyerId;
     private String sellerId;
     private String listingId;

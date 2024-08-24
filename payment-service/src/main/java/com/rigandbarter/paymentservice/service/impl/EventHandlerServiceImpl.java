@@ -31,8 +31,13 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
     public RBResultStatus<Void> handleTransactionInProgressEvent(TransactionInProgressEvent transactionCreatedEvent) {
         // TODO: Create a setupIntent for the buyer to seller (95% of sale price)
         // TODO: Create s setupIntent for buyer to me (5% of sale price)
+        try {
+            paymentService.createSetupIntentForBuyer(transactionCreatedEvent);
+        } catch (Exception e) {
+            return new RBResultStatus<>(false, e.getMessage());
+        }
 
-        return null;
+        return new RBResultStatus<>(true);
     }
 
     @Override

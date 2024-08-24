@@ -26,4 +26,5 @@ public class Transaction {
     private boolean buyerAccepted;
     private boolean sellerAccepted;
     private TransactionState state;
+    private String stripeSetupIntentId;
 }

@@ -15,6 +15,7 @@ import com.rigandbarter.transactionservice.service.ITransactionService;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotAuthorizedException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -71,7 +72,9 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public void acceptTransaction(String transactionId, String userId) throws NotAuthorizedException {
+    public void acceptTransaction(String transactionId, Jwt principal) throws NotAuthorizedException {
+        String userId = principal.getSubject();
+
         Transaction transaction = this.transactionRepository.findByUniqueId(transactionId);
 
         // Set buyer/seller accepted depending on which the user is
@@ -89,6 +92,8 @@ public class TransactionServiceImpl implements ITransactionService {
             TransactionInProgressEvent event = TransactionInProgressEvent.builder()
                     .id(UUID.randomUUID().toString())
                     .userId(transaction.getSellerId())
+                    .authToken(principal.getTokenValue())
+                    .transactionId(transaction.getUniqueId())
                     .buyerId(transaction.getBuyerId())
                     .sellerId(transaction.getSellerId())
                     .listingId(transaction.getListingId())
@@ -116,6 +121,7 @@ public class TransactionServiceImpl implements ITransactionService {
         TransactionCompletedEvent event = TransactionCompletedEvent.builder()
                 .id(UUID.randomUUID().toString())
                 .userId(transaction.getSellerId())
+                .transactionId(transactionId)
                 .buyerId(transaction.getBuyerId())
                 .sellerId(transaction.getSellerId())
                 .listingId(transaction.getListingId())
@@ -126,6 +132,13 @@ public class TransactionServiceImpl implements ITransactionService {
         transactionCompletedProducer.send(event, this::handleFailedTransactionCompletedEventSend);
 
         this.transactionRepository.save(transaction);
+    }
+
+    @Override
+    public void setTransactionSetupIntentId(String transactionId, String setupIntentId) {
+        Transaction transaction = this.transactionRepository.findByUniqueId(transactionId);
+        transaction.setStripeSetupIntentId(setupIntentId);
+        transactionRepository.save(transaction);
     }
 
     /**

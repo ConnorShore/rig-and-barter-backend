@@ -33,6 +33,17 @@ public interface ITransactionController {
     List<TransactionResponse> getAllTransactions(@AuthenticationPrincipal Jwt principal);
 
     /**
+     * Sets the setup intent id for the given transaction
+     * @param transactionId The transaction to set setupIntentId for
+     * @param setupIntentId The id of the setup intent
+     */
+    @PutMapping("{transactionId}/intent")
+    @ResponseStatus(HttpStatus.OK)
+    void setTransactionSetupIntentId(@PathVariable String transactionId,
+                                     @RequestParam String setupIntentId,
+                                     @AuthenticationPrincipal Jwt principal);
+
+    /**
      * Accepts the transaction for the specified user
      * @param transactionId The id of the transaction to accept
      * @param principal The user auth principal

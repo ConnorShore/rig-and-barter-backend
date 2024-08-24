@@ -13,7 +13,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionInProgressEvent extends RBEvent {
+    private String transactionId;
     private String buyerId;
     private String sellerId;
     private String listingId;
+    private String authToken;
 }

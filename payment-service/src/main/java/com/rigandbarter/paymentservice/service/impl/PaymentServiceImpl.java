@@ -4,6 +4,7 @@ import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
 import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
+import com.rigandbarter.eventlibrary.events.TransactionInProgressEvent;
 import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
 import com.rigandbarter.core.models.StripePaymentMethodResponse;
 import com.rigandbarter.core.models.StripeCustomerResponse;
@@ -20,10 +21,12 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.param.*;
-import lombok.RequiredArgsConstructor;
+import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.auth.AuthenticationException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,25 +44,19 @@ public class PaymentServiceImpl implements IPaymentService {
     private final IStripeProductRepository stripeProductRepository;
     private final IStripeCustomerRepository stripeCustomerRepository;
 
+    private final WebClient.Builder webClientBuilder;
+
     public PaymentServiceImpl(String stripeSecretKey,
                               IStripeProductRepository stripeProductRepository,
                               IStripeCustomerRepository stripeCustomerRepository,
+                              WebClient.Builder webClientBuilder,
                               RBEventProducerFactory rbEventProducerFactory) {
         this.stripeSecretKey = stripeSecretKey;
         this.stripeProductRepository = stripeProductRepository;
         this.stripeCustomerRepository = stripeCustomerRepository;
+        this.webClientBuilder = webClientBuilder;
         this.stripeCustomerCreatedProducer = rbEventProducerFactory.createProducer(StripeCustomerCreatedEvent.class);
     }
-
-    /*
-        TODO:
-            1) MAY WANT TO DO THIS: https://docs.stripe.com/connect/collect-then-transfer-guide?platform=web instead of direct payments
-                -Create account when create user
-            DONE) When user enters billing info, it creates a Stripe customer and payment method (save them locally too)
-            2) When the buyer and seller accept, create a setupIntent (or paymentIntent...not sure which one) (TransactionInProgressEvent)
-            3) Once the transaction is completed, complete the payment (TransactionCompletedEvent)
-
-     */
 
     @Override
     public String createStripeProduct(StripeProductRequest stripeProductRequest) throws StripeException {
@@ -176,6 +173,9 @@ public class PaymentServiceImpl implements IPaymentService {
             account.delete();
         }
 
+        if(!stripeCustomer.getPaymentMethods().isEmpty())
+            stripeCustomer.setVerified(true);
+
         stripeCustomer.setAccountId(accountId);
         stripeCustomerRepository.save(stripeCustomer);
 
@@ -205,6 +205,7 @@ public class PaymentServiceImpl implements IPaymentService {
         }
 
         customer.setAccountId(null);
+        customer.setVerified(false);
         stripeCustomerRepository.save(customer);
     }
 
@@ -245,6 +246,11 @@ public class PaymentServiceImpl implements IPaymentService {
         currentPaymentMethods.add(newPaymentMethod);
         customer.setPaymentMethods(currentPaymentMethods);
 
+        if(currentPaymentMethods.isEmpty())
+            customer.setVerified(false);
+        else if(customer.getAccountId() != null)
+            customer.setVerified(true);
+
         stripeCustomerRepository.save(customer);
 
         return StripePaymentMethodResponse.builder()
@@ -283,5 +289,49 @@ public class PaymentServiceImpl implements IPaymentService {
         }
 
         stripeCustomerRepository.save(customer);
+    }
+
+    @Override
+    public void createSetupIntentForBuyer(TransactionInProgressEvent transactionCreatedEvent) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        StripeCustomer buyerCustomer = stripeCustomerRepository.findByUserId(transactionCreatedEvent.getBuyerId());
+        StripeCustomer sellerCustomer = stripeCustomerRepository.findByUserId(transactionCreatedEvent.getSellerId());
+
+        if(buyerCustomer == null)
+            throw new NotFoundException("Error: The buyer user is not found. Failed to move transaction to In Progress.");
+        if(sellerCustomer == null)
+            throw new NotFoundException("Error: The seller user is not found. Failed to move transaction to In Progress.");
+
+        if(!buyerCustomer.isVerified() || !sellerCustomer.isVerified()) {
+            log.info("No transaction setup intent created as buyer and seller weren't both verified");
+        }
+
+        SetupIntentCreateParams params =
+                SetupIntentCreateParams.builder()
+                        .addPaymentMethodType("card")
+                        .setCustomer(buyerCustomer.getStripeId())
+                        .setUsage(SetupIntentCreateParams.Usage.OFF_SESSION)
+                        .build();
+
+        SetupIntent setupIntent = SetupIntent.create(params);
+
+        // Set the setup intent id in the transaction service
+        try {
+            webClientBuilder.build()
+                    .put()
+                    .uri(builder -> builder
+                            .scheme("http")
+                            .host("transaction-service")
+                            .path("api/transaction/{transactionId}/intent")
+                            .queryParam("setupIntentId", setupIntent.getId())
+                            .build(transactionCreatedEvent.getTransactionId()))
+                    .headers(httpHeaders -> httpHeaders.setBearerAuth(transactionCreatedEvent.getAuthToken()))
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+        } catch (Exception e) {
+            setupIntent.cancel();
+        }
     }
 }
