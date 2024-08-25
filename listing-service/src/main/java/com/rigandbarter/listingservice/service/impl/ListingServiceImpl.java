@@ -2,7 +2,7 @@ package com.rigandbarter.listingservice.service.impl;
 
 import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.listingservice.dto.ListingRequest;
-import com.rigandbarter.listingservice.dto.ListingResponse;
+import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.listingservice.dto.StripeProductRequest;
 import com.rigandbarter.listingservice.model.Listing;
 import com.rigandbarter.listingservice.repository.document.IListingRepository;

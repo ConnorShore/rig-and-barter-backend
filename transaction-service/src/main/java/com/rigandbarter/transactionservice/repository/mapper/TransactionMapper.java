@@ -26,6 +26,7 @@ public class TransactionMapper {
                 .state(TransactionState.REQUESTED)
                 .buyerAccepted(false)
                 .sellerAccepted(false)
+                .stripeSetupIntentId(null)
                 .build();
     }
 
@@ -45,7 +46,10 @@ public class TransactionMapper {
                 .completionDate(transaction.getCompletionDate())
                 .buyerAccepted(transaction.isBuyerAccepted())
                 .sellerAccepted(transaction.isSellerAccepted())
+                .buyerCompleted(transaction.isBuyerCompleted())
+                .sellerCompleted(transaction.isSellerCompleted())
                 .state(transaction.getState())
+                .stripeSetupIntentId(transaction.getStripeSetupIntentId())
                 .build();
     }
 }

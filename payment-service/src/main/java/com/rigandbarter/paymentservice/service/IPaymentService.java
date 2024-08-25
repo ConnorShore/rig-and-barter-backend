@@ -1,6 +1,7 @@
 package com.rigandbarter.paymentservice.service;
 
 import com.rigandbarter.core.models.UserBasicInfo;
+import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionInProgressEvent;
 import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
 import com.rigandbarter.core.models.StripePaymentMethodResponse;
@@ -48,7 +49,7 @@ public interface IPaymentService {
      * @param userId The user to delete the account for
      * @throws StripeException
      */
-    void deleteStripeAccount(String accountId, String userId) throws AuthenticationException;
+    void deleteStripeAccount(String accountId, String userId, boolean istest) throws AuthenticationException;
 
     /**
      * Adds payment method for stripe customer
@@ -67,7 +68,13 @@ public interface IPaymentService {
 
     /**
      * Creates a setup intent in stripe for the buyer to seller
-     * @param transactionCreatedEvent The transqtion information
+     * @param transactionCreatedEvent The transaction information
      */
     void createSetupIntentForBuyer(TransactionInProgressEvent transactionCreatedEvent) throws StripeException;
+
+    /**
+     * Completes the setup intent in stripe for the buyer to seller
+     * @param transactionCreatedEvent The transaction info
+     */
+    void completeSetupIntent(TransactionCompletedEvent transactionCreatedEvent) throws StripeException;
 }

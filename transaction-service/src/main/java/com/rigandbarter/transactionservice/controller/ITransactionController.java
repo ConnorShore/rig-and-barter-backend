@@ -1,5 +1,6 @@
 package com.rigandbarter.transactionservice.controller;
 
+import com.rigandbarter.transactionservice.dto.CompleteTransactionRequest;
 import com.rigandbarter.transactionservice.dto.TransactionRequest;
 import com.rigandbarter.transactionservice.dto.TransactionResponse;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,15 @@ public interface ITransactionController {
     List<TransactionResponse> getAllTransactions(@AuthenticationPrincipal Jwt principal);
 
     /**
+     * Gets the specified transactions for the user
+     * @param principal The auth principal (user)
+     * @return Specified transactions for the user
+     */
+    @GetMapping("{transactionId}")
+    @ResponseStatus(HttpStatus.OK)
+    TransactionResponse getTransaciton(@PathVariable String transactionId, @AuthenticationPrincipal Jwt principal);
+
+    /**
      * Sets the setup intent id for the given transaction
      * @param transactionId The transaction to set setupIntentId for
      * @param setupIntentId The id of the setup intent
@@ -59,7 +69,9 @@ public interface ITransactionController {
      */
     @PutMapping("{transactionId}/complete")
     @ResponseStatus(HttpStatus.OK)
-    void completeTransaction(@PathVariable String transactionId, @AuthenticationPrincipal Jwt principal);
+    void completeTransaction(@PathVariable String transactionId,
+                             @RequestBody CompleteTransactionRequest request,
+                             @AuthenticationPrincipal Jwt principal);
 
     /**
      * The status endpoint to see if the service is running

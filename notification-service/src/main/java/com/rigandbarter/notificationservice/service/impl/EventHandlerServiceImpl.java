@@ -1,8 +1,8 @@
 package com.rigandbarter.notificationservice.service.impl;
 
+import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
-import com.rigandbarter.notificationservice.dto.ListingResponse;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotificationType;
 import com.rigandbarter.notificationservice.repository.mapper.FrontEndNotificationMapper;

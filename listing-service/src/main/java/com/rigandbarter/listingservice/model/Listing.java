@@ -1,5 +1,6 @@
 package com.rigandbarter.listingservice.model;
 
+import com.rigandbarter.core.models.ComponentCategory;
 import com.rigandbarter.core.models.UserBasicInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

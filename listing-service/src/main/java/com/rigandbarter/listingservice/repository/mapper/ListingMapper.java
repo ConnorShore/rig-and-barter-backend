@@ -2,7 +2,7 @@ package com.rigandbarter.listingservice.repository.mapper;
 
 import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.listingservice.dto.ListingRequest;
-import com.rigandbarter.listingservice.dto.ListingResponse;
+import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.listingservice.model.Listing;
 
 import java.time.LocalDateTime;

@@ -29,8 +29,8 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
 
     @Override
     public RBResultStatus<Void> handleTransactionInProgressEvent(TransactionInProgressEvent transactionCreatedEvent) {
-        // TODO: Create a setupIntent for the buyer to seller (95% of sale price)
-        // TODO: Create s setupIntent for buyer to me (5% of sale price)
+        // TODO: Setup split between seller (95%) and me (5%) (probably separate setupIntents?
+        //   or maybe better way with connected account stuff)
         try {
             paymentService.createSetupIntentForBuyer(transactionCreatedEvent);
         } catch (Exception e) {
@@ -44,7 +44,12 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
     public RBResultStatus<Void> handleTransactionCompletedEvent(TransactionCompletedEvent transactionCreatedEvent) {
         // TODO: Complete the setupIntent for the buyer to seller (95% of sale price)
         // TODO: Complete the setupIntent for buyer to me (5% of sale price)
+        try {
+            paymentService.completeSetupIntent(transactionCreatedEvent);
+        } catch (Exception e) {
+            return new RBResultStatus<>(false, e.getMessage());
+        }
 
-        return null;
+        return new RBResultStatus<>(true);
     }
 }

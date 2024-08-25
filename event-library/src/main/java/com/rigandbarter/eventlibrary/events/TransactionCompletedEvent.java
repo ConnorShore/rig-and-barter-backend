@@ -17,4 +17,7 @@ public class TransactionCompletedEvent extends RBEvent {
     private String buyerId;
     private String sellerId;
     private String listingId;
+    private String stripeSetupIntentId;
+    private String paymentMethodId;
+    private String authToken;
 }

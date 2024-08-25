@@ -73,6 +73,16 @@ public interface IPaymentController {
     void deleteStripeAccount(@PathVariable String accountId, @AuthenticationPrincipal Jwt principal) throws AuthenticationException;
 
     /**
+     * Deletes an account with specified id
+     * @param accountId the id of the account to delete
+     * @throws StripeException Fails to delete the account
+     */
+    @GetMapping("account/{accountId}/delete")
+    @ResponseStatus(HttpStatus.OK)
+    void deleteStripeAccountTemp(@PathVariable String accountId) throws AuthenticationException;
+
+
+    /**
      * Reauth endpoint for account creation
      */
     @GetMapping("reauth")

@@ -14,6 +14,7 @@ import com.rigandbarter.transactionservice.repository.mapper.TransactionMapper;
 import com.rigandbarter.transactionservice.service.ITransactionService;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class TransactionServiceImpl implements ITransactionService {
 
         transactionCreatedProducer = rbEventProducerFactory.createProducer(TransactionCreatedEvent.class);
         transactionInProgressProducer = rbEventProducerFactory.createProducer(TransactionInProgressEvent.class);
-        transactionCompletedProducer = rbEventProducerFactory.createProducer(TransactionCreatedEvent.class);
+        transactionCompletedProducer = rbEventProducerFactory.createProducer(TransactionCompletedEvent.class);
     }
 
     @Override
@@ -60,6 +61,18 @@ public class TransactionServiceImpl implements ITransactionService {
 
         transactionCreatedProducer.send(event, this::handleFailedTransactionCreatedEventSend);
         return transaction;
+    }
+
+    @Override
+    public TransactionResponse getTransactionForUser(String transactionId, String userId) {
+        Transaction transaction = this.transactionRepository.findByUniqueId(transactionId);
+        if(transaction == null)
+            throw new NotFoundException("Transaction with id does not exist in db: " + transactionId);
+
+        if(!userId.equals(transaction.getBuyerId()) && !userId.equals(transaction.getSellerId()))
+            throw new NotAuthorizedException("User [" + userId + "] is no the buyer or seller of transaction" + transactionId);
+
+        return TransactionMapper.entityToDto(transaction);
     }
 
     @Override
@@ -108,28 +121,43 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public void completeTransaction(String transactionId, String userId) {
+    public void completeTransaction(String transactionId, String paymentMethodId, Jwt principal) {
+        String userId = principal.getSubject();
+
         Transaction transaction = this.transactionRepository.findByUniqueId(transactionId);
 
         if(!userId.equals(transaction.getBuyerId()) && !userId.equals(transaction.getSellerId()))
             throw new NotAuthorizedException("User is not associated with the transaction");
 
+        if(userId.equals(transaction.getBuyerId())) {
+            transaction.setBuyerCompleted(true);
+            transaction.setPaymentMethodId(paymentMethodId);
+        }
 
-        transaction.setState(TransactionState.COMPLETED);
-        transaction.setCompletionDate(LocalDateTime.now());
+        if(userId.equals(transaction.getSellerId()))
+            transaction.setSellerCompleted(true);
 
-        TransactionCompletedEvent event = TransactionCompletedEvent.builder()
-                .id(UUID.randomUUID().toString())
-                .userId(transaction.getSellerId())
-                .transactionId(transactionId)
-                .buyerId(transaction.getBuyerId())
-                .sellerId(transaction.getSellerId())
-                .listingId(transaction.getListingId())
-                .creationDate(LocalDateTime.now())
-                .source(EVENT_SOURCE)
-                .build();
+        // If both buyer and seller have completed the transaction, send event to complete payment
+        if(transaction.isBuyerCompleted() && transaction.isSellerCompleted()) {
+            transaction.setState(TransactionState.COMPLETED);
+            transaction.setCompletionDate(LocalDateTime.now());
 
-        transactionCompletedProducer.send(event, this::handleFailedTransactionCompletedEventSend);
+            TransactionCompletedEvent event = TransactionCompletedEvent.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(transaction.getSellerId())
+                    .transactionId(transactionId)
+                    .stripeSetupIntentId(transaction.getStripeSetupIntentId())
+                    .paymentMethodId(transaction.getPaymentMethodId())
+                    .buyerId(transaction.getBuyerId())
+                    .sellerId(transaction.getSellerId())
+                    .authToken(principal.getTokenValue())
+                    .listingId(transaction.getListingId())
+                    .creationDate(LocalDateTime.now())
+                    .source(EVENT_SOURCE)
+                    .build();
+
+            transactionCompletedProducer.send(event, this::handleFailedTransactionCompletedEventSend);
+        }
 
         this.transactionRepository.save(transaction);
     }

@@ -17,6 +17,14 @@ public interface ITransactionService {
     Transaction createTransaction(TransactionRequest transactionRequest);
 
     /**
+     * Gets the specified transaction for the user
+     * @param transactionId The id of the transaction to retrieve
+     * @param userId The id of the user who is requesting the transaction
+     * @return The transaction
+     */
+    TransactionResponse getTransactionForUser(String transactionId, String userId);
+
+    /**
      * Gets all active transactions for the user
      * @param userId The id of the user to get transactions for
      * @return All active transactions for the user
@@ -33,8 +41,10 @@ public interface ITransactionService {
     /**
      * Marks the transaction as completed
      * @param transactionId The id of the transaction to complete
+     * @param paymentMethodId The id of the payment method to use (null if the seller)
+     * @param principal The auth object of the user
      */
-    void completeTransaction(String transactionId, String userId);
+    void completeTransaction(String transactionId, String paymentMethodId, Jwt principal);
 
     /**
      * Sets the transaction id for the setup intent

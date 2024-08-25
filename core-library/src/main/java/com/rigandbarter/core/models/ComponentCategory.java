@@ -1,4 +1,4 @@
-package com.rigandbarter.listingservice.model;
+package com.rigandbarter.core.models;
 
 public enum ComponentCategory {
     STORAGE,

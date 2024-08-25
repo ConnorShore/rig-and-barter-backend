@@ -25,6 +25,9 @@ public class Transaction {
     private LocalDateTime completionDate;
     private boolean buyerAccepted;
     private boolean sellerAccepted;
+    private boolean buyerCompleted;
+    private boolean sellerCompleted;
     private TransactionState state;
     private String stripeSetupIntentId;
+    private String paymentMethodId;
 }

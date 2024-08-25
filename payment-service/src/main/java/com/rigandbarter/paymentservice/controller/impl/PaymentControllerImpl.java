@@ -47,7 +47,12 @@ public class PaymentControllerImpl implements IPaymentController {
 
     @Override
     public void deleteStripeAccount(String accountId, Jwt principal) throws AuthenticationException {
-        paymentService.deleteStripeAccount(accountId, principal.getSubject());
+        paymentService.deleteStripeAccount(accountId, principal.getSubject(), false);
+    }
+
+    @Override
+    public void deleteStripeAccountTemp(String accountId) throws AuthenticationException {
+        paymentService.deleteStripeAccount(accountId, null, true);
     }
 
     @Override

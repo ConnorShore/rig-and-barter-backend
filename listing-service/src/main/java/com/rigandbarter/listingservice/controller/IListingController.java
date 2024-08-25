@@ -1,7 +1,7 @@
 package com.rigandbarter.listingservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.rigandbarter.listingservice.dto.ListingResponse;
+import com.rigandbarter.core.models.ListingResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

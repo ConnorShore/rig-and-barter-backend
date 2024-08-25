@@ -1,6 +1,7 @@
 package com.rigandbarter.transactionservice.controller.impl;
 
 import com.rigandbarter.transactionservice.controller.ITransactionController;
+import com.rigandbarter.transactionservice.dto.CompleteTransactionRequest;
 import com.rigandbarter.transactionservice.dto.TransactionRequest;
 import com.rigandbarter.transactionservice.dto.TransactionResponse;
 import com.rigandbarter.transactionservice.service.ITransactionService;
@@ -30,6 +31,11 @@ public class TransactionControllerImpl implements ITransactionController {
     }
 
     @Override
+    public TransactionResponse getTransaciton(String transactionId, Jwt principal) {
+        return transactionService.getTransactionForUser(transactionId, principal.getSubject());
+    }
+
+    @Override
     public void setTransactionSetupIntentId(String transactionId, String setupIntentId, Jwt principal) {
         transactionService.setTransactionSetupIntentId(transactionId, setupIntentId);
     }
@@ -40,8 +46,8 @@ public class TransactionControllerImpl implements ITransactionController {
     }
 
     @Override
-    public void completeTransaction(String transactionId, Jwt principal) {
-        this.transactionService.completeTransaction(transactionId, principal.getSubject());
+    public void completeTransaction(String transactionId, CompleteTransactionRequest completeTransactionRequest, Jwt principal) {
+        this.transactionService.completeTransaction(transactionId, completeTransactionRequest.getPaymentMethodId(), principal);
     }
     @Override
     public String healthCheck() {
