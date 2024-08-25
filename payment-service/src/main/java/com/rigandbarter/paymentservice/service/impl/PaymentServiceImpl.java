@@ -40,12 +40,9 @@ public class PaymentServiceImpl implements IPaymentService {
     private final String stripeFeePercent;
     private final String USD_CURRENCY = "usd";
     private final String TEST_CARD_TOKEN = "tok_visa";
-
     private final RBEventProducer stripeCustomerCreatedProducer;
-
     private final IStripeProductRepository stripeProductRepository;
     private final IStripeCustomerRepository stripeCustomerRepository;
-
     private final WebClient.Builder webClientBuilder;
 
     public PaymentServiceImpl(String stripeSecretKey, String stripeFeePercent,
@@ -295,7 +292,7 @@ public class PaymentServiceImpl implements IPaymentService {
     }
 
     @Override
-    public void completeSetupIntent(TransactionCompletedEvent transactionCompletedEvent) throws StripeException {
+    public void completeTransaction(TransactionCompletedEvent transactionCompletedEvent) throws StripeException {
         Stripe.apiKey = stripeSecretKey;
 
         StripeCustomer buyerCustomer = stripeCustomerRepository.findByUserId(transactionCompletedEvent.getBuyerId());
@@ -340,7 +337,7 @@ public class PaymentServiceImpl implements IPaymentService {
      */
     private void completePayment(ListingResponse listing, String paymentMethodId, String buyerStripeId, String sellerAccountId) throws StripeException {
         long payout = (long)(listing.getPrice() * 100);
-        long fee = (long)(Double.parseDouble(stripeFeePercent) * 100);
+        long fee = (long)((listing.getPrice() * Double.parseDouble(stripeFeePercent)) * 100);
 
         PaymentIntentCreateParams params =
                 PaymentIntentCreateParams.builder()

@@ -70,5 +70,5 @@ public interface IPaymentService {
      * Completes the setup intent in stripe for the buyer to seller
      * @param transactionCreatedEvent The transaction info
      */
-    void completeSetupIntent(TransactionCompletedEvent transactionCreatedEvent) throws StripeException;
+    void completeTransaction(TransactionCompletedEvent transactionCreatedEvent) throws StripeException;
 }

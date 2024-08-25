@@ -35,10 +35,8 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
 
     @Override
     public RBResultStatus<Void> handleTransactionCompletedEvent(TransactionCompletedEvent transactionCreatedEvent) {
-        // TODO: Complete the setupIntent for the buyer to seller (95% of sale price)
-        // TODO: Complete the setupIntent for buyer to me (5% of sale price)
         try {
-            paymentService.completeSetupIntent(transactionCreatedEvent);
+            paymentService.completeTransaction(transactionCreatedEvent);
         } catch (Exception e) {
             return new RBResultStatus<>(false, e.getMessage());
         }

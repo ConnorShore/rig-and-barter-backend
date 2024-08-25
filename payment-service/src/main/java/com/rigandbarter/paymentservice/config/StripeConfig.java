@@ -10,7 +10,7 @@ public class StripeConfig {
     @Value("${stripe.secret-key}")
     private String secretKey;
 
-    @Value("${rb.stripe.fee.percent")
+    @Value("${rb.stripe.fee.percent}")
     private String stripeFeePercent;
 
     @Bean
