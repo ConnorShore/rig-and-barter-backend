@@ -60,7 +60,7 @@ public interface ITransactionController {
      */
     @PutMapping("{transactionId}/accept")
     @ResponseStatus(HttpStatus.OK)
-    void acceptTransaction(@PathVariable String transactionId, @AuthenticationPrincipal Jwt principal);
+    TransactionResponse acceptTransaction(@PathVariable String transactionId, @AuthenticationPrincipal Jwt principal);
 
     /**
      * Completes the specified transaction
@@ -69,7 +69,7 @@ public interface ITransactionController {
      */
     @PutMapping("{transactionId}/complete")
     @ResponseStatus(HttpStatus.OK)
-    void completeTransaction(@PathVariable String transactionId,
+    TransactionResponse completeTransaction(@PathVariable String transactionId,
                              @RequestBody CompleteTransactionRequest request,
                              @AuthenticationPrincipal Jwt principal);
 

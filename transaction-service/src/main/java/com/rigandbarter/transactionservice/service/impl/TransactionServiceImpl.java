@@ -85,7 +85,7 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public void acceptTransaction(String transactionId, Jwt principal) throws NotAuthorizedException {
+    public TransactionResponse acceptTransaction(String transactionId, Jwt principal) throws NotAuthorizedException {
         String userId = principal.getSubject();
 
         Transaction transaction = this.transactionRepository.findByUniqueId(transactionId);
@@ -118,10 +118,11 @@ public class TransactionServiceImpl implements ITransactionService {
         }
 
         this.transactionRepository.save(transaction);
+        return TransactionMapper.entityToDto(transaction);
     }
 
     @Override
-    public void completeTransaction(String transactionId, String paymentMethodId, Jwt principal) {
+    public TransactionResponse completeTransaction(String transactionId, String paymentMethodId, Jwt principal) {
         String userId = principal.getSubject();
 
         Transaction transaction = this.transactionRepository.findByUniqueId(transactionId);
@@ -160,6 +161,7 @@ public class TransactionServiceImpl implements ITransactionService {
         }
 
         this.transactionRepository.save(transaction);
+        return TransactionMapper.entityToDto(transaction);
     }
 
     @Override

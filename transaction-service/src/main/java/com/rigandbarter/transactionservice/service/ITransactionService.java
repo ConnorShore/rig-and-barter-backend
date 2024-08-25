@@ -35,16 +35,18 @@ public interface ITransactionService {
      * Marks the transaction as accepted by the buyer/seller depending what the user is
      * @param transactionId The id of the transaction to accept
      * @param principal The user auth principal
+     * @return The updated transaction
      */
-    void acceptTransaction(String transactionId, Jwt principal);
+    TransactionResponse acceptTransaction(String transactionId, Jwt principal);
 
     /**
      * Marks the transaction as completed
      * @param transactionId The id of the transaction to complete
      * @param paymentMethodId The id of the payment method to use (null if the seller)
      * @param principal The auth object of the user
+     * @return The updated transaction
      */
-    void completeTransaction(String transactionId, String paymentMethodId, Jwt principal);
+    TransactionResponse completeTransaction(String transactionId, String paymentMethodId, Jwt principal);
 
     /**
      * Sets the transaction id for the setup intent

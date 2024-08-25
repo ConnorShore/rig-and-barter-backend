@@ -33,7 +33,7 @@ public class ListingServiceImpl implements IListingService {
     private final WebClient.Builder webClientBuilder;
 
     @Override
-    public Listing createListing(ListingRequest listingRequest, List<MultipartFile> images, Jwt principal) {
+    public ListingResponse createListing(ListingRequest listingRequest, List<MultipartFile> images, Jwt principal) {
         String userId = principal.getSubject();
 
         // Get the info for the user
@@ -83,7 +83,7 @@ public class ListingServiceImpl implements IListingService {
         if(listing == null)
             throw new InternalServerErrorException("Failed to save listing to the database");
 
-        return listing;
+        return ListingMapper.entityToDto(listing);
     }
 
     @Override

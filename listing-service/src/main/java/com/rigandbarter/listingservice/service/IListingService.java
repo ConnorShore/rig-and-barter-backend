@@ -16,7 +16,7 @@ public interface IListingService {
      * @param images The listing's images to save to blob storage
      * @return The created listing
      */
-    Listing createListing(ListingRequest listingRequest, List<MultipartFile> images, Jwt principal);
+    ListingResponse createListing(ListingRequest listingRequest, List<MultipartFile> images, Jwt principal);
 
     /**
      * Gets all the listings currently active

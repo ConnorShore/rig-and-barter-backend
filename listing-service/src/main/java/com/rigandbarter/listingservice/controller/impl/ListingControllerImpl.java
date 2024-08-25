@@ -23,10 +23,10 @@ public class ListingControllerImpl implements IListingController {
     private final IListingService listingService;
 
     @Override
-    public String createListing(Jwt principal, String listingRequest, MultipartFile[] images) throws JsonProcessingException {
+    public ListingResponse createListing(Jwt principal, String listingRequest, MultipartFile[] images) throws JsonProcessingException {
         ListingRequest listingRequestObj = new ObjectMapper().readValue(listingRequest, ListingRequest.class);
         log.info("Creating new listing requested for user: " + principal.getSubject());
-        return listingService.createListing(listingRequestObj, Arrays.asList(images), principal).getId();
+        return listingService.createListing(listingRequestObj, Arrays.asList(images), principal);
     }
 
     @Override

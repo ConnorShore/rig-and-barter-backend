@@ -24,7 +24,7 @@ public interface IListingController {
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    String createListing(@AuthenticationPrincipal Jwt principal,
+    ListingResponse createListing(@AuthenticationPrincipal Jwt principal,
                                  @RequestPart(name = "listing") String listingRequest,
                                  @RequestPart(name = "images") MultipartFile[] images) throws JsonProcessingException;
 

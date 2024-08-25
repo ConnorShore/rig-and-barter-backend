@@ -41,13 +41,13 @@ public class TransactionControllerImpl implements ITransactionController {
     }
 
     @Override
-    public void acceptTransaction(String transactionId, Jwt principal) {
-        this.transactionService.acceptTransaction(transactionId, principal);
+    public TransactionResponse acceptTransaction(String transactionId, Jwt principal) {
+        return this.transactionService.acceptTransaction(transactionId, principal);
     }
 
     @Override
-    public void completeTransaction(String transactionId, CompleteTransactionRequest completeTransactionRequest, Jwt principal) {
-        this.transactionService.completeTransaction(transactionId, completeTransactionRequest.getPaymentMethodId(), principal);
+    public TransactionResponse completeTransaction(String transactionId, CompleteTransactionRequest completeTransactionRequest, Jwt principal) {
+        return this.transactionService.completeTransaction(transactionId, completeTransactionRequest.getPaymentMethodId(), principal);
     }
     @Override
     public String healthCheck() {
