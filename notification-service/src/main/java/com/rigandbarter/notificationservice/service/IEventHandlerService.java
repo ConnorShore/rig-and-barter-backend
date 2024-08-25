@@ -10,5 +10,5 @@ public interface IEventHandlerService {
      * @param event The transaciton created event to handle
      * @return The result of handling the event
      */
-    RBResultStatus handleTransactionCreatedEvent(TransactionCreatedEvent event);
+    RBResultStatus<Void>handleTransactionCreatedEvent(TransactionCreatedEvent event);
 }

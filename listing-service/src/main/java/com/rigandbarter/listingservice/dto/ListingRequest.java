@@ -1,6 +1,6 @@
 package com.rigandbarter.listingservice.dto;
 
-import com.rigandbarter.listingservice.model.ComponentCategory;
+import com.rigandbarter.core.models.ComponentCategory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

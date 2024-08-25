@@ -1,8 +1,10 @@
 package com.rigandbarter.userservice.service;
 
+import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
 import com.rigandbarter.userservice.dto.*;
 import com.rigandbarter.userservice.util.exceptions.UpdateUserException;
 import com.rigandbarter.userservice.util.exceptions.UserRegistrationException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface IUserService {
@@ -19,7 +21,14 @@ public interface IUserService {
      * @param userId The uid of the user to return
      * @return The user with the specified uid, null if none exist
      */
-    UserResponse getUserById(String userId);
+    UserResponse getUserById(String userId, Jwt principal);
+
+    /**
+     * Returns the user's (with the specified uid) basic info
+     * @param userId The uid of the user to return
+     * @return The user with the specified uid, null if none exist
+     */
+    UserBasicInfoResponse getUserBasicInfoById(String userId);
 
     /**
      * Updates the user info and returns the updated user
@@ -33,11 +42,8 @@ public interface IUserService {
                                            MultipartFile profilePic) throws UpdateUserException;
 
     /**
-     * Updates the user info and returns the
-     * @param userId
-     * @param userBillingInfoRequest
-     * @return
+     * Adds the stripe customer created info to user
+     * @param stripeCustomerCreatedEvent
      */
-    UserBillingInfoResponse setUserBillingInfo(String userId,
-                                               UserBillingInfoRequest userBillingInfoRequest) throws UpdateUserException;
+    void setUserStripeCustomerInfo(StripeCustomerCreatedEvent stripeCustomerCreatedEvent) throws UpdateUserException;
 }

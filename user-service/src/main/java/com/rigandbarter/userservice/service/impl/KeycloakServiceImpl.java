@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 public class KeycloakServiceImpl implements IKeycloakService {
 
-    private final WebClient.Builder webClientBuilder;   // TODO: Move to core-library
+    private final WebClient.Builder webClientBuilderNoLb;
 
     @Value("${rb.keycloak.url}")
     private String KEYCLOAK_URL;
@@ -56,7 +56,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
 
         String userId;
         try {
-            webClientBuilder.build()
+            webClientBuilderNoLb.build()
                     .post()
                     .uri(url)
                     .headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
@@ -82,7 +82,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
 
         var accessToken = getAccessToken();
 
-        List<KeycloakUser> keycloakUserList = webClientBuilder.build()
+        List<KeycloakUser> keycloakUserList = webClientBuilderNoLb.build()
                 .get()
                 .uri(url)
                 .headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
@@ -103,7 +103,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
 
         String url = KEYCLOAK_URL + TOKEN_ENDPOINT;
 
-        var credentialData = webClientBuilder.build()
+        var credentialData = webClientBuilderNoLb.build()
                 .post()
                 .uri(url)
                 .body(BodyInserters.fromFormData("grant_type", "client_credentials")

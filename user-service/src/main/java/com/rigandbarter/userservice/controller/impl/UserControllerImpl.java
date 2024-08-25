@@ -29,33 +29,30 @@ public class UserControllerImpl implements IUserController {
 
     @Override
     public UserResponse getUser(String userId, Jwt principal) {
-        if(!principal.getClaimAsString("sub").equals(userId))
+        if(!userId.equals(principal.getSubject()))
             throw new UserAuthorizationException("Current user does not have permission to access another user's info");
 
         log.info("Attempting to retrieve user: " + userId);
-        return this.userService.getUserById(userId);
+        return this.userService.getUserById(userId, principal);
+    }
+
+    @Override
+    public UserBasicInfoResponse getUserBasicInfo(String userId, Jwt principal) {
+        if(!userId.equals(principal.getSubject()))
+            throw new UserAuthorizationException("Current user does not have permission to access another user's info");
+
+        return this.userService.getUserBasicInfoById(userId);
     }
 
     @Override
     public UserBasicInfoResponse setUserBasicInfo(String userId, String userInfoJson, MultipartFile profilePic, Jwt principal)
             throws UpdateUserException, JsonProcessingException {
-        if(!principal.getClaimAsString("sub").equals(userId))
-            throw new UserAuthorizationException("Current user does not have permission to modify another user's info");
+        if(!userId.equals(principal.getSubject()))
+            throw new UserAuthorizationException("Current user does not have permission to access another user's info");
 
         UserBasicInfoRequest userBasicInfoRequest = new ObjectMapper().readValue(userInfoJson, UserBasicInfoRequest.class);
         log.info("Updating info for user " + userId);
         return this.userService.setUserBasicInfo(userId, userBasicInfoRequest, profilePic.getSize() > 0 ? profilePic : null);
-    }
-
-    @Override
-    public UserBillingInfoResponse setUserBillingInfo(String userId, UserBillingInfoRequest userBillingInfoRequest, Jwt principal)
-            throws UpdateUserException {
-        if(!principal.getClaimAsString("sub").equals(userId))
-            throw new UserAuthorizationException("Current user does not have permission to modify another user's info");
-
-        // TODO: Validate billing info is in valid format before attempting to save (i.e. not missing fields, not enough card digits, etc)
-        log.info("Updating billing info for user: " + userId);
-        return this.userService.setUserBillingInfo(userId, userBillingInfoRequest);
     }
 
     @Override

@@ -23,5 +23,10 @@ public class Transaction {
     private String listingId;
     private LocalDateTime creationDate;
     private LocalDateTime completionDate;
+    private boolean buyerAccepted;
+    private boolean sellerAccepted;
+    private boolean buyerCompleted;
+    private boolean sellerCompleted;
     private TransactionState state;
+    private String paymentMethodId;
 }

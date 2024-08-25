@@ -27,7 +27,6 @@ public class SecurityConfig {
         return http
                 .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers(permittedPostUrls))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/user/**").permitAll()
                         .requestMatchers(HttpMethod.POST, permittedPostUrls).permitAll()
                         .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
                         .anyRequest().authenticated())

@@ -7,6 +7,7 @@ import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
 import com.rigandbarter.eventlibrary.model.RBEvent;
 import com.rigandbarter.eventlibrary.model.RBEventHandler;
 import com.rigandbarter.notificationservice.consumer.IEventHandler;
+import com.rigandbarter.notificationservice.service.IEventHandlerService;
 import com.rigandbarter.notificationservice.service.impl.EventHandlerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
 
-    private final EventHandlerServiceImpl eventHandlerService;
+    private final IEventHandlerService eventHandlerService;
 
     private RBEventConsumer transactionCreatedConsumer;
 
@@ -47,11 +48,13 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Received transaction created event: " + event.getId());
 
         TransactionCreatedEvent transactionCreatedEvent = (TransactionCreatedEvent)event;
-        RBResultStatus result = eventHandlerService.handleTransactionCreatedEvent(transactionCreatedEvent);
+        RBResultStatus<Void>result = eventHandlerService.handleTransactionCreatedEvent(transactionCreatedEvent);
 
         if (!result.isSuccess())
             log.error("Failed to handle Transaction Created Event: " + result.getErrorMessage());
 
         return null;
     }
+
+    // TODO: Handle transaction in progress and completed events
 }

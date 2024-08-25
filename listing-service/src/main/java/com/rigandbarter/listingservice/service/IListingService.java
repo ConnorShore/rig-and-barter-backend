@@ -1,7 +1,7 @@
 package com.rigandbarter.listingservice.service;
 
 import com.rigandbarter.listingservice.dto.ListingRequest;
-import com.rigandbarter.listingservice.dto.ListingResponse;
+import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.listingservice.model.Listing;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +16,7 @@ public interface IListingService {
      * @param images The listing's images to save to blob storage
      * @return The created listing
      */
-    Listing createListing(ListingRequest listingRequest, List<MultipartFile> images, Jwt principal);
+    ListingResponse createListing(ListingRequest listingRequest, List<MultipartFile> images, Jwt principal);
 
     /**
      * Gets all the listings currently active

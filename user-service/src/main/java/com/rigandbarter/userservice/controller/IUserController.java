@@ -35,7 +35,7 @@ public interface IUserController {
 
     /**
      * Sets the user's basic profile information
-     * @return
+     * @return The user's basic info
      */
     @PostMapping("{userId}/info/basic")
     @ResponseStatus(HttpStatus.OK)
@@ -44,11 +44,14 @@ public interface IUserController {
                                            @RequestPart(name = "profilePic") MultipartFile profilePic,
                                            @AuthenticationPrincipal Jwt principal) throws UpdateUserException, JsonProcessingException;
 
-    @PostMapping("{userId}/info/billing")
+    /**
+     * Gets the user's basic info
+     * @param userId the id of the user to get info for
+     * @return The user's basic info
+     */
+    @GetMapping("{userId}/info/basic")
     @ResponseStatus(HttpStatus.OK)
-    UserBillingInfoResponse setUserBillingInfo(@PathVariable String userId,
-                                           @RequestBody UserBillingInfoRequest userBillingInfoRequest,
-                                           @AuthenticationPrincipal Jwt principal) throws UpdateUserException;
+    UserBasicInfoResponse getUserBasicInfo(@PathVariable String userId, @AuthenticationPrincipal Jwt principal);
 
     /**
      * Health check for the service
