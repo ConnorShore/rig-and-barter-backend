@@ -67,12 +67,6 @@ public interface IPaymentService {
     void deletePaymentMethod(String paymentId, String userId) throws AuthenticationException;
 
     /**
-     * Creates a setup intent in stripe for the buyer to seller
-     * @param transactionCreatedEvent The transaction information
-     */
-    void createSetupIntentForBuyer(TransactionInProgressEvent transactionCreatedEvent) throws StripeException;
-
-    /**
      * Completes the setup intent in stripe for the buyer to seller
      * @param transactionCreatedEvent The transaction info
      */

@@ -29,14 +29,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
 
     @Override
     public RBResultStatus<Void> handleTransactionInProgressEvent(TransactionInProgressEvent transactionCreatedEvent) {
-        // TODO: Setup split between seller (95%) and me (5%) (probably separate setupIntents?
-        //   or maybe better way with connected account stuff)
-        try {
-            paymentService.createSetupIntentForBuyer(transactionCreatedEvent);
-        } catch (Exception e) {
-            return new RBResultStatus<>(false, e.getMessage());
-        }
-
+        // Currently don't need to do anything for this...may remove in future. Leaving just in case its needed
         return new RBResultStatus<>(true);
     }
 

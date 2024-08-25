@@ -25,5 +25,4 @@ public class TransactionResponse {
     private boolean buyerCompleted;
     private boolean sellerCompleted;
     private TransactionState state;
-    private String stripeSetupIntentId;
 }

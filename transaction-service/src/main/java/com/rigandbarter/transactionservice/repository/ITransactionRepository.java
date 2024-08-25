@@ -1,9 +1,13 @@
 package com.rigandbarter.transactionservice.repository;
 
 import com.rigandbarter.transactionservice.model.Transaction;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
+@Transactional
 public interface ITransactionRepository {
 
     /**
@@ -33,4 +37,11 @@ public interface ITransactionRepository {
      * @return All transactinos for the user
      */
     List<Transaction> findAllByBuyerId(String buyerId);
+
+    /**
+     * Deletes the transaction with the given id
+     * @param transactionId The id of the transaction to delete
+     * @return The deleted transaction object
+     */
+    void deleteByUniqueId(String transactionId);
 }

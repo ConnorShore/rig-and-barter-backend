@@ -28,6 +28,5 @@ public class Transaction {
     private boolean buyerCompleted;
     private boolean sellerCompleted;
     private TransactionState state;
-    private String stripeSetupIntentId;
     private String paymentMethodId;
 }

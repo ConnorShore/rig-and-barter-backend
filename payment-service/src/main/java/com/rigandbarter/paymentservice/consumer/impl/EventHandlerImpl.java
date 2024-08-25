@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
     private final IEventHandlerService eventHandlerService;
     private RBEventConsumer userCreatedConsumer;
-    private RBEventConsumer transactionInProgressConsumer;
+//    private RBEventConsumer transactionInProgressConsumer;
     private RBEventConsumer transactionCompletedConsumer;
 
     public EventHandlerImpl(RBEventConsumerFactory rbEventConsumerFactory, IEventHandlerService eventHandlerService) {
@@ -31,7 +31,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Initializing consumers");
 
         userCreatedConsumer = rbEventConsumerFactory.createConsumer(UserCreatedEvent.class, this::handleUserCreatedEvent);
-        transactionInProgressConsumer = rbEventConsumerFactory.createConsumer(TransactionInProgressEvent.class, this::handleTransactionInProgressEvent);
+//        transactionInProgressConsumer = rbEventConsumerFactory.createConsumer(TransactionInProgressEvent.class, this::handleTransactionInProgressEvent);
         transactionCompletedConsumer = rbEventConsumerFactory.createConsumer(TransactionCompletedEvent.class, this::handleTransactionCompletedEvent);
     }
 
@@ -40,7 +40,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Starting consumers");
 
         userCreatedConsumer.start();
-        transactionInProgressConsumer.start();
+//        transactionInProgressConsumer.start();
         transactionCompletedConsumer.start();
     }
 
@@ -49,7 +49,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Stopping consumers");
 
         userCreatedConsumer.stop();
-        transactionInProgressConsumer.stop();
+//        transactionInProgressConsumer.stop();
         transactionCompletedConsumer.stop();
     }
 

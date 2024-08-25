@@ -6,7 +6,6 @@ import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
 import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
-import com.rigandbarter.eventlibrary.events.TransactionInProgressEvent;
 import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
 import com.rigandbarter.core.models.StripePaymentMethodResponse;
 import com.rigandbarter.core.models.StripeCustomerResponse;
@@ -38,6 +37,7 @@ import java.util.stream.Collectors;
 public class PaymentServiceImpl implements IPaymentService {
 
     private final String stripeSecretKey;
+    private final String stripeFeePercent;
     private final String USD_CURRENCY = "usd";
     private final String TEST_CARD_TOKEN = "tok_visa";
 
@@ -48,12 +48,13 @@ public class PaymentServiceImpl implements IPaymentService {
 
     private final WebClient.Builder webClientBuilder;
 
-    public PaymentServiceImpl(String stripeSecretKey,
+    public PaymentServiceImpl(String stripeSecretKey, String stripeFeePercent,
                               IStripeProductRepository stripeProductRepository,
                               IStripeCustomerRepository stripeCustomerRepository,
                               WebClient.Builder webClientBuilder,
                               RBEventProducerFactory rbEventProducerFactory) {
         this.stripeSecretKey = stripeSecretKey;
+        this.stripeFeePercent = stripeFeePercent;
         this.stripeProductRepository = stripeProductRepository;
         this.stripeCustomerRepository = stripeCustomerRepository;
         this.webClientBuilder = webClientBuilder;
@@ -294,52 +295,6 @@ public class PaymentServiceImpl implements IPaymentService {
     }
 
     @Override
-    public void createSetupIntentForBuyer(TransactionInProgressEvent transactionCreatedEvent) throws StripeException {
-        //TODO: May not even need this, might be able to just do a payment intent on the completion step since we already
-        // have the user's cards saved
-        Stripe.apiKey = stripeSecretKey;
-
-        StripeCustomer buyerCustomer = stripeCustomerRepository.findByUserId(transactionCreatedEvent.getBuyerId());
-        StripeCustomer sellerCustomer = stripeCustomerRepository.findByUserId(transactionCreatedEvent.getSellerId());
-
-        if(buyerCustomer == null)
-            throw new NotFoundException("Error: The buyer user is not found. Failed to move transaction to In Progress.");
-        if(sellerCustomer == null)
-            throw new NotFoundException("Error: The seller user is not found. Failed to move transaction to In Progress.");
-
-        if(!buyerCustomer.isVerified() || !sellerCustomer.isVerified()) {
-            log.info("No transaction setup intent created as buyer and seller weren't both verified");
-        }
-
-        SetupIntentCreateParams params =
-                SetupIntentCreateParams.builder()
-                        .addPaymentMethodType("card")
-                        .setCustomer(buyerCustomer.getStripeId())
-                        .setUsage(SetupIntentCreateParams.Usage.OFF_SESSION)
-                        .build();
-
-        SetupIntent setupIntent = SetupIntent.create(params);
-
-        // Set the setup intent id in the transaction service
-        try {
-            webClientBuilder.build()
-                    .put()
-                    .uri(builder -> builder
-                            .scheme("http")
-                            .host("transaction-service")
-                            .path("api/transaction/{transactionId}/intent")
-                            .queryParam("setupIntentId", setupIntent.getId())
-                            .build(transactionCreatedEvent.getTransactionId()))
-                    .headers(httpHeaders -> httpHeaders.setBearerAuth(transactionCreatedEvent.getAuthToken()))
-                    .retrieve()
-                    .toBodilessEntity()
-                    .block();
-        } catch (Exception e) {
-            setupIntent.cancel();
-        }
-    }
-
-    @Override
     public void completeSetupIntent(TransactionCompletedEvent transactionCompletedEvent) throws StripeException {
         Stripe.apiKey = stripeSecretKey;
 
@@ -369,54 +324,40 @@ public class PaymentServiceImpl implements IPaymentService {
                     .block();
 
         if(listing == null)
-            throw new NotFoundException("Listing item for the transacaction does not exist. Cancelling transaction.");
+            throw new NotFoundException("Listing item for the transaction does not exist. Cancelling transaction.");
 
-        makePayment(listing, transactionCompletedEvent, buyerCustomer, sellerCustomer);
-
-        // TODO: SEtup intents may not be needed, can maybe do it all with payment intents at this stage
-//        SetupIntent setupIntent = SetupIntent.retrieve(transactionCompletedEvent.getStripeSetupIntentId());
-//        SetupIntentConfirmParams params = SetupIntentConfirmParams.builder()
-//                .setPaymentMethod(transactionCompletedEvent.getPaymentMethodId())
-//                .build();
-//
-//        setupIntent = setupIntent.confirm(params);
-//        switch (setupIntent.getStatus()) {
-//            case "succeeded":
-//                // TODO: Might need to make actual payment intent or something here?
-//                makePayment(transactionCompletedEvent, buyerCustomer, sellerCustomer);
-//                break;
-//            case "next_action":
-//                System.out.println();
-//                break;
-//            case "requires_payment_method":
-//                System.out.println();
-//                break;
-//            case "canceled":
-//                System.out.println();
-//                break;
-//        }
+        completePayment(listing, transactionCompletedEvent.getPaymentMethodId(),
+                buyerCustomer.getStripeId(), sellerCustomer.getAccountId());
     }
 
-    private void makePayment(ListingResponse listing, TransactionCompletedEvent event, StripeCustomer buyerCustomer, StripeCustomer sellerCustomer) throws StripeException {
-        double fee = listing.getPrice() * 0.05;
-        long payoutLong = (long)(listing.getPrice() * 100);
-        long feeLong = (long)(fee * 100);
+    /**
+     * Complete the payment for the listing.
+     * @param listing The listing to complete the payment for
+     * @param paymentMethodId The payment method of the buyer that is being used
+     * @param buyerStripeId The id of the buyer in stripe
+     * @param sellerAccountId The seller's connected account id
+     * @throws StripeException If fails to create/complete payment
+     */
+    private void completePayment(ListingResponse listing, String paymentMethodId, String buyerStripeId, String sellerAccountId) throws StripeException {
+        long payout = (long)(listing.getPrice() * 100);
+        long fee = (long)(Double.parseDouble(stripeFeePercent) * 100);
+
         PaymentIntentCreateParams params =
                 PaymentIntentCreateParams.builder()
-                        .setAmount(payoutLong)
+                        .setAmount(payout)
                         .setCurrency("usd")
-                        .setCustomer(buyerCustomer.getStripeId())
-                        .setPaymentMethod(event.getPaymentMethodId())
+                        .setCustomer(buyerStripeId)
+                        .setPaymentMethod(paymentMethodId)
                         .setAutomaticPaymentMethods(
                                 PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
                                         .setEnabled(true)
                                         .setAllowRedirects(PaymentIntentCreateParams.AutomaticPaymentMethods.AllowRedirects.NEVER)
                                         .build()
                         )
-                        .setApplicationFeeAmount(feeLong)
+                        .setApplicationFeeAmount(fee)
                         .setTransferData(
                                 PaymentIntentCreateParams.TransferData.builder()
-                                        .setDestination(sellerCustomer.getAccountId())
+                                        .setDestination(sellerAccountId)
                                         .build()
                         )
                         .build();
@@ -426,6 +367,7 @@ public class PaymentServiceImpl implements IPaymentService {
 
         switch (paymentIntent.getStatus()) {
             case "succeeded":
+                // TODO: Send notification to buyer and seller that transaction is complete
                 // TODO: Delete listing once transaction is completed
                 System.out.println();
                 break;

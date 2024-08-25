@@ -49,9 +49,10 @@ public interface ITransactionService {
     TransactionResponse completeTransaction(String transactionId, String paymentMethodId, Jwt principal);
 
     /**
-     * Sets the transaction id for the setup intent
-     * @param transactionId
-     * @param setupIntentId
+     * Marks the transaction as completed
+     * @param transactionId The id of the transaction to complete
+     * @param userId The id of the user
+     * @return The updated transaction
      */
-    void setTransactionSetupIntentId(String transactionId, String setupIntentId);
+    TransactionResponse cancelTransaction(String transactionId, String userId);
 }

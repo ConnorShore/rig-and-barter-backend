@@ -43,17 +43,6 @@ public interface ITransactionController {
     TransactionResponse getTransaciton(@PathVariable String transactionId, @AuthenticationPrincipal Jwt principal);
 
     /**
-     * Sets the setup intent id for the given transaction
-     * @param transactionId The transaction to set setupIntentId for
-     * @param setupIntentId The id of the setup intent
-     */
-    @PutMapping("{transactionId}/intent")
-    @ResponseStatus(HttpStatus.OK)
-    void setTransactionSetupIntentId(@PathVariable String transactionId,
-                                     @RequestParam String setupIntentId,
-                                     @AuthenticationPrincipal Jwt principal);
-
-    /**
      * Accepts the transaction for the specified user
      * @param transactionId The id of the transaction to accept
      * @param principal The user auth principal
@@ -72,6 +61,15 @@ public interface ITransactionController {
     TransactionResponse completeTransaction(@PathVariable String transactionId,
                              @RequestBody CompleteTransactionRequest request,
                              @AuthenticationPrincipal Jwt principal);
+    /**
+     * Cancels the specified transaction
+     * @param transactionId The id of the transaction to cancel
+     * @param principal The user auth principal
+     */
+    @PutMapping("{transactionId}/cancel")
+    @ResponseStatus(HttpStatus.OK)
+    TransactionResponse cancelTransaction(@PathVariable String transactionId,
+                                            @AuthenticationPrincipal Jwt principal);
 
     /**
      * The status endpoint to see if the service is running

@@ -36,11 +36,6 @@ public class TransactionControllerImpl implements ITransactionController {
     }
 
     @Override
-    public void setTransactionSetupIntentId(String transactionId, String setupIntentId, Jwt principal) {
-        transactionService.setTransactionSetupIntentId(transactionId, setupIntentId);
-    }
-
-    @Override
     public TransactionResponse acceptTransaction(String transactionId, Jwt principal) {
         return this.transactionService.acceptTransaction(transactionId, principal);
     }
@@ -49,6 +44,12 @@ public class TransactionControllerImpl implements ITransactionController {
     public TransactionResponse completeTransaction(String transactionId, CompleteTransactionRequest completeTransactionRequest, Jwt principal) {
         return this.transactionService.completeTransaction(transactionId, completeTransactionRequest.getPaymentMethodId(), principal);
     }
+
+    @Override
+    public TransactionResponse cancelTransaction(String transactionId, Jwt principal) {
+        return this.transactionService.cancelTransaction(transactionId, principal.getSubject());
+    }
+
     @Override
     public String healthCheck() {
         return "Transaction service is running...";

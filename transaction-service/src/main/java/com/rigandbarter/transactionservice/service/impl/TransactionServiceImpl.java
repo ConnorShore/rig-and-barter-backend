@@ -147,7 +147,6 @@ public class TransactionServiceImpl implements ITransactionService {
                     .id(UUID.randomUUID().toString())
                     .userId(transaction.getSellerId())
                     .transactionId(transactionId)
-                    .stripeSetupIntentId(transaction.getStripeSetupIntentId())
                     .paymentMethodId(transaction.getPaymentMethodId())
                     .buyerId(transaction.getBuyerId())
                     .sellerId(transaction.getSellerId())
@@ -165,10 +164,15 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public void setTransactionSetupIntentId(String transactionId, String setupIntentId) {
+    public TransactionResponse cancelTransaction(String transactionId, String userId) {
         Transaction transaction = this.transactionRepository.findByUniqueId(transactionId);
-        transaction.setStripeSetupIntentId(setupIntentId);
+        if(!userId.equals(transaction.getBuyerId()) && !userId.equals(transaction.getSellerId()))
+            throw new NotAuthorizedException("User is not associated with the transaction");
+
+        transaction.setState(TransactionState.CANCELLED);
         transactionRepository.save(transaction);
+
+        return TransactionMapper.entityToDto(transaction);
     }
 
     /**
