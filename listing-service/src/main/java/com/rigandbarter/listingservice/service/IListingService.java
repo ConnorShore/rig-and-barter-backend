@@ -30,4 +30,12 @@ public interface IListingService {
      * @return The listing with id equal to listingId
      */
     ListingResponse getListingById(String listingId);
+
+    /**
+     * Deletes a specific listing by its id
+     * @param listingId The id of the listing to delete
+     * @param deleteTransaction True if should delete associated transactions
+     * @param principal The auth principal of the user
+     */
+    void deleteListingById(String listingId, boolean deleteTransaction, Jwt principal);
 }

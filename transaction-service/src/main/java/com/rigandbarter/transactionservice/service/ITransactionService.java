@@ -55,4 +55,11 @@ public interface ITransactionService {
      * @return The updated transaction
      */
     TransactionResponse cancelTransaction(String transactionId, String userId);
+
+    /**
+     * Deletes the transaction based on id (Maybe listingId as well)
+     * @param id The id within the transaction to be deleted
+     * @return
+     */
+    void deleteTransaction(String id);
 }

@@ -10,6 +10,7 @@ import com.rigandbarter.listingservice.repository.file.IFileRepository;
 import com.rigandbarter.listingservice.repository.mapper.ListingMapper;
 import com.rigandbarter.listingservice.service.IListingService;
 import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -96,5 +97,25 @@ public class ListingServiceImpl implements IListingService {
     public ListingResponse getListingById(String listingId) {
         Listing listing = listingRepository.getListingById(listingId);
         return ListingMapper.entityToDto(listing);
+    }
+
+    @Override
+    public void deleteListingById(String listingId, boolean deleteTransaction, Jwt principal) {
+        try {
+            listingRepository.deleteListingById(listingId);
+
+            if(!deleteTransaction)
+                return;
+
+            webClientBuilder.build()
+                    .delete()
+                    .uri("http://transaction-service/api/transaction/{listingId}", listingId)
+                    .headers(h -> h.setBearerAuth(principal.getTokenValue()))
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+        } catch (Exception e) {
+            throw new NotFoundException("Failed to delete listing with id: " + listingId + " and associated transactions");
+        }
     }
 }

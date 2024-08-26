@@ -25,4 +25,10 @@ public interface IListingRepository {
      * @return The listing if found, null if otherwise
      */
     Listing getListingById(String listingId);
+
+    /**
+     * Deletes a specific listing based on its id
+     * @param listingId The id of the listing to delete
+     */
+    void deleteListingById(String listingId);
 }

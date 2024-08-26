@@ -41,7 +41,12 @@ public interface ITransactionRepository {
     /**
      * Deletes the transaction with the given id
      * @param transactionId The id of the transaction to delete
-     * @return The deleted transaction object
      */
     void deleteByUniqueId(String transactionId);
+
+    /**
+     * Deletes the transaction with the associated listing id
+     * @param listingId The id of the listing in the transaction to delete
+     */
+    void deleteByListingId(String listingId);
 }

@@ -40,7 +40,15 @@ public interface ITransactionController {
      */
     @GetMapping("{transactionId}")
     @ResponseStatus(HttpStatus.OK)
-    TransactionResponse getTransaciton(@PathVariable String transactionId, @AuthenticationPrincipal Jwt principal);
+    TransactionResponse getTransaction(@PathVariable String transactionId, @AuthenticationPrincipal Jwt principal);
+
+    /**
+     * Deletes the specified transactions for the user
+     * @param id The id of the transaciton to delete (may be listingId as well)
+     */
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    void deleteTransaction(@PathVariable String id);
 
     /**
      * Accepts the transaction for the specified user
