@@ -175,6 +175,12 @@ public class TransactionServiceImpl implements ITransactionService {
         return TransactionMapper.entityToDto(transaction);
     }
 
+    @Override
+    public void deleteTransaction(String id) {
+        this.transactionRepository.deleteByUniqueId(id);
+        this.transactionRepository.deleteByListingId(id);
+    }
+
     /**
      * Handler for when a transaction created event fails to send
      * @param error The error from the sending failure

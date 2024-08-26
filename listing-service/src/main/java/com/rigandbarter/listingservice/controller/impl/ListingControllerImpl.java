@@ -42,6 +42,11 @@ public class ListingControllerImpl implements IListingController {
     }
 
     @Override
+    public void deleteListingById(String listingId, boolean deleteTransaction, Jwt principal) {
+        listingService.deleteListingById(listingId, deleteTransaction, principal);
+    }
+
+    @Override
     public String healthCheck() {
         return "Listing Service is running...";
     }

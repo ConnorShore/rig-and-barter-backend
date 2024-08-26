@@ -31,8 +31,13 @@ public class TransactionControllerImpl implements ITransactionController {
     }
 
     @Override
-    public TransactionResponse getTransaciton(String transactionId, Jwt principal) {
+    public TransactionResponse getTransaction(String transactionId, Jwt principal) {
         return transactionService.getTransactionForUser(transactionId, principal.getSubject());
+    }
+
+    @Override
+    public void deleteTransaction(String id) {
+        this.transactionService.deleteTransaction(id);
     }
 
     @Override

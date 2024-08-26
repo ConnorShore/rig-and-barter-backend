@@ -35,4 +35,9 @@ public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Listing,
         var listingOptional =  super.findById(listingId);
         return listingOptional.orElse(null);
     }
+
+    @Override
+    public void deleteListingById(String listingId) {
+        super.deleteById(listingId);
+    }
 }

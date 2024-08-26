@@ -46,6 +46,14 @@ public interface IListingController {
     ListingResponse getListingById(@PathVariable String listingId);
 
     /**
+     * Deletes a specific listing based on the id
+     * @param listingId the id of the listing to retrieve
+     */
+    @DeleteMapping("{listingId}")
+    @ResponseStatus(HttpStatus.OK)
+    void deleteListingById(@PathVariable String listingId, @RequestParam boolean removeTransaction, @AuthenticationPrincipal Jwt principal);
+
+    /**
      * Status endpoint to see if service is running
      */
     @GetMapping("status")
