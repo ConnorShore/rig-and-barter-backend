@@ -21,10 +21,10 @@ import java.util.Optional;
 @Repository
 @ConditionalOnProperty(value = "rb.storage.document", havingValue = "mongodb")
 @Slf4j
-public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Notification, String> implements INotificationRepository {
+public class MongoDbNotificationRepositoryImpl extends SimpleMongoRepository<Notification, String> implements INotificationRepository {
     private final MongoTemplate mongoTemplate;
 
-    public MongoDbListingRepositoryImpl(MongoOperations mongoOperations, MongoTemplate mongoTemplate) {
+    public MongoDbNotificationRepositoryImpl(MongoOperations mongoOperations, MongoTemplate mongoTemplate) {
         super(new MongoRepositoryFactory(mongoOperations).getEntityInformation(Notification.class), mongoOperations);
         this.mongoTemplate = mongoTemplate;
     }

@@ -14,5 +14,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class TransactionCreatedEvent extends RBEvent {
     private String buyerId;
+    private String sellerId;
     private String listingId;
 }

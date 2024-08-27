@@ -53,6 +53,7 @@ public class TransactionServiceImpl implements ITransactionService {
         TransactionCreatedEvent event = TransactionCreatedEvent.builder()
                 .id(UUID.randomUUID().toString())
                 .userId(transaction.getSellerId())
+                .sellerId(transaction.getSellerId())
                 .buyerId(transaction.getBuyerId())
                 .listingId(transaction.getListingId())
                 .creationDate(LocalDateTime.now())

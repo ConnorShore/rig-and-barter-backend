@@ -1,6 +1,5 @@
-package com.rigandbarter.notificationservice.service;
+package com.rigandbarter.messageservice.service;
 
-import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -9,11 +8,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebSocketService {
 
-    /**
-     * Add more topics for different types
-     */
-    @Value("${rb.websocket.topic.front-end}")
-    private String FRONT_END_TOPIC;
+    @Value("${rb.websocket.topic.messaging}")
+    private String MESSAGING_TOPIC;
 
     private final SimpMessagingTemplate simpMessagingTemplate;
 
@@ -22,8 +18,8 @@ public class WebSocketService {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    public void sendFrontendMessage(FrontEndNotification notification) {
-        String topic = String.format("/topic/%s", FRONT_END_TOPIC);
-        simpMessagingTemplate.convertAndSend(topic, notification);
-    }
+//    public void sendFrontendMessage(MessageFrontend notification) {
+//        String topic = String.format("/topic/%s", MESSAGING_TOPIC);
+//        simpMessagingTemplate.convertAndSend(topic, notification);
+//    }
 }

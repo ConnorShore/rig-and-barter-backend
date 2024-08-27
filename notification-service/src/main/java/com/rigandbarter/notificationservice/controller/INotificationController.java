@@ -1,6 +1,5 @@
 package com.rigandbarter.notificationservice.controller;
 
-import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.notificationservice.dto.FrontEndNotificationResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

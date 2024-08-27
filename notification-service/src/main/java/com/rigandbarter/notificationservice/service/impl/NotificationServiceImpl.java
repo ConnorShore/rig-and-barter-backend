@@ -55,12 +55,12 @@ public class NotificationServiceImpl implements INotificationService {
     }
 
     @Override
-    public void initiateFrontEndNotification(FrontEndNotification notification) {
+    public void sendFrontEndNotification(FrontEndNotification notification) {
         webSocketService.sendFrontendMessage(notification);
     }
 
     @Override
-    public void initiateEmailNotification(EmailNotification notification) {
+    public void sendEmailNotification(EmailNotification notification) {
         log.info("Email sent (NOT_IMPLEMENTED_YET)");
     }
 }

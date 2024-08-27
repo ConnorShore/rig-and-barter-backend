@@ -29,7 +29,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
     //TODO: Get this from config file
     private String FRONTEND_LISTING_URL = "http://localhost:4200/listings/";
 
-    public RBResultStatus<Void>handleTransactionCreatedEvent(TransactionCreatedEvent event) {
+    public RBResultStatus<Void> handleTransactionCreatedEvent(TransactionCreatedEvent event) {
         /**
          * TODO: Get user information from JWT decode or from principal on
          */
@@ -46,6 +46,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
             return new RBResultStatus<>(false, msg);
         }
 
+        // TODO: Get name of actual buyer instead of Test Person
         FrontEndNotification frontEndNotification = FrontEndNotificationMapper.fromEvent(
                     event,
                     FRONT_END_NOTIFICATION_TITLE,
@@ -58,7 +59,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
         );
 
         notificationService.saveNotification(frontEndNotification);
-        notificationService.initiateFrontEndNotification(frontEndNotification);
+        notificationService.sendFrontEndNotification(frontEndNotification);
 
         // Create and send email notification
         // Etc

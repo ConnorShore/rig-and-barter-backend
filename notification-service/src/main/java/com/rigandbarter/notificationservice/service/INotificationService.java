@@ -44,11 +44,11 @@ public interface INotificationService {
      * Sends notification to the front end
      * @param notification The notification to send
      */
-    void initiateFrontEndNotification(FrontEndNotification notification);
+    void sendFrontEndNotification(FrontEndNotification notification);
 
     /**
      * Sends notification out via email
      * @param notification The notification to send
      */
-    void initiateEmailNotification(EmailNotification notification);
+    void sendEmailNotification(EmailNotification notification);
 }
