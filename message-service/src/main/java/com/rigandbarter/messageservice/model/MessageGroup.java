@@ -19,6 +19,8 @@ public class MessageGroup {
     private String id;
     private String buyerId;
     private String sellerId;
+    private String groupName;
+    private String groupImageUrl;
     private List<Message> messages;
 
     public void addMessage(Message message) {

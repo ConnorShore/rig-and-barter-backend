@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class MessageGroupRequest {
     private String buyerId;
     private String sellerId;
+    private String groupName;
+    private String groupImageUrl;
 }

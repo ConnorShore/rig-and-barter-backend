@@ -15,5 +15,7 @@ public class MessageGroupResponse {
     private String id;
     private String buyerId;
     private String sellerId;
+    private String groupName;
+    private String groupImageUrl;
     private List<MessageResponse> messages;
 }

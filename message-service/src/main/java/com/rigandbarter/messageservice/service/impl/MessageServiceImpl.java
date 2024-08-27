@@ -24,6 +24,7 @@ public class MessageServiceImpl implements IMessageService {
 
     @Override
     public MessageGroupResponse createMessageGroup(MessageGroupRequest messageGroupRequest) {
+        // TODO: Make call to auth service to get names for buyer and seller
         MessageGroup createdGroup = this.messageRepository.saveMessageGroup(MessageMapper.messageGroupDtoToEntity(messageGroupRequest));
         return MessageMapper.messageGroupEntityToDto(createdGroup);
     }

@@ -1,5 +1,6 @@
 package com.rigandbarter.messageservice.service;
 
+import com.rigandbarter.messageservice.dto.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -18,8 +19,8 @@ public class WebSocketService {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-//    public void sendFrontendMessage(MessageFrontend notification) {
-//        String topic = String.format("/topic/%s", MESSAGING_TOPIC);
-//        simpMessagingTemplate.convertAndSend(topic, notification);
-//    }
+    public void sendFrontendMessage(MessageResponse message) {
+        String topic = String.format("/topic/%s", MESSAGING_TOPIC);
+        simpMessagingTemplate.convertAndSend(topic, message);
+    }
 }

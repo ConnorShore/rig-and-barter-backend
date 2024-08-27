@@ -23,6 +23,8 @@ public class MessageMapper {
                 .id(UUID.randomUUID().toString())
                 .buyerId(dto.getBuyerId())
                 .sellerId(dto.getSellerId())
+                .groupName(dto.getGroupName())
+                .groupImageUrl(dto.getGroupImageUrl())
                 .messages(new ArrayList<>())
                 .build();
     }
@@ -37,6 +39,8 @@ public class MessageMapper {
                 .id(entity.getId())
                 .buyerId(entity.getBuyerId())
                 .sellerId(entity.getSellerId())
+                .groupName(entity.getGroupName())
+                .groupImageUrl(entity.getGroupImageUrl())
                 .messages(
                         entity.getMessages()
                                 .stream()

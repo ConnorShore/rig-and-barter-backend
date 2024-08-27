@@ -66,10 +66,15 @@ public class MongoDbMessageRepositoryImpl extends SimpleMongoRepository<MessageG
     @Override
     public List<MessageGroup> getAllMessageGroupsForUser(String userId) {
         Criteria buyer = Criteria.where("buyerId").is(userId);
-        Criteria seller = Criteria.where("sellerId").is(userId);
-        Criteria combined = buyer.orOperator(seller);
         Query query = new Query();
-        query.addCriteria(combined);
-        return mongoTemplate.find(query,  MessageGroup.class);
+        query.addCriteria(buyer);
+        List<MessageGroup> groups =  mongoTemplate.find(query, MessageGroup.class);
+
+        Criteria seller = Criteria.where("sellerId").is(userId);
+        query = new Query();
+        query.addCriteria(seller);
+        groups.addAll(mongoTemplate.find(query, MessageGroup.class));
+
+        return groups;
     }
 }
