@@ -9,6 +9,7 @@ import com.rigandbarter.messageservice.model.MessageGroup;
 import com.rigandbarter.messageservice.repository.document.IMessageRepository;
 import com.rigandbarter.messageservice.repository.mapper.MessageMapper;
 import com.rigandbarter.messageservice.service.IMessageService;
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,5 +42,14 @@ public class MessageServiceImpl implements IMessageService {
         return groups.stream()
                 .map(MessageMapper::messageGroupEntityToDto)
                 .toList();
+    }
+
+    @Override
+    public MessageGroupResponse getMessageGroupForUser(String groupId) {
+        MessageGroup group = this.messageRepository.getMessageGroupById(groupId);
+        if(group == null)
+            throw new NotFoundException("Group with id: " + groupId + " does not exist");
+
+        return MessageMapper.messageGroupEntityToDto(group);
     }
 }

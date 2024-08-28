@@ -9,7 +9,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class NotificationWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Value("${rb.front-end.url}")
     private String FRONT_END_URL;

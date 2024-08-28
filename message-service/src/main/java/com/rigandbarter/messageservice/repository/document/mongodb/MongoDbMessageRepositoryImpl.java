@@ -59,8 +59,13 @@ public class MongoDbMessageRepositoryImpl extends SimpleMongoRepository<MessageG
     }
 
     @Override
-    public void deleteNotificationGroup(String messageGroupId) {
-        super.deleteById(messageGroupId);
+    public void deleteNotificationGroup(String groupId) {
+        super.deleteById(groupId);
+    }
+
+    @Override
+    public MessageGroup getMessageGroupById(String groupId) {
+        return super.findById(groupId).orElse(null);
     }
 
     @Override

@@ -35,11 +35,21 @@ public interface IMessageController {
 
     /**
      * Gets the message groups for the user
+     * @param principal The auth principal of the user
      * @return All the message groups for the given user
      */
     @GetMapping("group")
     @ResponseStatus(HttpStatus.OK)
     List<MessageGroupResponse> getAllMessageGroupsForUser(@AuthenticationPrincipal Jwt principal);
+
+    /**
+     * Gets the message group with specified id for the user
+     * @param groupId The id of the message group to retrieve
+     * @return The message group with the given id for the given user
+     */
+    @GetMapping("group/{groupId}")
+    @ResponseStatus(HttpStatus.OK)
+    MessageGroupResponse getMessageGroupUser(@PathVariable String groupId);
 
     /**
      * Health check for the message service

@@ -13,7 +13,9 @@ public interface IMessageRepository {
 
     void deleteMessageFromGroup(String groupId, String messageId);
 
-    void deleteNotificationGroup(String messageGroupId);
+    void deleteNotificationGroup(String groupId);
+
+    MessageGroup getMessageGroupById(String groupId);
 
     List<MessageGroup> getAllMessageGroupsForUser(String userId);
 }

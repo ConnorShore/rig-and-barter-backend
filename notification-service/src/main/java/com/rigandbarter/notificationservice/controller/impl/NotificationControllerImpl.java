@@ -2,6 +2,8 @@ package com.rigandbarter.notificationservice.controller.impl;
 
 import com.rigandbarter.notificationservice.controller.INotificationController;
 import com.rigandbarter.notificationservice.dto.FrontEndNotificationResponse;
+import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
+import com.rigandbarter.notificationservice.model.notification.FrontEndNotificationType;
 import com.rigandbarter.notificationservice.service.INotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,7 @@ public class NotificationControllerImpl implements INotificationController {
 
     @Override
     public String healthCheck() {
+        notificationService.sendFrontEndNotification(new FrontEndNotification("TEST", "TEST BODY", null, true, FrontEndNotificationType.INFO));
         return "Notification service is running...";
     }
 }

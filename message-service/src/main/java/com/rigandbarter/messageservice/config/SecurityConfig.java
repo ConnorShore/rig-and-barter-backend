@@ -12,9 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    /**
-     * TODO: Potentially move SecurityConfig to common library if they are all the same and have some default rb properties
-     */
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     String issuerUri;
 
@@ -25,7 +22,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/socket/**").permitAll()
+                        .requestMatchers("/msocket/**").permitAll()
                         .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2

@@ -29,4 +29,11 @@ public interface IMessageService {
      * @return All the message groups for the given user
      */
     List<MessageGroupResponse> getAllMessageGroupsForUser(String userId);
+
+    /**
+     * Get the message group with the specified id
+     * @param groupId The id of the message group to get
+     * @return The message group
+     */
+    MessageGroupResponse getMessageGroupForUser(String groupId);
 }
