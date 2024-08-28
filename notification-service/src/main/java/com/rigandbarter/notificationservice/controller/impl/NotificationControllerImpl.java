@@ -41,7 +41,6 @@ public class NotificationControllerImpl implements INotificationController {
 
     @Override
     public String healthCheck() {
-        notificationService.sendFrontEndNotification(new FrontEndNotification("TEST", "TEST BODY", null, true, FrontEndNotificationType.INFO));
         return "Notification service is running...";
     }
 }
