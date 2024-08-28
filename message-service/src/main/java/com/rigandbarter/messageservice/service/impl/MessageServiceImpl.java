@@ -32,8 +32,9 @@ public class MessageServiceImpl implements IMessageService {
 
     @Override
     public MessageResponse createMessage(MessageRequest messageRequest) {
+        MessageGroup group = this.messageRepository.getMessageGroupById(messageRequest.getGroupId());
         Message createdMessage = this.messageRepository.saveMessageToGroup(messageRequest.getGroupId(), MessageMapper.messageDtoToEntity(messageRequest));
-        return MessageMapper.messageEntityToDto(createdMessage);
+        return MessageMapper.messageEntityToDto(createdMessage, group.getGroupName());
     }
 
     @Override

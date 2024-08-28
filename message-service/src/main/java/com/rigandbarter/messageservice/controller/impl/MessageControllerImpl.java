@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -21,7 +20,6 @@ import java.util.List;
 public class MessageControllerImpl implements IMessageController {
 
     private final IMessageService messageService;
-    private final WebSocketService webSocketService;
 
     @Override
     public MessageGroupResponse createMessageGroup(MessageGroupRequest messageGroupRequest) {
@@ -45,13 +43,6 @@ public class MessageControllerImpl implements IMessageController {
 
     @Override
     public String healthCheck() {
-        webSocketService.sendGeneralFrontendMessage(MessageResponse.builder()
-                .id("TEST_ID")
-                .content("CONTENT")
-                .senderId("SENDERID")
-                .receiverId("RECEIVERID")
-                .timestamp(LocalDateTime.now())
-                .build());
         return "Message service is running...";
     }
 }

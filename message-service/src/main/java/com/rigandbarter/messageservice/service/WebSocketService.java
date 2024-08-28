@@ -24,17 +24,6 @@ public class WebSocketService {
         this.messageService = messageService;
     }
 
-    @MessageMapping("/chat")
-    public void handleMessage(@Payload MessageRequest messageRequest) {
-        MessageResponse messageResponse = messageService.createMessage(messageRequest);
-        sendDirectedFrontendMessage(messageResponse, messageRequest.getReceiverId() + "queue/messages");
-//        simpMessagingTemplate.convertAndSendToUser(
-//                messageRequest.getReceiverId(),
-//                "/queue/messages",
-//                messageResponse
-//        );
-    }
-
     public void sendDirectedFrontendMessage(MessageResponse message, String topic) {
         String fullTopic = String.format("/mtopic/%s", topic);
         simpMessagingTemplate.convertAndSend(fullTopic, message);

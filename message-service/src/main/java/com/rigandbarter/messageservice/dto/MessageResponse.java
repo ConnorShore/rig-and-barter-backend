@@ -14,6 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class MessageResponse {
     private String id;
+    private String groupName;
     private String senderId;
     private String receiverId;
     private String content;

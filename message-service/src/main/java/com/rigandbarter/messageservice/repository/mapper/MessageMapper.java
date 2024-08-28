@@ -44,8 +44,8 @@ public class MessageMapper {
                 .messages(
                         entity.getMessages()
                                 .stream()
-                                .map(MessageMapper::messageEntityToDto).
-                                toList()
+                                .map(m -> MessageMapper.messageEntityToDto(m, entity.getGroupName()))
+                                .toList()
                 )
                 .build();
     }
@@ -55,9 +55,10 @@ public class MessageMapper {
      * @param entity The entity to convert to dto
      * @return The created dto
      */
-    public static MessageResponse messageEntityToDto(Message entity) {
+    public static MessageResponse messageEntityToDto(Message entity, String groupName) {
         return MessageResponse.builder()
                 .id(entity.getId())
+                .groupName(groupName)
                 .senderId(entity.getSenderId())
                 .receiverId(entity.getReceiverId())
                 .content(entity.getContent())
