@@ -20,7 +20,6 @@ import java.util.List;
 public class NotificationServiceImpl implements INotificationService {
 
     private final INotificationRepository notificationRepository;
-    private final WebSocketService webSocketService;
 
     @Override
     public void saveNotification(Notification notification) {
@@ -56,7 +55,7 @@ public class NotificationServiceImpl implements INotificationService {
 
     @Override
     public void sendFrontEndNotification(FrontEndNotification notification) {
-        webSocketService.sendFrontendMessage(notification);
+//        webSocketService.sendFrontendMessage(notification);
     }
 
     @Override

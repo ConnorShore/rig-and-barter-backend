@@ -8,6 +8,7 @@ import com.rigandbarter.notificationservice.model.notification.FrontEndNotificat
 import com.rigandbarter.notificationservice.repository.mapper.FrontEndNotificationMapper;
 import com.rigandbarter.notificationservice.service.IEventHandlerService;
 import com.rigandbarter.notificationservice.service.INotificationService;
+import com.rigandbarter.notificationservice.service.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
 
     private final INotificationService notificationService;
     private final WebClient.Builder webClientBuilder;
+    private final WebSocketService webSocketService;
 
     private final String FRONT_END_NOTIFICATION_TITLE = "New Transaction Request!";
 
@@ -59,7 +61,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
         );
 
         notificationService.saveNotification(frontEndNotification);
-        notificationService.sendFrontEndNotification(frontEndNotification);
+        webSocketService.sendFrontendMessage(frontEndNotification);
 
         // Create and send email notification
         // Etc
