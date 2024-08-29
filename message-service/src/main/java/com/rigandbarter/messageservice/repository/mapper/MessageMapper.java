@@ -59,6 +59,7 @@ public class MessageMapper {
         return MessageResponse.builder()
                 .id(entity.getId())
                 .groupName(groupName)
+                .groupId(entity.getGroupId())
                 .senderId(entity.getSenderId())
                 .receiverId(entity.getReceiverId())
                 .content(entity.getContent())
@@ -74,6 +75,7 @@ public class MessageMapper {
     public static Message messageDtoToEntity(MessageRequest dto) {
         return Message.builder()
                 .id(UUID.randomUUID().toString())
+                .groupId(dto.getGroupId())
                 .senderId(dto.getSenderId())
                 .receiverId(dto.getReceiverId())
                 .content(dto.getContent())

@@ -24,6 +24,6 @@ public class MessagingControllerImpl implements IMessagingController {
     public void handleMessage(MessageRequest messageRequest) {
         MessageResponse messageResponse = messageService.createMessage(messageRequest);
         webSocketService.sendDirectedFrontendMessage(messageResponse, messageRequest.getGroupId() + "/queue/message");
-//        webSocketService.sendGeneralFrontendMessage(messageResponse);
+        webSocketService.sendGeneralFrontendMessage(messageResponse);
     }
 }

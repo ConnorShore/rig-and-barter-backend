@@ -16,12 +16,10 @@ public class WebSocketService {
     @Value("${rb.websocket.topic.messaging}")
     private String MESSAGING_TOPIC;
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final IMessageService messageService;
 
     @Autowired
-    public WebSocketService(final SimpMessagingTemplate simpMessagingTemplate, MessageServiceImpl messageService) {
+    public WebSocketService(final SimpMessagingTemplate simpMessagingTemplate) {
         this.simpMessagingTemplate = simpMessagingTemplate;
-        this.messageService = messageService;
     }
 
     public void sendDirectedFrontendMessage(MessageResponse message, String topic) {

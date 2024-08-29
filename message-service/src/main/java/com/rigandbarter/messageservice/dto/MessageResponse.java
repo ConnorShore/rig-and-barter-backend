@@ -15,6 +15,7 @@ import java.util.Date;
 public class MessageResponse {
     private String id;
     private String groupName;
+    private String groupId;
     private String senderId;
     private String receiverId;
     private String content;

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Message {
     private String id;
+    private String groupId;
     private String senderId;
     private String receiverId;
     private String content;
