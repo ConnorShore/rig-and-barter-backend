@@ -1,4 +1,4 @@
-package com.rigandbarter.notificationservice.config;
+package com.rigandbarter.messageservice.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -9,20 +9,20 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class MessageWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Value("${rb.front-end.url}")
     private String FRONT_END_URL;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app");
-        registry.enableSimpleBroker("/topic");
+        registry.setApplicationDestinationPrefixes("/mapp");
+        registry.enableSimpleBroker("/mtopic");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/socket")
+        registry.addEndpoint("/msocket")
                 .setAllowedOriginPatterns(FRONT_END_URL)
                 .withSockJS();
     }

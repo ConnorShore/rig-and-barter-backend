@@ -20,7 +20,6 @@ import java.util.List;
 public class NotificationServiceImpl implements INotificationService {
 
     private final INotificationRepository notificationRepository;
-    private final WebSocketService webSocketService;
 
     @Override
     public void saveNotification(Notification notification) {
@@ -55,12 +54,12 @@ public class NotificationServiceImpl implements INotificationService {
     }
 
     @Override
-    public void initiateFrontEndNotification(FrontEndNotification notification) {
-        webSocketService.sendFrontendMessage(notification);
+    public void sendFrontEndNotification(FrontEndNotification notification) {
+//        webSocketService.sendFrontendMessage(notification);
     }
 
     @Override
-    public void initiateEmailNotification(EmailNotification notification) {
+    public void sendEmailNotification(EmailNotification notification) {
         log.info("Email sent (NOT_IMPLEMENTED_YET)");
     }
 }

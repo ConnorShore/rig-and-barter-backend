@@ -25,6 +25,7 @@
 		<module>core-library</module>
         <module>user-service</module>
         <module>payment-service</module>
+        <module>message-service</module>
     </modules>
 
 	<properties>
