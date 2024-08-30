@@ -281,6 +281,9 @@ public class PaymentServiceImpl implements IPaymentService {
                 )
         );
 
+        if(customer.getPaymentMethods().isEmpty())
+            customer.setVerified(false);
+
         try {
             PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentId);
             paymentMethod.detach();
