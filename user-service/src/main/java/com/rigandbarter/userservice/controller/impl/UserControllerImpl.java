@@ -2,6 +2,8 @@ package com.rigandbarter.userservice.controller.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rigandbarter.core.models.UserBasicInfoResponse;
+import com.rigandbarter.core.models.UserResponse;
 import com.rigandbarter.core.util.exceptions.UserAuthorizationException;
 import com.rigandbarter.userservice.controller.IUserController;
 import com.rigandbarter.userservice.dto.*;

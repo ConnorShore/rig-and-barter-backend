@@ -1,8 +1,9 @@
 package com.rigandbarter.userservice.service.impl;
 
-import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.core.models.StripeCustomerResponse;
 import com.rigandbarter.core.models.UserBasicInfo;
+import com.rigandbarter.core.models.UserBasicInfoResponse;
+import com.rigandbarter.core.models.UserResponse;
 import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
 import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;

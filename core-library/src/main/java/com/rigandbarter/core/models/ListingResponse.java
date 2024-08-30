@@ -23,5 +23,6 @@ public class ListingResponse {
     private Double price;
     private List<String> imageUrls;
     private ComponentCategory componentCategory;
-    private UserBasicInfo userInfo;
+    private UserBasicInfoResponse userInfo;
+    private boolean userVerified;
 }

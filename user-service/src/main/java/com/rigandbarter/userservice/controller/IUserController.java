@@ -1,6 +1,8 @@
 package com.rigandbarter.userservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.rigandbarter.core.models.UserBasicInfoResponse;
+import com.rigandbarter.core.models.UserResponse;
 import com.rigandbarter.userservice.dto.*;
 import com.rigandbarter.userservice.util.exceptions.UpdateUserException;
 import com.rigandbarter.userservice.util.exceptions.UserRegistrationException;
@@ -9,8 +11,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Map;
 
 @RequestMapping("api/user")
 public interface IUserController {

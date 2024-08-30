@@ -1,6 +1,7 @@
 package com.rigandbarter.listingservice.repository.mapper;
 
 import com.rigandbarter.core.models.UserBasicInfo;
+import com.rigandbarter.core.models.UserBasicInfoResponse;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.listingservice.model.Listing;
@@ -27,6 +28,7 @@ public class ListingMapper {
                 .componentCategory(listing.getComponentCategory())
                 .imageUrls(listing.getImageUrls())
                 .userInfo(listing.getUserInfo())
+                .userVerified(listing.isUserVerified())
                 .build();
     }
 
@@ -37,10 +39,12 @@ public class ListingMapper {
      * @param stripeId The id of the product in stripe
      * @param imageUrls The urls to the listing's images
      * @param userInfo The basic user info for the listing user
+     * @param userVerified True if the user is verified
      * @return The created listing
      */
     public static Listing dtoToEntity(ListingRequest listingRequest, String userId,
-                                      String stripeId, List<String> imageUrls, UserBasicInfo userInfo) {
+                                      String stripeId, List<String> imageUrls, UserBasicInfoResponse userInfo,
+                                      boolean userVerified) {
         return Listing.builder()
                 .id(UUID.randomUUID().toString())
                 .userId(userId)
@@ -52,6 +56,7 @@ public class ListingMapper {
                 .componentCategory(listingRequest.getComponentCategory())
                 .imageUrls(imageUrls)
                 .userInfo(userInfo)
+                .userVerified(userVerified)
                 .build();
     }
 }

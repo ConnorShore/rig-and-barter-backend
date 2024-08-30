@@ -1,6 +1,7 @@
 package com.rigandbarter.listingservice.service.impl;
 
 import com.rigandbarter.core.models.UserBasicInfo;
+import com.rigandbarter.core.models.UserResponse;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.listingservice.dto.StripeProductRequest;
@@ -38,13 +39,16 @@ public class ListingServiceImpl implements IListingService {
         String userId = principal.getSubject();
 
         // Get the info for the user
-        UserBasicInfo userBasicInfo = webClientBuilder.build()
+        UserResponse userInfo = webClientBuilder.build()
                 .get()
-                .uri("http://user-service/api/user/" + userId + "/info/basic")
+                .uri("http://user-service/api/user/" + userId)
                 .headers(h -> h.setBearerAuth(principal.getTokenValue()))
                 .retrieve()
-                .bodyToMono(UserBasicInfo.class)
+                .bodyToMono(UserResponse.class)
                 .block();
+
+        if(userInfo == null)
+            throw new NotFoundException("Cannot get info for user. User doesn't exist in db");
 
         // Create a product in stripe for the listing
         StripeProductRequest stripeProductRequest = StripeProductRequest.builder()
@@ -80,7 +84,12 @@ public class ListingServiceImpl implements IListingService {
         }
 
         // Save the listing data to the document db
-        Listing listing = listingRepository.saveListing(ListingMapper.dtoToEntity(listingRequest, userId, productId, imageUrls, userBasicInfo));
+        Listing listing = listingRepository.saveListing(
+                ListingMapper.dtoToEntity(listingRequest, userId, productId, imageUrls,
+                        userInfo.getBasicInfo(),
+                        userInfo.getStripeInfo().isVerified()
+                )
+        );
         if(listing == null)
             throw new InternalServerErrorException("Failed to save listing to the database");
 
@@ -97,6 +106,15 @@ public class ListingServiceImpl implements IListingService {
     public ListingResponse getListingById(String listingId) {
         Listing listing = listingRepository.getListingById(listingId);
         return ListingMapper.entityToDto(listing);
+    }
+
+    @Override
+    public void setVerificationForListings(String userId, boolean verified) {
+        List<Listing> userListings = listingRepository.getAllListingsForUser(userId);
+        for(Listing listing : userListings)
+            listing.setUserVerified(verified);
+
+        listingRepository.saveListings(userListings);
     }
 
     @Override

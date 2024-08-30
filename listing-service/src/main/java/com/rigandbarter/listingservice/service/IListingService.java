@@ -32,6 +32,13 @@ public interface IListingService {
     ListingResponse getListingById(String listingId);
 
     /**
+     * Sets the listings for the user to be verified or not
+     * @param userId The id of the user to get listings for
+     * @param verified The verification status to set
+     */
+    void setVerificationForListings(String userId, boolean verified);
+
+    /**
      * Deletes a specific listing by its id
      * @param listingId The id of the listing to delete
      * @param deleteTransaction True if should delete associated transactions

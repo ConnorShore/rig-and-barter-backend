@@ -6,6 +6,7 @@ import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
 import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
+import com.rigandbarter.eventlibrary.events.UserVerifyEvent;
 import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
 import com.rigandbarter.core.models.StripePaymentMethodResponse;
 import com.rigandbarter.core.models.StripeCustomerResponse;
@@ -29,18 +30,22 @@ import org.apache.http.auth.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class PaymentServiceImpl implements IPaymentService {
 
+    private final String EVENT_SOURCE = "PaymentService";
     private final String stripeSecretKey;
     private final String stripeFeePercent;
     private final String USD_CURRENCY = "usd";
     private final String TEST_CARD_TOKEN = "tok_visa";
     private final RBEventProducer stripeCustomerCreatedProducer;
+    private final RBEventProducer userVerifyProducer;
     private final IStripeProductRepository stripeProductRepository;
     private final IStripeCustomerRepository stripeCustomerRepository;
     private final WebClient.Builder webClientBuilder;
@@ -56,6 +61,7 @@ public class PaymentServiceImpl implements IPaymentService {
         this.stripeCustomerRepository = stripeCustomerRepository;
         this.webClientBuilder = webClientBuilder;
         this.stripeCustomerCreatedProducer = rbEventProducerFactory.createProducer(StripeCustomerCreatedEvent.class);
+        this.userVerifyProducer = rbEventProducerFactory.createProducer(UserVerifyEvent.class);
     }
 
     @Override
@@ -121,6 +127,9 @@ public class PaymentServiceImpl implements IPaymentService {
 
         // Create event to update user object with stripe customer
         StripeCustomerCreatedEvent stripeCustomerCreatedEvent = StripeCustomerCreatedEvent.builder()
+                .id(UUID.randomUUID().toString())
+                .source(EVENT_SOURCE)
+                .creationDate(LocalDateTime.now())
                 .userId(stripeCustomer.getUserId())
                 .stripeCustomerId(stripeCustomer.getStripeId())
                 .build();
@@ -173,8 +182,10 @@ public class PaymentServiceImpl implements IPaymentService {
             account.delete();
         }
 
-        if(!stripeCustomer.getPaymentMethods().isEmpty())
+        if(!stripeCustomer.getPaymentMethods().isEmpty() && !stripeCustomer.isVerified()) {
             stripeCustomer.setVerified(true);
+            userVerifyProducer.send(createUserVerifyEvent(stripeCustomer.getUserId(), true));
+        }
 
         stripeCustomer.setAccountId(accountId);
         stripeCustomerRepository.save(stripeCustomer);
@@ -205,7 +216,12 @@ public class PaymentServiceImpl implements IPaymentService {
         }
 
         customer.setAccountId(null);
-        customer.setVerified(false);
+
+        if(customer.isVerified()) {
+            customer.setVerified(false);
+            userVerifyProducer.send(createUserVerifyEvent(customer.getUserId(), false));
+        }
+
         stripeCustomerRepository.save(customer);
     }
 
@@ -246,10 +262,10 @@ public class PaymentServiceImpl implements IPaymentService {
         currentPaymentMethods.add(newPaymentMethod);
         customer.setPaymentMethods(currentPaymentMethods);
 
-        if(currentPaymentMethods.isEmpty())
-            customer.setVerified(false);
-        else if(customer.getAccountId() != null)
+        if(customer.getAccountId() != null && !customer.isVerified()) {
             customer.setVerified(true);
+            userVerifyProducer.send(createUserVerifyEvent(customer.getUserId(), true));
+        }
 
         stripeCustomerRepository.save(customer);
 
@@ -281,8 +297,10 @@ public class PaymentServiceImpl implements IPaymentService {
                 )
         );
 
-        if(customer.getPaymentMethods().isEmpty())
+        if(customer.getPaymentMethods().isEmpty() && customer.isVerified()) {
             customer.setVerified(false);
+            userVerifyProducer.send(createUserVerifyEvent(customer.getUserId(), false));
+        }
 
         try {
             PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentId);
@@ -381,5 +399,21 @@ public class PaymentServiceImpl implements IPaymentService {
                 System.out.println();
                 break;
         }
+    }
+
+    /**
+     * Helper to construct a user verify event
+     * @param userId The id of the user
+     * @param isVerified True if the user is verified, false otherwise
+     * @return The created user verify event
+     */
+    private UserVerifyEvent createUserVerifyEvent(String userId, boolean isVerified) {
+        return UserVerifyEvent.builder()
+                .id(UUID.randomUUID().toString())
+                .source(EVENT_SOURCE)
+                .creationDate(LocalDateTime.now())
+                .userId(userId)
+                .isVerified(isVerified)
+                .build();
     }
 }
