@@ -10,6 +10,7 @@
         <module name="core-library" />
         <module name="payment-service" />
         <module name="event-library" />
+        <module name="component-scraper" />
         <module name="api-gateway" />
         <module name="transaction-service" />
         <module name="user-service" />
@@ -23,6 +24,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
+      <module name="component-scraper" options="-parameters" />
       <module name="core-library" options="-parameters" />
       <module name="discovery-service" options="-parameters" />
       <module name="event-library" options="-parameters" />

@@ -7,5 +7,5 @@ public enum ComponentCategory {
     CPU,
     GPU,
     POWER_SUPPLY,
-    MONITOR
+    CASE
 }
