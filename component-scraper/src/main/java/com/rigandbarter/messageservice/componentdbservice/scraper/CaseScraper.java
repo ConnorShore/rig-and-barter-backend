@@ -20,6 +20,8 @@ import java.util.List;
 
 public class CaseScraper extends Scraper<CaseComponent> {
 
+    private final String[] OMITTED_STRINGS = {"windowed", "window", "tempered", "isolated", "glass", "edition", "drgb", "argb"};
+
     public CaseScraper(String url, String outputFilePath) {
         super(url, outputFilePath);
     }
@@ -57,37 +59,55 @@ public class CaseScraper extends Scraper<CaseComponent> {
         return items.stream()
                 .filter(i -> i.getName() != null)
                 .peek(item -> {
+                    int stage = 0;
                     String name = item.getName();
                     try {
-                        int lastHyphen = name.lastIndexOf('-');
+                        int lastHyphen = name.lastIndexOf(" -- ");
+                        int index = 4;
+                        if(lastHyphen == -1) {
+                            lastHyphen = name.lastIndexOf(" - ");
+                            index = 3;
+                        }
+                        stage = 1;
 
-                        String colorWindowStr = name.substring(lastHyphen+1).toLowerCase();
-                        String updatedName = name.substring(0, lastHyphen).trim();
+                        String colorWindowStr = "";
+                        String updatedName = name;
+                        if(lastHyphen != -1) {
+                            colorWindowStr = name.substring(lastHyphen+index).toLowerCase();
+                            updatedName = name.substring(0, lastHyphen).trim();
+                        }
+
+                        stage = 2;
 
                         // See if it has window
                         boolean hasWindow = colorWindowStr.contains("window") || colorWindowStr.contains("glass");
-                        colorWindowStr = colorWindowStr.replaceAll("windowed", "");
-                        colorWindowStr = colorWindowStr.replaceAll("window", "");
-                        colorWindowStr = colorWindowStr.replaceAll("tempered", "");
-                        colorWindowStr = colorWindowStr.replaceAll("glass", "");
+
+                        // Remove strings to get color alone
+                        for(String str : OMITTED_STRINGS)
+                            colorWindowStr = colorWindowStr.replaceAll(str, "");
+
+                        stage = 3;
 
                         // Get the color
-                        // TODO: Get all colors working. Check output to see cases it fails on
-                        //  log when we make a color null
                         String color = colorWindowStr.trim();;
                         if(color.contains("/")) {
                             // Get first color if there are multiple colors
                             color = color.split("/")[0];
-                        } else {
-                            color = "";
                         }
+
+                        color = color.replaceAll("[^a-zA-Z ]", "").trim();
+
+                        if(color.isEmpty())
+                            System.out.println("Null color for: " + name);
+
+                        stage = 4;
 
                         // Use updated values
                         item.setName(updatedName);
                         item.setWindowed(hasWindow);
                         item.setColor(WordUtils.capitalizeFully(color));
                     } catch (Exception e) {
-                        System.err.println("Failed to convert item: " + name);
+                        System.err.printf("Failed to convert item: %s | Stage = %d\n", name, stage);
                     }
                 })
                 .toList();

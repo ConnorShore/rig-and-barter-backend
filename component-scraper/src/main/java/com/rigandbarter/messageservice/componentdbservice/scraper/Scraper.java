@@ -51,6 +51,7 @@ public abstract class Scraper<T> {
     protected void writeOutFailedConversions() {
         if(failedConversions.isEmpty())
             return;
+
         // Write failed conversions out if necessary
         try {
             System.out.printf("Failed Conversions for [%s]: %d%n", getName(), failedConversions.size());
@@ -63,7 +64,7 @@ public abstract class Scraper<T> {
 
             fileWriter.close();
         } catch (IOException e) {
-            System.err.println("Failed to create cases failed file");
+            System.err.println("Failed to create cases failed file for: " + outputFilePath);
         }
     }
 
