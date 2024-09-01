@@ -24,23 +24,17 @@ public class CaseScraper extends Scraper<CaseComponent> {
 
         List<CaseComponent> caseComponents = new ArrayList<>();
         Set<String> visited = new HashSet<>();
-        String urlStr = null;
         for(WebElement url : urls) {
-            try {
-                urlStr = url.getAttribute("href");
-                if(visited.contains(urlStr))
-                    continue;
+            String urlStr = url.getAttribute("href");
+            if(visited.contains(urlStr))
+                continue;
 
-                CaseComponent c = retrieveCaseData(urlStr);
+            CaseComponent c = retrieveCaseData(urlStr);
 
-                if(c != null)
-                    caseComponents.add(c);
+            if(c != null)
+                caseComponents.add(c);
 
-                visited.add(urlStr);
-            } catch (Exception e) {
-                failedConversions.add(urlStr);
-                System.err.println(e.getMessage());
-            }
+            visited.add(urlStr);
         }
 
         return caseComponents;

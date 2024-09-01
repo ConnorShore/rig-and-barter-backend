@@ -1,6 +1,7 @@
 package com.rigandbarter.messageservice.componentdbservice;
 
 import com.rigandbarter.messageservice.componentdbservice.scraper.CaseScraper;
+import com.rigandbarter.messageservice.componentdbservice.scraper.MotherboardScraper;
 import com.rigandbarter.messageservice.componentdbservice.scraper.Scraper;
 
 import java.io.File;
@@ -18,19 +19,22 @@ import java.util.zip.ZipOutputStream;
 
 public class ComponentDbServiceApplication {
 
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(1);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     private static final String OUTPUT_ZIP_NAME = "data_files.zip";
 
     public static void main(String[] args) {
         CaseScraper caseScraper = new CaseScraper("https://www.pc-kombo.com/us/components/cases", "cases.csv");
+        MotherboardScraper motherboardScraper = new MotherboardScraper("https://www.pc-kombo.com/us/components/motherboards", "motherboards.csv");
+
         executorService.execute(createScraperRunnable(caseScraper));
+        executorService.execute(createScraperRunnable(motherboardScraper));
 
         executorService.shutdown();
 
         while (!executorService.isTerminated()) { }
 
-        String[] fileNamesToAdd = {"cases.csv"};
+        String[] fileNamesToAdd = {"cases.csv", "motherboards.csv"};
         createZipAndAddFiles(fileNamesToAdd);
 
         System.out.println("All scrapers have finished execution");
