@@ -4,7 +4,10 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import com.rigandbarter.messageservice.componentdbservice.model.MotherboardComponent;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.io.FileWriter;
@@ -12,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,10 +61,30 @@ public abstract class Scraper<T> {
     /**
      * Methods to implement by different scrapers
      */
-    protected abstract List<T> scrape();
+    protected abstract T retrieveComponentData(String url);
     protected abstract List<T> cleanAndFilter(List<T> items);
     public abstract String getName();
 
+    private List<T> scrape() {
+        List<WebElement> urls = webDriver.findElements(By.cssSelector("li.columns a"));
+
+        List<T> components = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        for(WebElement url : urls) {
+            String urlStr = url.getAttribute("href");
+            if(visited.contains(urlStr))
+                continue;
+
+            T c = retrieveComponentData(urlStr);
+
+            if(c != null)
+                components.add(c);
+
+            visited.add(urlStr);
+        }
+
+        return components;
+    }
 
     /**
      * Writes out failed conversion urls to text file
@@ -98,5 +122,21 @@ public abstract class Scraper<T> {
         } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected String findName() {
+        return webDriver.findElement(By.tagName("h1")).getText();
+    }
+
+    protected String findImageUrl() {
+        WebElement imgElem = webDriver.findElement(By.cssSelector("img.img-responsive"));
+        if(imgElem == null)
+            return "";
+
+        return imgElem.getAttribute("src");
+    }
+
+    protected String findManufacturer() {
+        return webDriver.findElement(By.cssSelector("dd[itemprop=\"brand\"]")).getText();
     }
 }

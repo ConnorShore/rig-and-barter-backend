@@ -19,25 +19,43 @@ public class CaseScraper extends Scraper<CaseComponent> {
     }
 
     @Override
-    protected List<CaseComponent> scrape() {
-        List<WebElement> urls = webDriver.findElements(By.cssSelector("li.columns a"));
+    protected CaseComponent retrieveComponentData(String url) {
+        if(!url.contains("pc-kombo"))
+            return null;
 
-        List<CaseComponent> caseComponents = new ArrayList<>();
-        Set<String> visited = new HashSet<>();
-        for(WebElement url : urls) {
-            String urlStr = url.getAttribute("href");
-            if(visited.contains(urlStr))
-                continue;
+        CaseComponent caseComponent = null;
+        boolean tabOpen = false;
+        try {
+            webDriver.switchTo().newWindow(WindowType.TAB);
+            tabOpen = true;
 
-            CaseComponent c = retrieveCaseData(urlStr);
+            webDriver.get(url);
+            webDriver.manage()
+                    .timeouts()
+                    .implicitlyWait(Duration.ofMillis(1000));
 
-            if(c != null)
-                caseComponents.add(c);
+            caseComponent = CaseComponent.builder()
+                    .category(ComponentCategory.CASE)
+                    .name(findName())
+                    .imageUrl(findImageUrl())
+                    .manufacturer(findManufacturer())
+                    .motherboardType(findMotherboardType())
+                    .powerSupplyType(findPowerSupplyType())
+                    .gpuLength(findGpuLength())
+                    .color(null)        // will be acquired in clean phase
+                    .windowed(false)    // will be acquired in the clean phase
+                    .build();
+        } catch (Exception e) {
+            failedConversions.add(url);
+        }
+        finally {
+            if(tabOpen)
+                webDriver.close();
 
-            visited.add(urlStr);
+            webDriver.switchTo().window(baseWindowHandle);
         }
 
-        return caseComponents;
+        return caseComponent;
     }
 
     @Override
@@ -83,8 +101,8 @@ public class CaseScraper extends Scraper<CaseComponent> {
 
                         color = color.replaceAll("[^a-zA-Z ]", "").trim();
 
-                        if(color.isEmpty())
-                            System.out.println("Null color for: " + name);
+//                        if(color.isEmpty())
+//                            System.out.println("Null color for: " + name);
 
                         stage = 4;
 
@@ -102,61 +120,6 @@ public class CaseScraper extends Scraper<CaseComponent> {
     @Override
     public String getName() {
         return "Case Scraper";
-    }
-
-    private CaseComponent retrieveCaseData(String url) {
-        if(!url.contains("pc-kombo"))
-            return null;
-
-        CaseComponent caseComponent = null;
-        boolean tabOpen = false;
-        try {
-            webDriver.switchTo().newWindow(WindowType.TAB);
-            tabOpen = true;
-
-            webDriver.get(url);
-            webDriver.manage()
-                    .timeouts()
-                    .implicitlyWait(Duration.ofMillis(1000));
-
-            caseComponent = CaseComponent.builder()
-                    .category(ComponentCategory.CASE)
-                    .name(findName())
-                    .imageUrl(findImageUrl())
-                    .manufacturer(findManufacturer())
-                    .motherboardType(findMotherboardType())
-                    .powerSupplyType(findPowerSupplyType())
-                    .gpuLength(findGpuLength())
-                    .color(null)        // will be acquired in clean phase
-                    .windowed(false)    // will be acquired in the clean phase
-                    .build();
-        } catch (Exception e) {
-            failedConversions.add(url);
-        }
-        finally {
-            if(tabOpen)
-                webDriver.close();
-
-            webDriver.switchTo().window(baseWindowHandle);
-        }
-
-        return caseComponent;
-    }
-
-    private String findName() {
-        return webDriver.findElement(By.tagName("h1")).getText();
-    }
-
-    private String findImageUrl() {
-        WebElement imgElem = webDriver.findElement(By.cssSelector("img.img-responsive"));
-        if(imgElem == null)
-            return "";
-
-        return imgElem.getAttribute("src");
-    }
-
-    private String findManufacturer() {
-        return webDriver.findElement(By.cssSelector("dd[itemprop=\"brand\"]")).getText();
     }
 
     private String findMotherboardType() {
