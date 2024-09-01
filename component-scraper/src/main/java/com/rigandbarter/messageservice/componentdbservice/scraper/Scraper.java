@@ -1,10 +1,16 @@
 package com.rigandbarter.messageservice.componentdbservice.scraper;
 
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +54,18 @@ public abstract class Scraper<T> {
         writeToFile(ret);
     }
 
-    protected void writeOutFailedConversions() {
+    /**
+     * Methods to implement by different scrapers
+     */
+    protected abstract List<T> scrape();
+    protected abstract List<T> cleanAndFilter(List<T> items);
+    public abstract String getName();
+
+
+    /**
+     * Writes out failed conversion urls to text file
+     */
+    private void writeOutFailedConversions() {
         if(failedConversions.isEmpty())
             return;
 
@@ -68,8 +85,18 @@ public abstract class Scraper<T> {
         }
     }
 
-    protected abstract List<T> scrape();
-    protected abstract List<T> cleanAndFilter(List<T> items);
-    protected abstract void writeToFile(List<T> cleanedItems) throws IOException;
-    public abstract String getName();
+    /**\
+     * Writes out the list of components to a csv file
+     * @param cleanedItems The cleaned items to write out
+     */
+    private void writeToFile(List<T> cleanedItems) {
+        Path outputPath = Path.of(outputFilePath);
+        try (var writer = Files.newBufferedWriter(outputPath)) {
+            StatefulBeanToCsv<T> csv = new StatefulBeanToCsvBuilder<T>(writer)
+                    .build();
+            csv.write(cleanedItems);
+        } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

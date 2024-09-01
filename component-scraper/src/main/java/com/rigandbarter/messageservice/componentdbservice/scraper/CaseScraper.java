@@ -1,9 +1,4 @@
 package com.rigandbarter.messageservice.componentdbservice.scraper;
-
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import com.rigandbarter.core.models.ComponentCategory;
 import com.rigandbarter.messageservice.componentdbservice.model.CaseComponent;
 import org.apache.commons.text.WordUtils;
@@ -11,9 +6,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WindowType;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.util.*;
 import java.util.List;
@@ -114,20 +106,6 @@ public class CaseScraper extends Scraper<CaseComponent> {
     }
 
     @Override
-    protected void writeToFile(List<CaseComponent> cleanedItems) throws IOException {
-        Path outputPath = Path.of(outputFilePath);
-        try (var writer = Files.newBufferedWriter(outputPath)) {
-            StatefulBeanToCsv<CaseComponent> csv = new StatefulBeanToCsvBuilder<CaseComponent>(writer)
-                    .build();
-            csv.write(cleanedItems);
-        } catch (CsvRequiredFieldEmptyException e) {
-            throw new RuntimeException(e);
-        } catch (CsvDataTypeMismatchException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public String getName() {
         return "Case Scraper";
     }
@@ -136,7 +114,6 @@ public class CaseScraper extends Scraper<CaseComponent> {
         if(!url.contains("pc-kombo"))
             return null;
 
-//        String prevWindowHandle = webDriver.getWindowHandle();
         CaseComponent caseComponent = null;
         boolean tabOpen = false;
         try {
