@@ -1,4 +1,4 @@
-package com.rigandbarter.userservice.dto;
+package com.rigandbarter.core.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

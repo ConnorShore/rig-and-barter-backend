@@ -173,6 +173,8 @@ public class TransactionServiceImpl implements ITransactionService {
         transaction.setState(TransactionState.CANCELLED);
         transactionRepository.save(transaction);
 
+        //TODO: Send transaction cancelled event to delete messages associated with it
+
         return TransactionMapper.entityToDto(transaction);
     }
 

@@ -1,5 +1,7 @@
 package com.rigandbarter.userservice.service;
 
+import com.rigandbarter.core.models.UserBasicInfoResponse;
+import com.rigandbarter.core.models.UserResponse;
 import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
 import com.rigandbarter.userservice.dto.*;
 import com.rigandbarter.userservice.util.exceptions.UpdateUserException;

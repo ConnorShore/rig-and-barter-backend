@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j
 public class MongoDbMessageRepositoryImpl extends SimpleMongoRepository<MessageGroup, String> implements IMessageRepository {
 
-    private final MongoTemplate mongoTemplate;
+            private final MongoTemplate mongoTemplate;
 
     public MongoDbMessageRepositoryImpl(MongoOperations mongoOperations, MongoTemplate mongoTemplate) {
         super(new MongoRepositoryFactory(mongoOperations).getEntityInformation(MessageGroup.class), mongoOperations);

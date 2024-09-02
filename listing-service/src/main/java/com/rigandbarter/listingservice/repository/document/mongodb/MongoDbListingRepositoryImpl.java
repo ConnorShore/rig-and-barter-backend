@@ -5,6 +5,9 @@ import com.rigandbarter.listingservice.repository.document.IListingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.stereotype.Repository;
@@ -16,8 +19,12 @@ import java.util.List;
 @ConditionalOnProperty(value = "rb.storage.document", havingValue = "mongodb")
 @Slf4j
 public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Listing, String> implements IListingRepository {
-    public MongoDbListingRepositoryImpl(MongoOperations mongoOperations) {
+
+    private final MongoTemplate mongoTemplate;
+
+    public MongoDbListingRepositoryImpl(MongoOperations mongoOperations, MongoTemplate mongoTemplate) {
         super(new MongoRepositoryFactory(mongoOperations).getEntityInformation(Listing.class), mongoOperations);
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
@@ -26,8 +33,21 @@ public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Listing,
     }
 
     @Override
+    public List<Listing> saveListings(List<Listing> listings) {
+        return super.saveAll(listings);
+    }
+
+    @Override
     public List<Listing> getAllListings() {
         return super.findAll();
+    }
+
+    @Override
+    public List<Listing> getAllListingsForUser(String userId) {
+        Criteria buyer = Criteria.where("userId").is(userId);
+        Query query = new Query();
+        query.addCriteria(buyer);
+        return  mongoTemplate.find(query, Listing.class);
     }
 
     @Override
