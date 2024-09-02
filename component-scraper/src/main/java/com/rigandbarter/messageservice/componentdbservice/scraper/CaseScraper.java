@@ -4,10 +4,7 @@ import com.rigandbarter.messageservice.componentdbservice.model.CaseComponent;
 import org.apache.commons.text.WordUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WindowType;
 
-import java.time.Duration;
-import java.util.*;
 import java.util.List;
 
 public class CaseScraper extends Scraper<CaseComponent> {
@@ -19,43 +16,18 @@ public class CaseScraper extends Scraper<CaseComponent> {
     }
 
     @Override
-    protected CaseComponent retrieveComponentData(String url) {
-        if(!url.contains("pc-kombo"))
-            return null;
-
-        CaseComponent caseComponent = null;
-        boolean tabOpen = false;
-        try {
-            webDriver.switchTo().newWindow(WindowType.TAB);
-            tabOpen = true;
-
-            webDriver.get(url);
-            webDriver.manage()
-                    .timeouts()
-                    .implicitlyWait(Duration.ofMillis(1000));
-
-            caseComponent = CaseComponent.builder()
-                    .category(ComponentCategory.CASE)
-                    .name(findName())
-                    .imageUrl(findImageUrl())
-                    .manufacturer(findManufacturer())
-                    .motherboardType(findMotherboardType())
-                    .powerSupplyType(findPowerSupplyType())
-                    .gpuLength(findGpuLength())
-                    .color(null)        // will be acquired in clean phase
-                    .windowed(false)    // will be acquired in the clean phase
-                    .build();
-        } catch (Exception e) {
-            failedConversions.add(url);
-        }
-        finally {
-            if(tabOpen)
-                webDriver.close();
-
-            webDriver.switchTo().window(baseWindowHandle);
-        }
-
-        return caseComponent;
+    protected CaseComponent retrieveComponentData() {
+        return CaseComponent.builder()
+                .category(ComponentCategory.CASE)
+                .name(findName())
+                .imageUrl(findImageUrl())
+                .manufacturer(findManufacturer())
+                .motherboardType(findMotherboardType())
+                .powerSupplyType(findPowerSupplyType())
+                .gpuLength(findGpuLength())
+                .color(null)        // will be acquired in clean phase
+                .windowed(false)    // will be acquired in the clean phase
+                .build();
     }
 
     @Override

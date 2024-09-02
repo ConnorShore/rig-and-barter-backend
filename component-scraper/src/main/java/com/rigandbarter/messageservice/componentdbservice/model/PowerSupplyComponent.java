@@ -11,10 +11,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class MotherboardComponent extends Component {
+public class PowerSupplyComponent extends Component {
     private String connector;
-    private String socket;
-    private String memoryType;
-    private int memoryCapacity;
-    private int memorySlots;
+    private int watts;
+    private int num8PinPCIE;
+    private int num6PinPCIE;
 }

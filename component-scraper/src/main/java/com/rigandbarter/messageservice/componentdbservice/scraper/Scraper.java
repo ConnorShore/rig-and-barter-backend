@@ -4,10 +4,10 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-import com.rigandbarter.messageservice.componentdbservice.model.MotherboardComponent;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.io.FileWriter;
@@ -45,23 +45,23 @@ public abstract class Scraper<T> {
 
         // Scrape out objects
         baseWindowHandle = webDriver.getWindowHandle();
-        List<T> ret = scrape();
+        List<T> scrapedComponents = scrape();
         webDriver.close();
 
         // Write out failed conversions to error file
         writeOutFailedConversions();
 
         // Clean the items
-        ret = cleanAndFilter(ret);
+        scrapedComponents = cleanAndFilter(scrapedComponents);
 
         // Write out items to output
-        writeToFile(ret);
+        writeToFile(scrapedComponents);
     }
 
     /**
      * Methods to implement by different scrapers
      */
-    protected abstract T retrieveComponentData(String url);
+    protected abstract T retrieveComponentData();
     protected abstract List<T> cleanAndFilter(List<T> items);
     public abstract String getName();
 
@@ -75,7 +75,7 @@ public abstract class Scraper<T> {
             if(visited.contains(urlStr))
                 continue;
 
-            T c = retrieveComponentData(urlStr);
+            T c = scrapeComponent(urlStr);
 
             if(c != null)
                 components.add(c);
@@ -86,14 +86,41 @@ public abstract class Scraper<T> {
         return components;
     }
 
+    private T scrapeComponent(String url) {
+        if(!url.contains("pc-kombo"))
+            return null;
+
+        T component = null;
+        boolean tabOpen = false;
+        try {
+            webDriver.switchTo().newWindow(WindowType.TAB);
+            tabOpen = true;
+
+            webDriver.get(url);
+            webDriver.manage()
+                    .timeouts()
+                    .implicitlyWait(Duration.ofMillis(1000));
+
+            component = retrieveComponentData();
+
+        } catch (Exception e) {
+            failedConversions.add(url);
+        }
+        finally {
+            if(tabOpen)
+                webDriver.close();
+
+            webDriver.switchTo().window(baseWindowHandle);
+        }
+
+        return component;
+    }
+
     /**
      * Writes out failed conversion urls to text file
      */
     private void writeOutFailedConversions() {
-        if(failedConversions.isEmpty())
-            return;
-
-        // Write failed conversions out if necessary
+        // Write failed conversions
         try {
             System.out.printf("Failed Conversions for [%s]: %d%n", getName(), failedConversions.size());
             String fileName = outputFilePath.split("\\.")[0] + "-failed.txt";

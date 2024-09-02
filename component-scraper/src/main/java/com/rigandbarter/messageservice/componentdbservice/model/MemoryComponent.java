@@ -11,10 +11,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class MotherboardComponent extends Component {
-    private String connector;
-    private String socket;
-    private String memoryType;
-    private int memoryCapacity;
-    private int memorySlots;
+public class MemoryComponent extends Component {
+    private String type;
+    private int size;
+    private int clockSpeed;
+    private int numSticks;
 }
