@@ -1,11 +1,12 @@
 package com.rigandbarter.core.models;
 
 public enum ComponentCategory {
-    STORAGE,
+    HARD_DRIVE,
+    SOLID_STATE_DRIVE,
     MOTHERBOARD,
     MEMORY,
     CPU,
     GPU,
     POWER_SUPPLY,
-    MONITOR
+    CASE
 }

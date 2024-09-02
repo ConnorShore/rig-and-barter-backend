@@ -26,6 +26,7 @@
         <module>user-service</module>
         <module>payment-service</module>
         <module>message-service</module>
+        <module>component-scraper</module>
     </modules>
 
 	<properties>
