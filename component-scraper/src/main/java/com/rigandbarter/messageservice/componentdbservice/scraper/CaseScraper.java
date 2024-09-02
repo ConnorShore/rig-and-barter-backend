@@ -35,7 +35,6 @@ public class CaseScraper extends Scraper<CaseComponent> {
         return items.stream()
                 .filter(i -> i.getName() != null)
                 .peek(item -> {
-                    int stage = 0;
                     String name = item.getName();
                     try {
                         int lastHyphen = name.lastIndexOf(" -- ");
@@ -44,7 +43,6 @@ public class CaseScraper extends Scraper<CaseComponent> {
                             lastHyphen = name.lastIndexOf(" - ");
                             index = 3;
                         }
-                        stage = 1;
 
                         String colorWindowStr = "";
                         String updatedName = name;
@@ -53,16 +51,12 @@ public class CaseScraper extends Scraper<CaseComponent> {
                             updatedName = name.substring(0, lastHyphen).trim();
                         }
 
-                        stage = 2;
-
                         // See if it has window
                         boolean hasWindow = colorWindowStr.contains("window") || colorWindowStr.contains("glass");
 
                         // Remove strings to get color alone
                         for(String str : OMITTED_STRINGS)
                             colorWindowStr = colorWindowStr.replaceAll(str, "");
-
-                        stage = 3;
 
                         // Get the color
                         String color = colorWindowStr.trim();;
@@ -73,17 +67,12 @@ public class CaseScraper extends Scraper<CaseComponent> {
 
                         color = color.replaceAll("[^a-zA-Z ]", "").trim();
 
-//                        if(color.isEmpty())
-//                            System.out.println("Null color for: " + name);
-
-                        stage = 4;
-
                         // Use updated values
                         item.setName(updatedName);
                         item.setWindowed(hasWindow);
                         item.setColor(WordUtils.capitalizeFully(color));
                     } catch (Exception e) {
-                        System.err.printf("Failed to convert item: %s | Stage = %d\n", name, stage);
+                        System.err.printf("Failed to convert item: %s\n", name);
                     }
                 })
                 .toList();

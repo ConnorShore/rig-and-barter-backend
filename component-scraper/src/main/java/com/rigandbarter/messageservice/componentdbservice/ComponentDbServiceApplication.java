@@ -16,7 +16,7 @@ import java.util.zip.ZipOutputStream;
 
 public class ComponentDbServiceApplication {
 
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(6);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(8);
     private static final String OUTPUT_ZIP_NAME = "data_files.zip";
     private static final String FAILED_ZIP_NAME = "failed_files.zip";
 
@@ -27,6 +27,8 @@ public class ComponentDbServiceApplication {
         VideoCardScraper videoCardScraper = new VideoCardScraper("https://www.pc-kombo.com/us/components/gpus", "gpu.csv");
         MemoryScraper memoryScraper = new MemoryScraper("https://www.pc-kombo.com/us/components/rams", "memory.csv");
         PowerSupplyScraper powerSupplyScraper = new PowerSupplyScraper("https://www.pc-kombo.com/us/components/psus", "power-supply.csv");
+        HardDriveScraper hardDriveScraper = new HardDriveScraper("https://www.pc-kombo.com/us/components/hdds", "hard-drive.csv");
+        SolidStateDriveScraper solidStateDriveScraper = new SolidStateDriveScraper("https://www.pc-kombo.com/us/components/ssds", "solid-state-drive.csv");;
 
         executorService.execute(createScraperRunnable(caseScraper));
         executorService.execute(createScraperRunnable(motherboardScraper));
@@ -34,6 +36,8 @@ public class ComponentDbServiceApplication {
         executorService.execute(createScraperRunnable(videoCardScraper));
         executorService.execute(createScraperRunnable(memoryScraper));
         executorService.execute(createScraperRunnable(powerSupplyScraper));
+        executorService.execute(createScraperRunnable(hardDriveScraper));
+        executorService.execute(createScraperRunnable(solidStateDriveScraper));
 
         executorService.shutdown();
 
@@ -42,14 +46,17 @@ public class ComponentDbServiceApplication {
         // Write out data files and failed files
         String[] fileNamesToAdd = {
                 "case.csv", "motherboard.csv", "cpu.csv",
-                "gpu.csv", "memory.csv", "power-supply.csv"
+                "gpu.csv", "memory.csv", "power-supply.csv",
+                "hard-drive.csv", "solid-state-drive.csv"
         };
-        createZipAndAddFiles(OUTPUT_ZIP_NAME, fileNamesToAdd);
 
         String[] failedNamesToAdd = {
                 "case-failed.txt", "motherboard-failed.txt", "cpu-failed.txt",
-                "gpu-failed.txt", "memory-failed.txt", "power-supply-failed.txt"
+                "gpu-failed.txt", "memory-failed.txt", "power-supply-failed.txt",
+                "hard-drive-failed.txt", "solid-state-drive-failed.txt"
         };
+
+        createZipAndAddFiles(OUTPUT_ZIP_NAME, fileNamesToAdd);
         createZipAndAddFiles(FAILED_ZIP_NAME, failedNamesToAdd);
 
         System.out.println("All scrapers have finished execution!");

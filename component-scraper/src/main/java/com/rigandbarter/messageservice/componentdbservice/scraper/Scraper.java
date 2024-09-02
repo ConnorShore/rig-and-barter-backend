@@ -156,11 +156,15 @@ public abstract class Scraper<T> {
     }
 
     protected String findImageUrl() {
-        WebElement imgElem = webDriver.findElement(By.cssSelector("img.img-responsive"));
-        if(imgElem == null)
-            return "";
+        try {
+            WebElement imgElem = webDriver.findElement(By.cssSelector("img.img-responsive"));
+            if(imgElem == null)
+                return "";
 
-        return imgElem.getAttribute("src");
+            return imgElem.getAttribute("src");
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     protected String findManufacturer() {
