@@ -1,6 +1,7 @@
 package com.rigandbarter.messageservice.componentdbservice;
 
 import com.rigandbarter.messageservice.componentdbservice.scraper.*;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,12 +16,34 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ComponentDbServiceApplication {
-
     private static final ExecutorService executorService = Executors.newFixedThreadPool(8);
     private static final String OUTPUT_ZIP_NAME = "data_files.zip";
     private static final String FAILED_ZIP_NAME = "failed_files.zip";
+    private static final String OUTPUT_DIRECTORY = "/component-scraper/dist/out";
+    private static final String RECENT_RUNS_DIRECTORY = "/component-scraper/dist/recent";
+    private static final String[] DATA_FILE_NAMES = {
+            "case.csv", "motherboard.csv", "cpu.csv",
+            "gpu.csv", "memory.csv", "power-supply.csv",
+            "hard-drive.csv", "solid-state-drive.csv"
+    };
+    private static final String[] FAILED_FILE_NAMES = {
+            "case-failed.txt", "motherboard-failed.txt", "cpu-failed.txt",
+            "gpu-failed.txt", "memory-failed.txt", "power-supply-failed.txt",
+            "hard-drive-failed.txt", "solid-state-drive-failed.txt"
+    };
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        scrapeContent();
+        packageScrapedContent();
+
+        System.out.println("All scrapers have finished execution!");
+        System.exit(0);
+    }
+
+    /**
+     * Scrapes content for all component types
+     */
+    private static void scrapeContent() {
         CaseScraper caseScraper = new CaseScraper("https://www.pc-kombo.com/us/components/cases", "case.csv");
         MotherboardScraper motherboardScraper = new MotherboardScraper("https://www.pc-kombo.com/us/components/motherboards", "motherboard.csv");
         ProcessorScraper processorScraper = new ProcessorScraper("https://www.pc-kombo.com/us/components/cpus", "cpu.csv");
@@ -42,30 +65,43 @@ public class ComponentDbServiceApplication {
         executorService.shutdown();
 
         while (!executorService.isTerminated()) { }
-
-        // Write out data files and failed files
-        String[] fileNamesToAdd = {
-                "case.csv", "motherboard.csv", "cpu.csv",
-                "gpu.csv", "memory.csv", "power-supply.csv",
-                "hard-drive.csv", "solid-state-drive.csv"
-        };
-
-        String[] failedNamesToAdd = {
-                "case-failed.txt", "motherboard-failed.txt", "cpu-failed.txt",
-                "gpu-failed.txt", "memory-failed.txt", "power-supply-failed.txt",
-                "hard-drive-failed.txt", "solid-state-drive-failed.txt"
-        };
-
-        createZipAndAddFiles(OUTPUT_ZIP_NAME, fileNamesToAdd);
-        createZipAndAddFiles(FAILED_ZIP_NAME, failedNamesToAdd);
-
-        System.out.println("All scrapers have finished execution!");
-        System.exit(0);
     }
 
-    private static void createZipAndAddFiles(String fileName, String... fileNamesToAdd) {
+    /**
+     * Package the zipped data files
+     * @throws IOException Fails on io
+     */
+    private static void packageScrapedContent() throws IOException {
+        // Store previous output files to the recents directory to do diffs on later
+        String out = System.getProperty("user.dir") + OUTPUT_DIRECTORY;
+        File outDir = new File(out);
+
+        if(outDir.exists()) {
+            String recentRuns = System.getProperty("user.dir") + RECENT_RUNS_DIRECTORY;
+            File recentRunsDir = new File(recentRuns);
+
+            FileUtils.deleteDirectory(recentRunsDir);
+            recentRunsDir.mkdirs();
+
+            FileUtils.copyDirectory(outDir, recentRunsDir);
+        } else {
+            outDir.mkdirs();
+        }
+
+        // Create and zip up data files and failed files
+        createZipAndAddFiles(outDir, OUTPUT_ZIP_NAME, DATA_FILE_NAMES);
+        createZipAndAddFiles(outDir, FAILED_ZIP_NAME, FAILED_FILE_NAMES);
+    }
+
+    /**
+     * Creates a zip file that contains the list of all files
+     * @param directory The directory of the zip file
+     * @param fileName The name of the zip file
+     * @param fileNamesToAdd The list of files to add to the zip
+     */
+    private static void createZipAndAddFiles(File directory, String fileName, String... fileNamesToAdd) {
         try {
-            FileOutputStream fos = new FileOutputStream(fileName);
+            FileOutputStream fos = new FileOutputStream(String.valueOf(Paths.get(directory.getAbsolutePath(), fileName)));
             ZipOutputStream zos = new ZipOutputStream(fos);
 
             for (String aFile : fileNamesToAdd) {
@@ -89,6 +125,12 @@ public class ComponentDbServiceApplication {
         }
     }
 
+    /**
+     * Creates a runnable object for the passed in scraper
+     * @param scraper The scraper to create a runnable for
+     * @return The runnable version of the scaper
+     * @param <T> The component type for the scraper
+     */
     private static <T> Runnable createScraperRunnable(Scraper<T> scraper) {
         return () -> {
             try {
