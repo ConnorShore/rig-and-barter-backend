@@ -1,4 +1,4 @@
-package com.rigandbarter.componentscraper.model;
+package com.rigandbarter.componentservice.model;
 
 import com.rigandbarter.core.models.ComponentCategory;
 import lombok.AllArgsConstructor;

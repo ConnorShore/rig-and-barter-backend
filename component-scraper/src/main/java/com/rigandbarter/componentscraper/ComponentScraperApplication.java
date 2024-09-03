@@ -2,14 +2,26 @@ package com.rigandbarter.componentscraper;
 
 import com.rigandbarter.componentscraper.scraper.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.HttpClients;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
@@ -17,6 +29,7 @@ import java.util.zip.ZipOutputStream;
 
 public class ComponentScraperApplication {
     private static final ExecutorService executorService = Executors.newFixedThreadPool(8);
+
     private static final String OUTPUT_ZIP_NAME = "data_files.zip";
     private static final String FAILED_ZIP_NAME = "failed_files.zip";
     private static final String OUTPUT_DIRECTORY = "/component-scraper/dist/out";
@@ -32,12 +45,37 @@ public class ComponentScraperApplication {
             "hard-drive-failed.txt", "solid-state-drive-failed.txt"
     };
 
-    public static void main(String[] args) throws IOException {
-        scrapeContent();
-        packageScrapedContent();
+    private static final String POST_URL = "http://localhost:8080/api/component";
 
-        System.out.println("All scrapers have finished execution!");
-        System.exit(0);
+    public static void main(String[] args) {
+        try {
+            scrapeContent();
+            File zipFile = packageScrapedContent();
+            sendPackagedContent(zipFile);
+
+            System.out.println("All scrapers have finished execution!");
+            System.exit(0);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            System.exit(-1);
+        }
+    }
+
+    /**
+     * Send the content to the component-service to be saved
+     */
+    private static void sendPackagedContent(File file) throws IOException {
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(POST_URL);
+        ContentBody fileContent = new FileBody(file); //For tar.gz: "application/x-gzip"
+        HttpEntity multipart = MultipartEntityBuilder.create()
+                .addPart("dataZip", fileContent)
+                .build();
+
+        httpPost.setEntity(multipart);
+        HttpResponse response = httpClient.execute(httpPost);
+        if(response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED)
+            throw new RuntimeException("Failed to post contents to component-service");
     }
 
     /**
@@ -71,7 +109,7 @@ public class ComponentScraperApplication {
      * Package the zipped data files
      * @throws IOException Fails on io
      */
-    private static void packageScrapedContent() throws IOException {
+    private static File packageScrapedContent() throws IOException {
         // Store previous output files to the recents directory to do diffs on later
         String out = System.getProperty("user.dir") + OUTPUT_DIRECTORY;
         File outDir = new File(out);
@@ -89,8 +127,9 @@ public class ComponentScraperApplication {
         }
 
         // Create and zip up data files and failed files
-        createZipAndAddFiles(outDir, OUTPUT_ZIP_NAME, DATA_FILE_NAMES);
+        File outFile = createZipAndAddFiles(outDir, OUTPUT_ZIP_NAME, DATA_FILE_NAMES);
         createZipAndAddFiles(outDir, FAILED_ZIP_NAME, FAILED_FILE_NAMES);
+        return outFile;
     }
 
     /**
@@ -99,10 +138,11 @@ public class ComponentScraperApplication {
      * @param fileName The name of the zip file
      * @param fileNamesToAdd The list of files to add to the zip
      */
-    private static void createZipAndAddFiles(File directory, String fileName, String... fileNamesToAdd) {
+    private static File createZipAndAddFiles(File directory, String fileName, String... fileNamesToAdd) {
+        ZipOutputStream zos;
         try {
             FileOutputStream fos = new FileOutputStream(String.valueOf(Paths.get(directory.getAbsolutePath(), fileName)));
-            ZipOutputStream zos = new ZipOutputStream(fos);
+            zos = new ZipOutputStream(fos);
 
             for (String aFile : fileNamesToAdd) {
                 zos.putNextEntry(new ZipEntry(new File(aFile).getName()));
@@ -115,14 +155,17 @@ public class ComponentScraperApplication {
             }
 
             zos.close();
-
             System.out.printf("Data files zipped successfully [%s]\n", fileName);
+
+            return new File(String.valueOf(Paths.get(directory.getAbsolutePath(), fileName)));
 
         } catch (FileNotFoundException ex) {
             System.err.println("A file does not exist: " + ex);
         } catch (IOException ex) {
             System.err.println("I/O error: " + ex);
         }
+
+        return null;
     }
 
     /**
