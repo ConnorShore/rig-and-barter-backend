@@ -1,4 +1,4 @@
-package com.rigandbarter.componentservice.controller.service;
+package com.rigandbarter.componentservice.service;
 
 import com.rigandbarter.componentservice.dto.ComponentResponse;
 import com.rigandbarter.core.models.ComponentCategory;

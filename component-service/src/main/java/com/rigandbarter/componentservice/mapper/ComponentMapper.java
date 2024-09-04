@@ -1,4 +1,4 @@
-package com.rigandbarter.componentservice.controller.mapper;
+package com.rigandbarter.componentservice.mapper;
 
 import com.rigandbarter.componentservice.dto.*;
 import com.rigandbarter.componentservice.model.*;

@@ -1,6 +1,7 @@
 package com.rigandbarter.componentservice.controller;
 
 import com.rigandbarter.componentservice.dto.ComponentResponse;
+import com.rigandbarter.core.models.ComponentCategory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +19,22 @@ public interface IComponentController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     List<ComponentResponse> updateComponentDb(@RequestPart(name = "dataZip") MultipartFile dataZipFile);
+
+    /**
+     * Updates the component database with new entries
+     * @return List of created components
+     */
+    @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
+    List<ComponentResponse> getAllComponents();
+
+    /**
+     * Updates the component database with new entries
+     * @return List of created components
+     */
+    @GetMapping("{category}")
+    @ResponseStatus(HttpStatus.OK)
+    List<ComponentResponse> getAllComponentsOfCategory(@PathVariable ComponentCategory category);
 
     /**
      * Status endpoint to see if service is running

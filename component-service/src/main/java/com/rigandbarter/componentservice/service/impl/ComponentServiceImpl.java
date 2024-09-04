@@ -1,9 +1,9 @@
-package com.rigandbarter.componentservice.controller.service.impl;
+package com.rigandbarter.componentservice.service.impl;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.rigandbarter.componentservice.controller.mapper.ComponentMapper;
-import com.rigandbarter.componentservice.controller.service.IComponentService;
+import com.rigandbarter.componentservice.mapper.ComponentMapper;
+import com.rigandbarter.componentservice.service.IComponentService;
 import com.rigandbarter.componentservice.dto.*;
 import com.rigandbarter.componentservice.model.*;
 import com.rigandbarter.componentservice.repository.document.IComponentRepository;
@@ -132,19 +132,21 @@ public class ComponentServiceImpl implements IComponentService {
         return files;
     }
 
-    private ComponentResponse componentToResponse(Component compoennt) {
-        switch (compoennt.getCategory()) {
-            case HARD_DRIVE -> ComponentMapper.entityToDto((HardDriveComponent) compoennt);
-            case SOLID_STATE_DRIVE -> ComponentMapper.entityToDto((SolidStateDriveComponent) compoennt);
-            case MOTHERBOARD -> ComponentMapper.entityToDto((MotherboardComponent) compoennt);
-            case MEMORY -> ComponentMapper.entityToDto((MemoryComponent) compoennt);
-            case CPU -> ComponentMapper.entityToDto((ProcessorComponent) compoennt);
-            case GPU -> ComponentMapper.entityToDto((VideoCardComponent) compoennt);
-            case POWER_SUPPLY -> ComponentMapper.entityToDto((PowerSupplyComponent) compoennt);
-            case CASE -> ComponentMapper.entityToDto((CaseComponent) compoennt);
-            default -> log.error("FAiled to convert component: " + compoennt.getId());
-        }
+    private ComponentResponse componentToResponse(Component component) {
+        ComponentResponse res = switch (component.getCategory()) {
+            case HARD_DRIVE -> ComponentMapper.entityToDto((HardDriveComponent) component);
+            case SOLID_STATE_DRIVE -> ComponentMapper.entityToDto((SolidStateDriveComponent) component);
+            case MOTHERBOARD -> ComponentMapper.entityToDto((MotherboardComponent) component);
+            case MEMORY -> ComponentMapper.entityToDto((MemoryComponent) component);
+            case CPU -> ComponentMapper.entityToDto((ProcessorComponent) component);
+            case GPU -> ComponentMapper.entityToDto((VideoCardComponent) component);
+            case POWER_SUPPLY -> ComponentMapper.entityToDto((PowerSupplyComponent) component);
+            case CASE -> ComponentMapper.entityToDto((CaseComponent) component);
+        };
 
-        return null;
+        if(res == null)
+            log.error("Failed to convert component: " + component.getId());
+
+        return res;
     }
 }
