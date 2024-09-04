@@ -66,7 +66,7 @@ public abstract class Scraper<T> {
     public abstract String getName();
 
     private List<T> scrape() {
-        List<WebElement> urls = webDriver.findElements(By.cssSelector("li.columns a")).stream().limit(20).toList();
+        List<WebElement> urls = webDriver.findElements(By.cssSelector("li.columns a"));
 
         List<T> components = new ArrayList<>();
         Set<String> visited = new HashSet<>();

@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 @Service
 @RequiredArgsConstructor
@@ -29,90 +28,28 @@ public class ComponentServiceImpl implements IComponentService {
 
     @Override
     public List<ComponentResponse> saveAllComponents(MultipartFile zipDataFile) {
-        List<String> files = new ArrayList<>();
-        List<Component> components = new ArrayList<>();
+
+        // Convert the zip data to components
+        List<Component> componentsToAdd = new ArrayList<>();
         try {
-            ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipDataFile.getBytes()));
-            ZipEntry entry = null;
-            while ((entry = zipStream.getNextEntry()) != null) {
-
-                String entryName = entry.getName();
-
-                FileOutputStream out = new FileOutputStream(entryName);
-
-                byte[] byteBuff = new byte[4096];
-                int bytesRead = 0;
-                while ((bytesRead = zipStream.read(byteBuff)) != -1)
-                {
-                    out.write(byteBuff, 0, bytesRead);
-                }
-
-                out.close();
-                zipStream.closeEntry();
-                files.add(entryName);
+            List<String> files = createFilesFromZip(zipDataFile);
+            for (String file : files) {
+                componentsToAdd.addAll(extractComponentPojosFromFile(file));
             }
-            zipStream.close();
         }
-        catch (IOException e) {
+        catch(Exception e) {
             log.error(e.getMessage());
             return null;
         }
 
-        try {
-            for(String file : files) {
-                Reader reader = new BufferedReader(new FileReader(file));
-                Class classToUse;
-                switch(file) {
-                    case "case.csv":
-                        classToUse = CaseComponent.class;
-                        break;
-                    case "motherboard.csv":
-                        classToUse = MotherboardComponent.class;
-                        break;
-                    case "cpu.csv":
-                        classToUse = ProcessorComponent.class;
-                        break;
-                    case "gpu.csv":
-                        classToUse = VideoCardComponent.class;
-                        break;
-                    case "memory.csv":
-                        classToUse = MemoryComponent.class;
-                        break;
-                    case "power-supply.csv":
-                        classToUse = PowerSupplyComponent.class;
-                        break;
-                    case "hard-drive.csv":
-                        classToUse = HardDriveComponent.class;
-                        break;
-                    case "solid-state-drive.csv":
-                        classToUse = SolidStateDriveComponent.class;
-                        break;
-                    default:
-                        log.error("Cannot convert file to objects: " + file);
-                        return null;
-
-                }
-                CsvToBean<Component> csvReader = new CsvToBeanBuilder(reader)
-                        .withType(classToUse)
-                        .withSeparator(',')
-                        .withIgnoreLeadingWhiteSpace(true)
-                        .withIgnoreEmptyLine(true)
-                        .build();
-
-                List<Component> results = csvReader.parse();
-                components.addAll(results);
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return null;
-        }
-
+        // Remove components that already exist in the database
         List<Component> currentComponents = componentRepository.getAllComponents().stream()
                                                 .peek(c -> c.setId(null))
                                                 .toList();
-        components.removeAll(currentComponents);
+        componentsToAdd.removeAll(currentComponents);
 
-        List<Component> savedComponents = componentRepository.saveAllComponents(components);
+        // Save the unique components to the database
+        List<Component> savedComponents = componentRepository.saveAllComponents(componentsToAdd);
 
         return savedComponents.stream()
                 .map(this::componentToResponse)
@@ -133,7 +70,69 @@ public class ComponentServiceImpl implements IComponentService {
                 .toList();
     }
 
-    public ComponentResponse componentToResponse(Component compoennt) {
+    /**
+     * Creates a list of Component pojos from the passed in csv file
+     * @param fileName The csv file to parse for objects
+     * @return The list of components created from file
+     */
+    private List<Component> extractComponentPojosFromFile(String fileName) throws FileNotFoundException {
+        Reader reader = new BufferedReader(new FileReader(fileName));
+        Class classToUse = switch (fileName) {
+            case "case.csv" -> CaseComponent.class;
+            case "motherboard.csv" -> MotherboardComponent.class;
+            case "cpu.csv" -> ProcessorComponent.class;
+            case "gpu.csv" -> VideoCardComponent.class;
+            case "memory.csv" -> MemoryComponent.class;
+            case "power-supply.csv" -> PowerSupplyComponent.class;
+            case "hard-drive.csv" -> HardDriveComponent.class;
+            case "solid-state-drive.csv" -> SolidStateDriveComponent.class;
+            default -> throw new RuntimeException("Failed to find class for file: " + fileName);
+        };
+
+        CsvToBean csvReader = new CsvToBeanBuilder<Component>(reader)
+                .withType(classToUse)
+                .withSeparator(',')
+                .withIgnoreLeadingWhiteSpace(true)
+                .withIgnoreEmptyLine(true)
+                .build();
+
+        return csvReader.parse();
+    }
+
+    /**
+     * Creates files for each entry in the zip file
+     * @param zipDataFile The zip containing the files
+     * @return A list of file names (as strings) that were created
+     * @throws IOException If fails to read file
+     */
+    private List<String> createFilesFromZip(MultipartFile zipDataFile) throws IOException {
+        List<String> files = new ArrayList<>();
+        ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipDataFile.getBytes()));
+        ZipEntry entry;
+        while ((entry = zipStream.getNextEntry()) != null) {
+
+            String entryName = entry.getName();
+
+            FileOutputStream out = new FileOutputStream(entryName);
+
+            byte[] byteBuff = new byte[4096];
+            int bytesRead = 0;
+            while ((bytesRead = zipStream.read(byteBuff)) != -1)
+            {
+                out.write(byteBuff, 0, bytesRead);
+            }
+
+            out.close();
+            zipStream.closeEntry();
+
+            files.add(entryName);
+        }
+        zipStream.close();
+
+        return files;
+    }
+
+    private ComponentResponse componentToResponse(Component compoennt) {
         switch (compoennt.getCategory()) {
             case HARD_DRIVE -> ComponentMapper.entityToDto((HardDriveComponent) compoennt);
             case SOLID_STATE_DRIVE -> ComponentMapper.entityToDto((SolidStateDriveComponent) compoennt);
