@@ -14,9 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class Notification {
-    /**
-     * TODO: Figure the model out
-     */
     protected String id;
     protected String eventId;
     protected String targetUser;

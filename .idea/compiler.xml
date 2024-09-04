@@ -12,6 +12,7 @@
         <module name="event-library" />
         <module name="component-scraper" />
         <module name="api-gateway" />
+        <module name="component-service" />
         <module name="transaction-service" />
         <module name="user-service" />
         <module name="listing-service" />
@@ -25,6 +26,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
       <module name="component-scraper" options="-parameters" />
+      <module name="component-service" options="-parameters" />
       <module name="core-library" options="-parameters" />
       <module name="discovery-service" options="-parameters" />
       <module name="event-library" options="-parameters" />
