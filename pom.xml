@@ -28,6 +28,7 @@
         <module>message-service</module>
         <module>component-scraper</module>
         <module>component-service</module>
+        <module>pc-builder-service</module>
     </modules>
 
 	<properties>

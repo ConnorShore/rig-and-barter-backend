@@ -36,6 +36,7 @@ public class ComponentServiceImpl implements IComponentService {
             for (String file : files) {
                 componentsToAdd.addAll(extractComponentPojosFromFile(file));
             }
+            // TODO: Delete all created files
         }
         catch(Exception e) {
             log.error(e.getMessage());
