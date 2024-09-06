@@ -13,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PCBuildResponse {
     private String id;
-    private String userId;
     private String name;
     private String caseId;
     private String motherBoardId;

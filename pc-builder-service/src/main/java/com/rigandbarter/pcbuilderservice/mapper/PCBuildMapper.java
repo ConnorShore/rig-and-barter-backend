@@ -38,7 +38,6 @@ public class PCBuildMapper {
     public static PCBuildResponse entityToDto(PCBuild entity) {
         return PCBuildResponse.builder()
                 .id(entity.getId())
-                .userId(entity.getUserId())
                 .name(entity.getName())
                 .caseId(entity.getCaseId())
                 .motherBoardId(entity.getMotherBoardId())
