@@ -1,5 +1,6 @@
 package com.rigandbarter.pcbuilderservice.model;
 
+import com.rigandbarter.core.models.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,12 +18,12 @@ public class PCBuild {
     private String id;
     private String userId;
     private String name;
-    private String caseId;
-    private String motherBoardId;
-    private String powerSupplyId;
-    private String cpuId;
-    private String gpuId;
-    private List<String> memoryIds;
-    private List<String> hardDriveIds;
-    private List<String> solidStateDriveIds;
+    private CaseComponentResponse caseComponent;
+    private MotherboardComponentResponse motherboardComponent;
+    private PowerSupplyComponentResponse powerSupplyComponent;
+    private ProcessorComponentResponse cpuComponent;
+    private VideoCardComponentResponse gpuComponent;
+    private List<MemoryComponentResponse> memoryComponents;
+    private List<HardDriveComponentResponse> hardDriveComponents;
+    private List<SolidStateDriveComponentResponse> solidStateDriveComponents;
 }

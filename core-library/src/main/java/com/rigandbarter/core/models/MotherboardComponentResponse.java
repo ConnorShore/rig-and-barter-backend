@@ -1,6 +1,5 @@
-package com.rigandbarter.componentservice.dto;
+package com.rigandbarter.core.models;
 
-import com.rigandbarter.componentservice.model.Component;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,9 +11,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class PowerSupplyComponentResponse extends ComponentResponse {
+public class MotherboardComponentResponse extends ComponentResponse {
     private String connector;
-    private int watts;
-    private int num8PinPCIE;
-    private int num6PinPCIE;
+    private String socket;
+    private String memoryType;
+    private int memoryCapacity;
+    private int memorySlots;
 }

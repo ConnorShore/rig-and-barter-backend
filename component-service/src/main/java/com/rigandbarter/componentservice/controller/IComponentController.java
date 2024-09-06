@@ -1,6 +1,6 @@
 package com.rigandbarter.componentservice.controller;
 
-import com.rigandbarter.componentservice.dto.ComponentResponse;
+import com.rigandbarter.core.models.ComponentResponse;
 import com.rigandbarter.core.models.ComponentCategory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

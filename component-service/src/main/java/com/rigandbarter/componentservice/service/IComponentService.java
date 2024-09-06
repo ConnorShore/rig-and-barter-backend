@@ -1,6 +1,6 @@
 package com.rigandbarter.componentservice.service;
 
-import com.rigandbarter.componentservice.dto.ComponentResponse;
+import com.rigandbarter.core.models.ComponentResponse;
 import com.rigandbarter.core.models.ComponentCategory;
 import org.springframework.web.multipart.MultipartFile;
 

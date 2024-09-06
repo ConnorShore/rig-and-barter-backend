@@ -19,7 +19,12 @@ public class PCBuilderServiceImpl implements IPCBuilderService {
 
     @Override
     public PCBuildResponse savePCBuild(PCBuildRequest pcBuildRequest, String userId) {
+        PCBuild existingBuild = pcBuilderRepository.getByUserID(userId);
         PCBuild build = PCBuildMapper.dtoToEntity(pcBuildRequest, userId);
+
+        if(existingBuild != null)
+            build.setId(existingBuild.getId());
+
         build = pcBuilderRepository.save(build);
         return PCBuildMapper.entityToDto(build);
     }

@@ -1,4 +1,4 @@
-package com.rigandbarter.componentservice.dto;
+package com.rigandbarter.core.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,8 +11,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class HardDriveComponentResponse extends ComponentResponse {
-    private int size;   // in gb
-    private double rpm;
-    private int cacheSize;
+public class ProcessorComponentResponse extends ComponentResponse {
+    private double baseClock;
+    private double turboClock;
+    private int cores;
+    private int threads;
 }
