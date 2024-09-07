@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.stereotype.Repository;
@@ -48,14 +50,52 @@ public class MongoDbComponentRepositoryImpl extends SimpleMongoRepository<Compon
     }
 
     @Override
-    public List<Component> getPaginatedComponentsOfCategory(ComponentCategory category, int page, int numPerPage, String sortColumn, boolean descending) {
-        Sort.Order order = new Sort.Order(descending ? Sort.Direction.DESC : Sort.Direction.ASC, sortColumn);
-        Pageable paging = PageRequest.of(page, numPerPage, Sort.by(order));
+    public List<Component> getPaginatedComponentsOfCategory(ComponentCategory category,
+                                                            int page,
+                                                            int numPerPage,
+                                                            String sortColumn,
+                                                            boolean descending,
+                                                            String searchTerm) {
+        Query query;
+        if(searchTerm == null || searchTerm.isBlank()) {
+            // If no search term order by sortColumn
+            Sort.Order order = new Sort.Order(descending ? Sort.Direction.DESC : Sort.Direction.ASC, sortColumn);
+            Pageable paging = PageRequest.of(page, numPerPage, Sort.by(order));
 
-        Query query = new Query();
-        query.addCriteria(Criteria.where("category").is(category));
-        query.with(paging);
+            query = new Query();
+            query.addCriteria(Criteria.where("category").is(category));
+            query.with(paging);
+        } else {
+            // If there is a search term, order based on relevance
+            Pageable paging = PageRequest.of(page, numPerPage);
+            TextCriteria criteria = TextCriteria.forDefaultLanguage()
+                    .caseSensitive(false)
+                    .matching(searchTerm);
+
+            query = TextQuery.queryText(criteria)
+                    .sortByScore()
+                    .addCriteria(Criteria.where("category").is(category))
+                    .with(paging);
+        }
 
         return mongoTemplate.find(query, Component.class);
+    }
+
+    @Override
+    public int getPaginatedComponentsOfCategorySize(ComponentCategory category, String searchTerm) {
+        Query query;
+        if(searchTerm == null || searchTerm.isBlank()) {
+            query = new Query();
+            query.addCriteria(Criteria.where("category").is(category));
+        } else {
+            TextCriteria criteria = TextCriteria.forDefaultLanguage()
+                    .caseSensitive(false)
+                    .matching(searchTerm);
+
+            query = TextQuery.queryText(criteria)
+                    .addCriteria(Criteria.where("category").is(category));
+        }
+
+       return mongoTemplate.find(query, Component.class).size();
     }
 }

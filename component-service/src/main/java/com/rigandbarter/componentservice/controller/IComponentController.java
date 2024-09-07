@@ -47,7 +47,8 @@ public interface IComponentController {
                                                             @RequestParam int page,
                                                             @RequestParam int numPerPage,
                                                             @RequestParam String sortColumn,
-                                                            @RequestParam boolean descending);
+                                                            @RequestParam boolean descending,
+                                                            @RequestParam String searchTerm);
 
     /**
      * Status endpoint to see if service is running

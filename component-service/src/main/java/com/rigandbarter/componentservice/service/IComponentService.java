@@ -38,11 +38,13 @@ public interface IComponentService {
      * @param numPerPage Number of entries per page
      * @param sortColumn Which column to sort on
      * @param descending True if values should be descending
+     * @param searchTerm The text search string
      * @return The list of paged components with given params and the total num items
      */
     PagedComponentResponse getPaginatedComponentsOfCategory(ComponentCategory category,
                                                             int page,
                                                             int numPerPage,
                                                             String sortColumn,
-                                                            boolean descending);
+                                                            boolean descending,
+                                                            String searchTerm);
 }
