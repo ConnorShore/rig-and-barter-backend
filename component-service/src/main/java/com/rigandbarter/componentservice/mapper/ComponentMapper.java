@@ -1,7 +1,7 @@
 package com.rigandbarter.componentservice.mapper;
 
-import com.rigandbarter.componentservice.dto.*;
 import com.rigandbarter.componentservice.model.*;
+import com.rigandbarter.core.models.*;
 
 /**
  * Mapper for all component types

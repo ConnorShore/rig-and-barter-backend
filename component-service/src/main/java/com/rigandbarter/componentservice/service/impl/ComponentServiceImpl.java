@@ -2,12 +2,13 @@ package com.rigandbarter.componentservice.service.impl;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.rigandbarter.componentservice.dto.PagedComponentResponse;
 import com.rigandbarter.componentservice.mapper.ComponentMapper;
 import com.rigandbarter.componentservice.service.IComponentService;
-import com.rigandbarter.componentservice.dto.*;
 import com.rigandbarter.componentservice.model.*;
 import com.rigandbarter.componentservice.repository.document.IComponentRepository;
 import com.rigandbarter.core.models.ComponentCategory;
+import com.rigandbarter.core.models.ComponentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class ComponentServiceImpl implements IComponentService {
             for (String file : files) {
                 componentsToAdd.addAll(extractComponentPojosFromFile(file));
             }
+            // TODO: Delete all created files
         }
         catch(Exception e) {
             log.error(e.getMessage());
@@ -68,6 +70,20 @@ public class ComponentServiceImpl implements IComponentService {
         return componentRepository.getAllComponentsOfCategory(category).stream()
                 .map(this::componentToResponse)
                 .toList();
+    }
+
+    @Override
+    public PagedComponentResponse getPaginatedComponentsOfCategory(ComponentCategory category, int page, int numPerPage, String sortColumn, boolean descending) {
+        int totalItems = componentRepository.getAllComponentsOfCategory(category).size();
+        List<ComponentResponse> components = componentRepository.getPaginatedComponentsOfCategory(category, page, numPerPage, sortColumn, descending)
+                .stream()
+                .map(this::componentToResponse)
+                .toList();
+
+        return PagedComponentResponse.builder()
+                .numItems(totalItems)
+                .components(components)
+                .build();
     }
 
     /**

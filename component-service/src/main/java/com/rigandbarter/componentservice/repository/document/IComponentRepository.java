@@ -26,4 +26,19 @@ public interface IComponentRepository {
      * @return All components of the specified category
      */
     List<Component> getAllComponentsOfCategory(ComponentCategory category);
+
+    /**
+     * Gets components of specific category paginated and sorted
+     * @param category the category of components to get
+     * @param page The page index
+     * @param numPerPage Number of entries per page
+     * @param sortColumn Which column to sort on
+     * @param descending True if values should be descending
+     * @return The list of components with given params
+     */
+    List<Component> getPaginatedComponentsOfCategory(ComponentCategory category,
+                                                     int page,
+                                                     int numPerPage,
+                                                     String sortColumn,
+                                                     boolean descending);
 }

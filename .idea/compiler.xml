@@ -8,17 +8,18 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="core-library" />
-        <module name="payment-service" />
-        <module name="event-library" />
-        <module name="component-scraper" />
-        <module name="api-gateway" />
         <module name="component-service" />
-        <module name="transaction-service" />
         <module name="user-service" />
         <module name="listing-service" />
         <module name="message-service" />
         <module name="discovery-service" />
         <module name="notification-service" />
+        <module name="payment-service" />
+        <module name="event-library" />
+        <module name="component-scraper" />
+        <module name="api-gateway" />
+        <module name="transaction-service" />
+        <module name="pc-builder-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -34,6 +35,7 @@
       <module name="message-service" options="-parameters" />
       <module name="notification-service" options="-parameters" />
       <module name="payment-service" options="-parameters" />
+      <module name="pc-builder-service" options="-parameters" />
       <module name="rig-and-barter-backend" options="" />
       <module name="transaction-service" options="-parameters" />
       <module name="user-service" options="-parameters" />

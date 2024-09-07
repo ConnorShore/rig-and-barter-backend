@@ -1,6 +1,5 @@
-package com.rigandbarter.componentservice.dto;
+package com.rigandbarter.core.models;
 
-import com.rigandbarter.componentservice.model.Component;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

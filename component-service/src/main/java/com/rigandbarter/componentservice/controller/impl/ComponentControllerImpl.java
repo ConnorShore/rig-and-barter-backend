@@ -1,8 +1,9 @@
 package com.rigandbarter.componentservice.controller.impl;
 
 import com.rigandbarter.componentservice.controller.IComponentController;
+import com.rigandbarter.componentservice.dto.PagedComponentResponse;
 import com.rigandbarter.componentservice.service.IComponentService;
-import com.rigandbarter.componentservice.dto.ComponentResponse;
+import com.rigandbarter.core.models.ComponentResponse;
 import com.rigandbarter.core.models.ComponentCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,11 @@ public class ComponentControllerImpl implements IComponentController {
     @Override
     public List<ComponentResponse> getAllComponentsOfCategory(ComponentCategory category) {
         return componentService.getAllComponentsOfCategory(category);
+    }
+
+    @Override
+    public PagedComponentResponse getPaginatedComponentsOfCategory(ComponentCategory category, int page, int numPerPage, String sortColumn, boolean descending) {
+        return componentService.getPaginatedComponentsOfCategory(category, page, numPerPage, sortColumn, descending);
     }
 
     @Override
