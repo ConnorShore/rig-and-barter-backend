@@ -2,6 +2,7 @@ package com.rigandbarter.componentservice.service.impl;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.rigandbarter.componentservice.dto.PagedComponentResponse;
 import com.rigandbarter.componentservice.mapper.ComponentMapper;
 import com.rigandbarter.componentservice.service.IComponentService;
 import com.rigandbarter.componentservice.model.*;
@@ -69,6 +70,20 @@ public class ComponentServiceImpl implements IComponentService {
         return componentRepository.getAllComponentsOfCategory(category).stream()
                 .map(this::componentToResponse)
                 .toList();
+    }
+
+    @Override
+    public PagedComponentResponse getPaginatedComponentsOfCategory(ComponentCategory category, int page, int numPerPage, String sortColumn, boolean descending) {
+        int totalItems = componentRepository.getAllComponentsOfCategory(category).size();
+        List<ComponentResponse> components = componentRepository.getPaginatedComponentsOfCategory(category, page, numPerPage, sortColumn, descending)
+                .stream()
+                .map(this::componentToResponse)
+                .toList();
+
+        return PagedComponentResponse.builder()
+                .numItems(totalItems)
+                .components(components)
+                .build();
     }
 
     /**

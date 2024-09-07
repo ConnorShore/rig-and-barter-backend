@@ -1,5 +1,6 @@
 package com.rigandbarter.componentservice.controller;
 
+import com.rigandbarter.componentservice.dto.PagedComponentResponse;
 import com.rigandbarter.core.models.ComponentResponse;
 import com.rigandbarter.core.models.ComponentCategory;
 import org.springframework.http.HttpStatus;
@@ -29,12 +30,24 @@ public interface IComponentController {
     List<ComponentResponse> getAllComponents();
 
     /**
-     * Updates the component database with new entries
-     * @return List of created components
+     * Gets all components of specific category
+     * @return List of components of that category
      */
     @GetMapping("{category}")
     @ResponseStatus(HttpStatus.OK)
     List<ComponentResponse> getAllComponentsOfCategory(@PathVariable ComponentCategory category);
+
+    /**
+     * Gets all components of category paged
+     * @return Paged components and the total number of items
+     */
+    @GetMapping("{category}/paged")
+    @ResponseStatus(HttpStatus.OK)
+    PagedComponentResponse getPaginatedComponentsOfCategory(@PathVariable ComponentCategory category,
+                                                            @RequestParam int page,
+                                                            @RequestParam int numPerPage,
+                                                            @RequestParam String sortColumn,
+                                                            @RequestParam boolean descending);
 
     /**
      * Status endpoint to see if service is running

@@ -5,6 +5,9 @@ import com.rigandbarter.componentservice.repository.document.IComponentRepositor
 import com.rigandbarter.core.models.ComponentCategory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -42,5 +45,17 @@ public class MongoDbComponentRepositoryImpl extends SimpleMongoRepository<Compon
         Query query = new Query();
         query.addCriteria(Criteria.where("category").is(category));
         return mongoTemplate.find(query,  Component.class);
+    }
+
+    @Override
+    public List<Component> getPaginatedComponentsOfCategory(ComponentCategory category, int page, int numPerPage, String sortColumn, boolean descending) {
+        Sort.Order order = new Sort.Order(descending ? Sort.Direction.DESC : Sort.Direction.ASC, sortColumn);
+        Pageable paging = PageRequest.of(page, numPerPage, Sort.by(order));
+
+        Query query = new Query();
+        query.addCriteria(Criteria.where("category").is(category));
+        query.with(paging);
+
+        return mongoTemplate.find(query, Component.class);
     }
 }
