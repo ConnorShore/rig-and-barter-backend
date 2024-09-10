@@ -35,8 +35,13 @@ public class ComponentControllerImpl implements IComponentController {
     }
 
     @Override
-    public PagedComponentResponse getPaginatedComponentsOfCategory(ComponentCategory category, int page, int numPerPage, String sortColumn, boolean descending) {
-        return componentService.getPaginatedComponentsOfCategory(category, page, numPerPage, sortColumn, descending);
+    public PagedComponentResponse getPaginatedComponentsOfCategory(ComponentCategory category,
+                                                                   int page,
+                                                                   int numPerPage,
+                                                                   String sortColumn,
+                                                                   boolean descending,
+                                                                   String searchTerm) {
+        return componentService.getPaginatedComponentsOfCategory(category, page, numPerPage, sortColumn, descending, searchTerm);
     }
 
     @Override

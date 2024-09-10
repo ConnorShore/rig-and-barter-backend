@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -22,8 +24,13 @@ public class PCBuilderControllerImpl implements IPCBuilderController {
     }
 
     @Override
-    public PCBuildResponse getPCBuildForUser(Jwt principal) {
-        return pcBuilderService.getPCBuildForUser(principal.getSubject());
+    public List<PCBuildResponse> getPCBuildsForUser(Jwt principal) {
+        return pcBuilderService.getPCBuildsForUser(principal.getSubject());
+    }
+
+    @Override
+    public void deletePCBuildById(String buildId) {
+        pcBuilderService.deletePCBuildById(buildId);
     }
 
     @Override

@@ -73,12 +73,19 @@ public class ComponentServiceImpl implements IComponentService {
     }
 
     @Override
-    public PagedComponentResponse getPaginatedComponentsOfCategory(ComponentCategory category, int page, int numPerPage, String sortColumn, boolean descending) {
-        int totalItems = componentRepository.getAllComponentsOfCategory(category).size();
-        List<ComponentResponse> components = componentRepository.getPaginatedComponentsOfCategory(category, page, numPerPage, sortColumn, descending)
+    public PagedComponentResponse getPaginatedComponentsOfCategory(ComponentCategory category,
+                                                                   int page,
+                                                                   int numPerPage,
+                                                                   String sortColumn,
+                                                                   boolean descending,
+                                                                   String searchTerm) {
+
+        List<ComponentResponse> components = componentRepository.getPaginatedComponentsOfCategory(category, page, numPerPage, sortColumn, descending, searchTerm)
                 .stream()
                 .map(this::componentToResponse)
                 .toList();
+
+        int totalItems = componentRepository.getPaginatedComponentsOfCategorySize(category, searchTerm);
 
         return PagedComponentResponse.builder()
                 .numItems(totalItems)

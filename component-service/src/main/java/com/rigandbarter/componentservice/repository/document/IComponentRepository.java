@@ -34,11 +34,21 @@ public interface IComponentRepository {
      * @param numPerPage Number of entries per page
      * @param sortColumn Which column to sort on
      * @param descending True if values should be descending
+     * @param searchTerm The text to include for matching results
      * @return The list of components with given params
      */
     List<Component> getPaginatedComponentsOfCategory(ComponentCategory category,
                                                      int page,
                                                      int numPerPage,
                                                      String sortColumn,
-                                                     boolean descending);
+                                                     boolean descending,
+                                                     String searchTerm);
+
+    /**
+     * Gets number of components of specific category and search
+     * @param category the category of components to get
+     * @param searchTerm The text to include for matching results
+     * @return The number of components with given params
+     */
+    int getPaginatedComponentsOfCategorySize(ComponentCategory category, String searchTerm);
 }

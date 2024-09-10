@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PCBuildRequest {
+    private String id;
     private String name;
     private CaseComponentResponse caseComponent;
     private MotherboardComponentResponse motherboardComponent;

@@ -21,5 +21,11 @@ public interface IPCBuilderService {
      * @param userId The id of the user to get the build for
      * @return The retrieved pc build
      */
-    PCBuildResponse getPCBuildForUser(String userId);
+    List<PCBuildResponse> getPCBuildsForUser(String userId);
+
+    /**
+     * Deletes a pc build based on id
+     * @param id The id of the build to delete
+     */
+    void deletePCBuildById(String id);
 }
