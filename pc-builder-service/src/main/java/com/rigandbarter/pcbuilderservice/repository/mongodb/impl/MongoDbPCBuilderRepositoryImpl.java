@@ -32,10 +32,14 @@ public class MongoDbPCBuilderRepositoryImpl extends SimpleMongoRepository<PCBuil
     }
 
     @Override
-    public PCBuild getByUserID(String userId) {
+    public List<PCBuild> getByUserID(String userId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("userId").is(userId));
-        List<PCBuild> builds = mongoTemplate.find(query,  PCBuild.class);
-        return !builds.isEmpty() ? builds.get(0) : null;
+        return mongoTemplate.find(query, PCBuild.class);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        super.deleteById(id);
     }
 }

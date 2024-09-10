@@ -16,7 +16,7 @@ public class PCBuildMapper {
      */
     public static PCBuild dtoToEntity(PCBuildRequest dto, String userId) {
         return PCBuild.builder()
-                .id(UUID.randomUUID().toString())
+                .id(dto.getId() == null ? UUID.randomUUID().toString() : dto.getId())
                 .userId(userId)
                 .name(dto.getName())
                 .caseComponent(dto.getCaseComponent())

@@ -2,6 +2,8 @@ package com.rigandbarter.pcbuilderservice.repository;
 
 import com.rigandbarter.pcbuilderservice.model.PCBuild;
 
+import java.util.List;
+
 public interface IPCBuilderRepository {
     /**
      * Save the pc build in the db
@@ -15,5 +17,11 @@ public interface IPCBuilderRepository {
      * @param userId The id of the user to get the build for
      * @return The pc build of user (if any)
      */
-    PCBuild getByUserID(String userId);
+    List<PCBuild> getByUserID(String userId);
+
+    /**
+     * Deletes pc build by id
+     * @param id The id of the pc build
+     */
+    void deleteById(String id);
 }

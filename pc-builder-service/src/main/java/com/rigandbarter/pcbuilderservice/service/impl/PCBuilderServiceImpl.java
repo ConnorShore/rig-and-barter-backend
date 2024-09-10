@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -19,22 +21,31 @@ public class PCBuilderServiceImpl implements IPCBuilderService {
 
     @Override
     public PCBuildResponse savePCBuild(PCBuildRequest pcBuildRequest, String userId) {
-        PCBuild existingBuild = pcBuilderRepository.getByUserID(userId);
+        List<PCBuild> existingBuilds = pcBuilderRepository.getByUserID(userId);
+        boolean buildWithSameNameExists = existingBuilds
+                .stream()
+                .anyMatch(build -> (!build.getId().equals(pcBuildRequest.getId())
+                        && build.getName().equals(pcBuildRequest.getName())));
+
+        if(buildWithSameNameExists)
+            throw new RuntimeException("Build with same name already exists. Please choose a new name");
+
         PCBuild build = PCBuildMapper.dtoToEntity(pcBuildRequest, userId);
-
-        if(existingBuild != null)
-            build.setId(existingBuild.getId());
-
         build = pcBuilderRepository.save(build);
         return PCBuildMapper.entityToDto(build);
     }
 
     @Override
-    public PCBuildResponse getPCBuildForUser(String userId) {
-        PCBuild build = pcBuilderRepository.getByUserID(userId);
-        if(build == null)
-            return null;
+    public List<PCBuildResponse> getPCBuildsForUser(String userId) {
+        List<PCBuild> builds = pcBuilderRepository.getByUserID(userId);
 
-        return PCBuildMapper.entityToDto(build);
+        return builds.stream()
+                .map(PCBuildMapper::entityToDto)
+                .toList();
+    }
+
+    @Override
+    public void deletePCBuildById(String id) {
+        pcBuilderRepository.deleteById(id);
     }
 }

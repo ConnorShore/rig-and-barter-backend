@@ -7,6 +7,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("api/pc-builder")
 public interface IPCBuilderController {
 
@@ -27,7 +29,15 @@ public interface IPCBuilderController {
      */
     @GetMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    PCBuildResponse getPCBuildForUser(@AuthenticationPrincipal Jwt principal);
+    List<PCBuildResponse> getPCBuildsForUser(@AuthenticationPrincipal Jwt principal);
+
+    /**
+     * Deletes pc build based on id
+     * @param buildId The id of the build to delete
+     */
+    @DeleteMapping("{buildId}")
+    @ResponseStatus(HttpStatus.OK)
+    void deletePCBuildById(@PathVariable String buildId);
 
     /**
      * Status endpoint to see if service is running
