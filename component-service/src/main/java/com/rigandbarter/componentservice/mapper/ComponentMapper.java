@@ -32,7 +32,7 @@ public class ComponentMapper {
                 .build();
     }
 
-    public static HardDriveComponentResponse entitytoDto(HardDriveComponent entity) {
+    public static HardDriveComponentResponse entityToDto(HardDriveComponent entity) {
         return HardDriveComponentResponse.builder()
                 .id(entity.getId())
                 .name(entity.getName())
