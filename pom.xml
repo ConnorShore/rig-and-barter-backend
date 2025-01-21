@@ -26,10 +26,25 @@
         <module>user-service</module>
         <module>payment-service</module>
         <module>message-service</module>
-        <module>component-scraper</module>
+<!--        <module>component-scraper</module>-->
         <module>component-service</module>
         <module>pc-builder-service</module>
     </modules>
+
+<!--	<profiles>-->
+<!--		<profile>-->
+<!--			<id>skip-module</id>-->
+<!--			<activation>-->
+<!--				<property>-->
+<!--					<name>skipModule</name>-->
+<!--					<value>true</value>-->
+<!--				</property>-->
+<!--			</activation>-->
+<!--			<modules>-->
+<!--				<module>core-library</module>-->
+<!--			</modules>-->
+<!--		</profile>-->
+<!--	</profiles>-->
 
 	<properties>
 		<java.version>17</java.version>
@@ -37,7 +52,37 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring-cloud.version>2023.0.0</spring-cloud.version>
+		<dockerPassword>${dockerPassword}</dockerPassword>
 	</properties>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>cjshore1996/new-${project.artifactId}</name>
+						<builder>dashaun/builder:tiny</builder>
+						<publish>true</publish>
+					</image>
+					<docker>
+						<publishRegistry>
+							<username>cjshore1996</username>
+							<password>${dockerPassword}</password>
+						</publishRegistry>
+					</docker>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencyManagement>
 		<dependencies>

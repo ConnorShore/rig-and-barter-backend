@@ -1,0 +1,1 @@
+kind create cluster --name rab-backend-cluster --config kind-config.yaml

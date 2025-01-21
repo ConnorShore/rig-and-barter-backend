@@ -120,6 +120,7 @@ public class ListingServiceImpl implements IListingService {
     @Override
     public void deleteListingById(String listingId, boolean deleteTransaction, Jwt principal) {
         try {
+            // TODO: See if can create a db transaction and if the web request fails, rollback the db transaction
             listingRepository.deleteListingById(listingId);
 
             if(!deleteTransaction)

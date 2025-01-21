@@ -16,12 +16,14 @@
         <module name="notification-service" />
         <module name="payment-service" />
         <module name="event-library" />
-        <module name="component-scraper" />
         <module name="api-gateway" />
         <module name="transaction-service" />
         <module name="pc-builder-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="component-scraper" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
