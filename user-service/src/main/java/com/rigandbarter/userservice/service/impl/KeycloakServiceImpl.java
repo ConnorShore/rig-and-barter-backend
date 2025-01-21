@@ -9,6 +9,7 @@ import com.rigandbarter.userservice.model.KeycloakUserRepresentation;
 import com.rigandbarter.userservice.service.IKeycloakService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.representations.idm.ClientRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -99,10 +100,10 @@ public class KeycloakServiceImpl implements IKeycloakService {
      * TODO: Maybe move this to a bean?
      */
     private String getAccessToken() {
+
         final String TOKEN_ENDPOINT = "/realms/rig-and-barter-realm/protocol/openid-connect/token";
 
         String url = KEYCLOAK_URL + TOKEN_ENDPOINT;
-
         var credentialData = webClientBuilderNoLb.build()
                 .post()
                 .uri(url)

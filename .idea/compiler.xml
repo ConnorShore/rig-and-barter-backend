@@ -8,22 +8,20 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="core-library" />
+        <module name="payment-service" />
+        <module name="event-library" />
+        <module name="component-scraper" />
         <module name="component-service" />
+        <module name="api-gateway" />
+        <module name="transaction-service" />
         <module name="user-service" />
         <module name="listing-service" />
         <module name="message-service" />
+        <module name="pc-builder-service" />
         <module name="discovery-service" />
         <module name="notification-service" />
-        <module name="payment-service" />
-        <module name="event-library" />
-        <module name="api-gateway" />
-        <module name="transaction-service" />
-        <module name="pc-builder-service" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="component-scraper" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
