@@ -8,7 +8,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
-      MONGO_INITDB_DATABASE: listing-service
+      MONGO_INITDB_ROOT_DATABASE: root-db
     volumes:
       - ./data/mongodb:/data/db
 
@@ -18,10 +18,11 @@ services:
     ports:
       - "3306:3306"
     environment:
+      MYSQL_ROOT_USERNAME: root
       MYSQL_ROOT_PASSWORD: mysql
     volumes:
       - ./data/mysql:/var/lib/mysql
-      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql\
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   keycloak-mysql:
     container_name: keycloak-mysql
