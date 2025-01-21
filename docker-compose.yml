@@ -1,19 +1,16 @@
 version: '4'
 services:
-  mongoDB:
+  mongodb:
     image: mongo:7.0.5
-    container_name: mongoDB
+    container_name: mongodb
     ports:
       - "27017:27017"
     environment:
-        MONGO_INITDB_ROOT_USERNAME: root
-        MONGO_INITDB_ROOT_PASSWORD: password
-        MONGO_INITDB_DATABASE: listing-service
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: product-service
     volumes:
-      - ./data:/data/db
-#    networks:
-#      - mongo-network
-#    restart: always
+      - ./data/mongodb:/data/db
 
   mysql:
     image: mysql:8.3.0
@@ -21,11 +18,11 @@ services:
     ports:
       - "3306:3306"
     environment:
+      MYSQL_ROOT_USERNAME: root
       MYSQL_ROOT_PASSWORD: mysql
     volumes:
       - ./data/mysql:/var/lib/mysql
-      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
-#      - ./data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql\
 
   keycloak-mysql:
     container_name: keycloak-mysql
@@ -37,6 +34,7 @@ services:
       MYSQL_DATABASE: keycloak
       MYSQL_USER: keycloak
       MYSQL_PASSWORD: password
+
   keycloak:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:24.0.1
@@ -50,8 +48,68 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - "8081:8080"
+      - "8180:8080"
     volumes:
       - ./docker/keycloak/realms/:/opt/keycloak/data/import/
     depends_on:
       - keycloak-mysql
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: broker
+    ports:
+      - "55899:55899"
+      - "29092:29092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:55899
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8086:8080"
+    depends_on:
+      - broker
+    environment:
+      KAFKA_CLUSTERS_NAME: local
+      KAFKA_CLUSTERS_BOOTSTRAPSERVERS: broker:29092
+      #      KAFKA_CLUSTERS_SCHEMAREGISTRY: http://schema-registry:8081
+      DYNAMIC_CONFIG_ENABLED: 'true'
+
+#  broker:
+#    image: confluentinc/confluent-local:7.4.1
+#    hostname: broker
+#    container_name: broker
+#    ports:
+#      - "8082:8082"
+#      - "9092:9092"
+#      - "9101:9101"
+#    environment:
+#      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092'
+#      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker:29093'
+#      KAFKA_LISTENERS: 'PLAINTEXT://broker:29092,CONTROLLER://broker:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+#
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui:latest
+#    ports:
+#      - 9999:8080
+#    environment:
+#      DYNAMIC_CONFIG_ENABLED: true
+#      KAFKA_CLUSTERS_0_NAME: local
+#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
