@@ -12,13 +12,13 @@ import com.rigandbarter.transactionservice.model.TransactionState;
 import com.rigandbarter.transactionservice.repository.ITransactionRepository;
 import com.rigandbarter.transactionservice.repository.mapper.TransactionMapper;
 import com.rigandbarter.transactionservice.service.ITransactionService;
-import jakarta.ws.rs.InternalServerErrorException;
-import jakarta.ws.rs.NotAuthorizedException;
-import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

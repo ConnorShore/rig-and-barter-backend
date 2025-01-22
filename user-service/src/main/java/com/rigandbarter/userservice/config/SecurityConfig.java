@@ -23,16 +23,24 @@ public class SecurityConfig {
     String[] permittedPostUrls;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers(permittedPostUrls))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, permittedPostUrls).permitAll()
-                        .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
-                        .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))))
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.authorizeHttpRequests(authorize -> authorize
+                        .anyRequest()
+                        .permitAll())
                 .build();
     }
+
+//    @Bean
+//    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        return http
+//                .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers(permittedPostUrls))
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(HttpMethod.POST, permittedPostUrls).permitAll()
+//                        .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
+//                        .anyRequest().authenticated())
+//                .oauth2ResourceServer(oauth2 -> oauth2
+//                        .jwt(jwt -> jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))))
+//                .build();
+//    }
 
 }

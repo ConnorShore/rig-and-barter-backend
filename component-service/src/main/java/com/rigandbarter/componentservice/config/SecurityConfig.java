@@ -24,16 +24,24 @@ public class SecurityConfig {
     String[] permittedPostUrls;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(csrf -> csrf.ignoringRequestMatchers(permittedPostUrls))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
-                        .requestMatchers(HttpMethod.POST, permittedPostUrls).permitAll()
-                        .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))))
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.authorizeHttpRequests(authorize -> authorize
+                        .anyRequest()
+                        .permitAll())
                 .build();
     }
+
+//    @Bean
+//    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        return http
+//                .csrf(csrf -> csrf.ignoringRequestMatchers(permittedPostUrls))
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
+//                        .requestMatchers(HttpMethod.POST, permittedPostUrls).permitAll()
+//                        .anyRequest().authenticated())
+//                .oauth2ResourceServer(oauth2 -> oauth2
+//                        .jwt(jwt -> jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))))
+//                .build();
+//    }
 
 }
