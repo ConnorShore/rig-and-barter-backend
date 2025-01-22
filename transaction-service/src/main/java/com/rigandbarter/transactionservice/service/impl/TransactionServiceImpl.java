@@ -47,7 +47,7 @@ public class TransactionServiceImpl implements ITransactionService {
         // Save the transaction to the database
         Transaction transaction = this.transactionRepository.save(TransactionMapper.dtoToEntity(transactionRequest));
         if(transaction == null)
-            throw new InternalServerErrorException("Failed to create transaciton in database");
+            throw new InternalServerErrorException("Failed to create transaction in database");
 
         // Create and send TransactionCreatedEvent
         TransactionCreatedEvent event = TransactionCreatedEvent.builder()
