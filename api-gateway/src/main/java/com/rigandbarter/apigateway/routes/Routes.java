@@ -12,7 +12,6 @@ import org.springframework.web.servlet.function.ServerResponse;
 @Configuration
 public class Routes {
 
-
     @Value("${listing.service.url}")
     private String listingServiceUrl;
 
@@ -22,9 +21,8 @@ public class Routes {
     @Value("${notification.service.url}")
     private String notificationServiceUrl;
 
-    // TODO: Figure out websocked route (notification)
-//    @Value("${websocket.service.url}")
-//    private String webSocketServiceUrl;
+    @Value("${notification.socket.url}")
+    private String notificationSocketUrl;
 
     @Value("${user.service.url}")
     private String userServiceUrl;
@@ -35,9 +33,8 @@ public class Routes {
     @Value("${message.service.url}")
     private String messageServiceUrl;
 
-//  TODO: Message websocked
-//    @Value("${notification.service.url}")
-//    private String notificationServiceUrl;
+    @Value("${message.socket.url}")
+    private String messageSocketUrl;
 
     @Value("${component.service.url}")
     private String componentServiceUrl;
@@ -66,6 +63,14 @@ public class Routes {
                 .build();
     }
 
+
+    @Bean
+    public RouterFunction<ServerResponse> notificationSocketRoute() {
+        return GatewayRouterFunctions.route("notification_socket")
+                .route(RequestPredicates.path("/socket/**"), HandlerFunctions.http(notificationSocketUrl))
+                .build();
+    }
+
     @Bean
     public RouterFunction<ServerResponse> userServiceRoute() {
         return GatewayRouterFunctions.route("user_service")
@@ -77,6 +82,13 @@ public class Routes {
     public RouterFunction<ServerResponse> paymentServiceRoute() {
         return GatewayRouterFunctions.route("payment_service")
                 .route(RequestPredicates.path("/api/payment/**"), HandlerFunctions.http(paymentServiceUrl))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> messageSocketurl() {
+        return GatewayRouterFunctions.route("message_socket")
+                .route(RequestPredicates.path("/msocket/**"), HandlerFunctions.http(messageServiceUrl))
                 .build();
     }
 
