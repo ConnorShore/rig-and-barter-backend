@@ -16,9 +16,6 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${rb.front-end.url}")
-    private String FRONT_END_URL;
-
     String[] permittedGetUrls = {
             "/api/listing/**",
             "/api/component/**",
@@ -39,9 +36,6 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // TODO: Move permitted urls to objects in code
-        //  see if can remove security config from other services
-        //  get front end flow working (create user works, but front end needs to use new keycloak stuff)
         return http
                 .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers(permittedPostUrls))
                 .authorizeHttpRequests(auth -> auth
