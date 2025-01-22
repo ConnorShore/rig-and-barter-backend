@@ -8,6 +8,7 @@ import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
 import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
 import com.rigandbarter.eventlibrary.events.UserCreatedEvent;
+import com.rigandbarter.userservice.client.PaymentServiceClient;
 import com.rigandbarter.userservice.dto.*;
 import com.rigandbarter.userservice.mapper.UserMapper;
 import com.rigandbarter.userservice.model.UserEntity;
@@ -38,12 +39,14 @@ public class UserServiceImpl implements IUserService {
     private final String EVENT_SOURCE = "UserService";
 
     private final WebClient.Builder webClientBuilder;
+    private final PaymentServiceClient paymentServiceClient;
 
     public UserServiceImpl(IKeycloakService keycloakService,
                            IUserRepository userRepository,
                            IProfilePictureRepository profilePictureRepository,
                            RBEventProducerFactory rbEventProducerFactory,
-                           WebClient.Builder webClientBuilder)
+                           WebClient.Builder webClientBuilder,
+                           PaymentServiceClient paymentServiceClient)
     {
         this.keycloakService = keycloakService;
         this.userRepository = userRepository;
@@ -51,6 +54,7 @@ public class UserServiceImpl implements IUserService {
 
         this.userCreatedProducer = rbEventProducerFactory.createProducer(UserCreatedEvent.class);
         this.webClientBuilder = webClientBuilder;
+        this.paymentServiceClient = paymentServiceClient;
     }
 
     @Override
@@ -127,13 +131,15 @@ public class UserServiceImpl implements IUserService {
         // Get stripe customer info via web call to payment service
         StripeCustomerResponse stripeCustomerInfo = null;
         if(userEntity.getStripeCustomerId() != null) {
-            stripeCustomerInfo = webClientBuilder.build()
-                    .get()
-                    .uri("http://payment-service/api/payment/profile")
-                    .headers(httpHeaders -> httpHeaders.setBearerAuth(princiapl.getTokenValue()))
-                    .retrieve()
-                    .bodyToMono(StripeCustomerResponse.class)
-                    .block();
+//            stripeCustomerInfo = webClientBuilder.build()
+//                    .get()
+//                    .uri("http://payment-service/api/payment/profile")
+//                    .headers(httpHeaders -> httpHeaders.setBearerAuth(princiapl.getTokenValue()))
+//                    .retrieve()
+//                    .bodyToMono(StripeCustomerResponse.class)
+//                    .block();
+
+            stripeCustomerInfo = paymentServiceClient.getPaymentProfile("Bearer " + princiapl.getTokenValue());
 
             if (stripeCustomerInfo == null) {
                 String msg = "Failed to retrieve stripe customer info from payment service: " + userEntity.getStripeCustomerId();
