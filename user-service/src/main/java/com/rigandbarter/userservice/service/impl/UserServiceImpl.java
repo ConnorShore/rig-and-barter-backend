@@ -38,14 +38,12 @@ public class UserServiceImpl implements IUserService {
     private final RBEventProducer userCreatedProducer;;
     private final String EVENT_SOURCE = "UserService";
 
-    private final WebClient.Builder webClientBuilder;
     private final PaymentServiceClient paymentServiceClient;
 
     public UserServiceImpl(IKeycloakService keycloakService,
                            IUserRepository userRepository,
                            IProfilePictureRepository profilePictureRepository,
                            RBEventProducerFactory rbEventProducerFactory,
-                           WebClient.Builder webClientBuilder,
                            PaymentServiceClient paymentServiceClient)
     {
         this.keycloakService = keycloakService;
@@ -53,7 +51,6 @@ public class UserServiceImpl implements IUserService {
         this.profilePictureRepository = profilePictureRepository;
 
         this.userCreatedProducer = rbEventProducerFactory.createProducer(UserCreatedEvent.class);
-        this.webClientBuilder = webClientBuilder;
         this.paymentServiceClient = paymentServiceClient;
     }
 
@@ -131,14 +128,6 @@ public class UserServiceImpl implements IUserService {
         // Get stripe customer info via web call to payment service
         StripeCustomerResponse stripeCustomerInfo = null;
         if(userEntity.getStripeCustomerId() != null) {
-//            stripeCustomerInfo = webClientBuilder.build()
-//                    .get()
-//                    .uri("http://payment-service/api/payment/profile")
-//                    .headers(httpHeaders -> httpHeaders.setBearerAuth(princiapl.getTokenValue()))
-//                    .retrieve()
-//                    .bodyToMono(StripeCustomerResponse.class)
-//                    .block();
-
             stripeCustomerInfo = paymentServiceClient.getPaymentProfile("Bearer " + princiapl.getTokenValue());
 
             if (stripeCustomerInfo == null) {

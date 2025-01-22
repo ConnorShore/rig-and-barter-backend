@@ -7,6 +7,7 @@ import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
 import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
 import com.rigandbarter.eventlibrary.events.UserVerifyEvent;
+import com.rigandbarter.paymentservice.client.ListingServiceClient;
 import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
 import com.rigandbarter.core.models.StripePaymentMethodResponse;
 import com.rigandbarter.core.models.StripeCustomerResponse;
@@ -25,7 +26,6 @@ import com.stripe.model.*;
 import com.stripe.param.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.naming.AuthenticationException;
 import javax.ws.rs.NotAuthorizedException;
@@ -44,24 +44,27 @@ public class PaymentServiceImpl implements IPaymentService {
     private final String stripeFeePercent;
     private final String USD_CURRENCY = "usd";
     private final String TEST_CARD_TOKEN = "tok_visa";
+
     private final RBEventProducer stripeCustomerCreatedProducer;
     private final RBEventProducer userVerifyProducer;
+
     private final IStripeProductRepository stripeProductRepository;
     private final IStripeCustomerRepository stripeCustomerRepository;
-    private final WebClient.Builder webClientBuilder;
+
+    private final ListingServiceClient listingServiceClient;
 
     public PaymentServiceImpl(String stripeSecretKey, String stripeFeePercent,
                               IStripeProductRepository stripeProductRepository,
                               IStripeCustomerRepository stripeCustomerRepository,
-                              WebClient.Builder webClientBuilder,
-                              RBEventProducerFactory rbEventProducerFactory) {
+                              RBEventProducerFactory rbEventProducerFactory,
+                              ListingServiceClient listingServiceClient) {
         this.stripeSecretKey = stripeSecretKey;
         this.stripeFeePercent = stripeFeePercent;
         this.stripeProductRepository = stripeProductRepository;
         this.stripeCustomerRepository = stripeCustomerRepository;
-        this.webClientBuilder = webClientBuilder;
         this.stripeCustomerCreatedProducer = rbEventProducerFactory.createProducer(StripeCustomerCreatedEvent.class);
         this.userVerifyProducer = rbEventProducerFactory.createProducer(UserVerifyEvent.class);
+        this.listingServiceClient = listingServiceClient;
     }
 
     @Override
@@ -329,17 +332,19 @@ public class PaymentServiceImpl implements IPaymentService {
             throw new NotAuthorizedException("Cannot complete secured transaction if buyer and seller aren't both verified");
         }
 
-        ListingResponse listing = webClientBuilder.build()
-                    .get()
-                    .uri(builder -> builder
-                            .scheme("http")
-                            .host("listing-service")
-                            .path("api/listing/{listingId}")
-                            .build(transactionCompletedEvent.getListingId()))
-                    .headers(httpHeaders -> httpHeaders.setBearerAuth(transactionCompletedEvent.getAuthToken()))
-                    .retrieve()
-                    .bodyToMono(ListingResponse.class)
-                    .block();
+        ListingResponse listing = listingServiceClient.getListing(transactionCompletedEvent.getListingId(), "Bearer " + transactionCompletedEvent.getAuthToken());
+
+//        ListingResponse listing = webClientBuilder.build()
+//                    .get()
+//                    .uri(builder -> builder
+//                            .scheme("http")
+//                            .host("listing-service")
+//                            .path("api/listing/{listingId}")
+//                            .build(transactionCompletedEvent.getListingId()))
+//                    .headers(httpHeaders -> httpHeaders.setBearerAuth(transactionCompletedEvent.getAuthToken()))
+//                    .retrieve()
+//                    .bodyToMono(ListingResponse.class)
+//                    .block();
 
         if(listing == null)
             throw new NotFoundException("Listing item for the transaction does not exist. Cancelling transaction.");

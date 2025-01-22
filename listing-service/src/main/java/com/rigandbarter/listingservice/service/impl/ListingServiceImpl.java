@@ -2,6 +2,9 @@ package com.rigandbarter.listingservice.service.impl;
 
 import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.core.models.UserResponse;
+import com.rigandbarter.listingservice.client.PaymentServiceClient;
+import com.rigandbarter.listingservice.client.TransactionServiceClient;
+import com.rigandbarter.listingservice.client.UserServiceClient;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.listingservice.dto.StripeProductRequest;
@@ -32,20 +35,24 @@ public class ListingServiceImpl implements IListingService {
     private final IListingRepository listingRepository;
     private final IFileRepository fileRepository;
 
-    private final WebClient.Builder webClientBuilder;
+    private final UserServiceClient userServiceClient;
+    private final PaymentServiceClient paymentServiceClient;
+    private final TransactionServiceClient transactionServiceClient;
 
     @Override
     public ListingResponse createListing(ListingRequest listingRequest, List<MultipartFile> images, Jwt principal) {
         String userId = principal.getSubject();
 
+        UserResponse userInfo = userServiceClient.getUser(userId, "Bearer " + principal.getTokenValue());
+
         // Get the info for the user
-        UserResponse userInfo = webClientBuilder.build()
-                .get()
-                .uri("http://user-service/api/user/" + userId)
-                .headers(h -> h.setBearerAuth(principal.getTokenValue()))
-                .retrieve()
-                .bodyToMono(UserResponse.class)
-                .block();
+//        UserResponse userInfo = webClientBuilder.build()
+//                .get()
+//                .uri("http://user-service/api/user/" + userId)
+//                .headers(h -> h.setBearerAuth(principal.getTokenValue()))
+//                .retrieve()
+//                .bodyToMono(UserResponse.class)
+//                .block();
 
         if(userInfo == null)
             throw new NotFoundException("Cannot get info for user. User doesn't exist in db");
@@ -58,14 +65,16 @@ public class ListingServiceImpl implements IListingService {
                 .productPrice(listingRequest.getPrice())
                 .build();
 
-        String productId = webClientBuilder.build()
-                .post()
-                .uri("http://payment-service/api/payment/product")
-                .headers(h -> h.setBearerAuth(principal.getTokenValue()))
-                .bodyValue(stripeProductRequest)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        String productId = paymentServiceClient.getPaymentProduct(stripeProductRequest, "Bearer " + principal.getTokenValue());
+
+//        String productId = webClientBuilder.build()
+//                .post()
+//                .uri("http://payment-service/api/payment/product")
+//                .headers(h -> h.setBearerAuth(principal.getTokenValue()))
+//                .bodyValue(stripeProductRequest)
+//                .retrieve()
+//                .bodyToMono(String.class)
+//                .block();
 
         if (productId == null) {
             String msg = "Failed to create product in Stripe: " + listingRequest.getTitle();
@@ -126,13 +135,15 @@ public class ListingServiceImpl implements IListingService {
             if(!deleteTransaction)
                 return;
 
-            webClientBuilder.build()
-                    .delete()
-                    .uri("http://transaction-service/api/transaction/{listingId}", listingId)
-                    .headers(h -> h.setBearerAuth(principal.getTokenValue()))
-                    .retrieve()
-                    .toBodilessEntity()
-                    .block();
+            transactionServiceClient.deleteListingTransaction(listingId, "Bearer " + principal.getTokenValue());
+
+//            webClientBuilder.build()
+//                    .delete()
+//                    .uri("http://transaction-service/api/transaction/{listingId}", listingId)
+//                    .headers(h -> h.setBearerAuth(principal.getTokenValue()))
+//                    .retrieve()
+//                    .toBodilessEntity()
+//                    .block();
         } catch (Exception e) {
             throw new NotFoundException("Failed to delete listing with id: " + listingId + " and associated transactions");
         }
