@@ -57,8 +57,10 @@ public class UserServiceImpl implements IUserService {
     public UserResponse registerUser(UserRegisterRequest userRegisterRequest) throws UserRegistrationException {
         // Register user with keycloak
         String userId = this.keycloakService.registerUser(userRegisterRequest);
-        if(userId == null)
+        if(userId == null) {
+            // TODO: I think this throws a 401, but should be a 500
             throw new UserRegistrationException("Failed to register user with keycloak: " + userRegisterRequest.getEmail());
+        }
 
         // Add user to database
         UserEntity userEntity = null;

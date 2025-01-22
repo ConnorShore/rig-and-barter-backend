@@ -19,15 +19,29 @@ public class SecurityConfig {
     @Value("${rb.front-end.url}")
     private String FRONT_END_URL;
 
-    String[] permittedGetUrls = {"/api/listing/**"};
-    String[] permittedPostUrls = {"/api/user"};
+    String[] permittedGetUrls = {
+            "/api/listing/**",
+            "/api/component/**",
+            "/api/message/status",
+            "/api/notification/status",
+            "/api/payment/status",
+            "/api/payment/reauth",
+            "/api/account/*/delete",
+            "/api/transaction/status",
+            "/api/pc-builder/status",
+            "/api/user/status"
+    };
+
+    String[] permittedPostUrls = {
+            "/api/component",
+            "/api/user",
+    };
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // TODO: Move permitted urls to objects in code
         //  see if can remove security config from other services
         //  get front end flow working (create user works, but front end needs to use new keycloak stuff)
-        System.out.println("hit the chain api gateway");
         return http
                 .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers(permittedPostUrls))
                 .authorizeHttpRequests(auth -> auth
@@ -39,19 +53,6 @@ public class SecurityConfig {
                 .build();
     }
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-//        return httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers(permittedPostUrls))
-//            .authorizeHttpRequests(auth -> auth
-////        return httpSecurity.authorizeHttpRequests(authorize -> authorize
-//                    .requestMatchers(HttpMethod.POST, permittedPostUrls).permitAll()
-//                    .requestMatchers(HttpMethod.GET, permittedGetUrls).permitAll()
-//                    .anyRequest().authenticated())
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-//                .build();
-//    }
-
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -61,16 +62,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
-//    @Bean
-//    SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-//        return http
-//                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-//                .authorizeExchange(exchange -> exchange
-//                        .pathMatchers("/**").permitAll()
-//                        .anyExchange().authenticated())
-//                .oauth2Login(Customizer.withDefaults())
-//                .build();
-//    }
-
 }
