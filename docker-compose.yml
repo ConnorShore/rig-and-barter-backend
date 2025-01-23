@@ -87,10 +87,11 @@ services:
     depends_on:
       - broker
     environment:
-      KAFKA_CLUSTERS_NAME: local
-      KAFKA_CLUSTERS_BOOTSTRAPSERVERS: broker:29092
-      #      KAFKA_CLUSTERS_SCHEMAREGISTRY: http://schema-registry:8081
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9092
       DYNAMIC_CONFIG_ENABLED: 'true'
+      #      KAFKA_CLUSTERS_SCHEMAREGISTRY: http://schema-registry:8081
 
 #  broker:
 #    image: confluentinc/confluent-local:7.4.1
