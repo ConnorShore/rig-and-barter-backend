@@ -40,7 +40,9 @@ public class KafkaEventProducerImpl extends RBEventProducer {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaUrl);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+
         ProducerFactory<String, String> factory = new DefaultKafkaProducerFactory<>(props);
+
         this.kafkaTemplate = new KafkaTemplate<>(factory);
     }
 

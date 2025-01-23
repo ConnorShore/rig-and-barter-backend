@@ -35,4 +35,6 @@ public abstract class RBEventHandler {
     public abstract void initializeConsumers();
     public abstract void startConsumers();
     public abstract void stopConsumers();
+
+    public abstract String getGroupId();
 }

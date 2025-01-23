@@ -1,4 +1,4 @@
-package com.rigandbarter.notificationservice.consumer.impl;
+package com.rigandbarter.messageservice.consumer.impl;
 
 import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.components.RBEventConsumer;
@@ -6,9 +6,9 @@ import com.rigandbarter.eventlibrary.components.RBEventConsumerFactory;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
 import com.rigandbarter.eventlibrary.model.RBEvent;
 import com.rigandbarter.eventlibrary.model.RBEventHandler;
-import com.rigandbarter.notificationservice.consumer.IEventHandler;
-import com.rigandbarter.notificationservice.service.IEventHandlerService;
-import com.rigandbarter.notificationservice.service.impl.EventHandlerServiceImpl;
+import com.rigandbarter.messageservice.consumer.IEventHandler;
+import com.rigandbarter.messageservice.service.IEventHandlerService;
+import com.rigandbarter.messageservice.service.impl.EventHandlerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +45,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
 
     @Override
     public String getGroupId() {
-        return "NotificationServiceGroup";
+        return "MessageServiceGroup";
     }
 
     @Override
@@ -53,13 +53,11 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Received transaction created event: " + event.getId());
 
         TransactionCreatedEvent transactionCreatedEvent = (TransactionCreatedEvent)event;
-        RBResultStatus<Void>result = eventHandlerService.handleTransactionCreatedEvent(transactionCreatedEvent);
+        RBResultStatus<Void> result = eventHandlerService.handleTransactionCreatedEvent(transactionCreatedEvent);
 
         if (!result.isSuccess())
             log.error("Failed to handle Transaction Created Event: " + result.getErrorMessage());
 
         return null;
     }
-
-    // TODO: Handle transaction in progress and completed events
 }

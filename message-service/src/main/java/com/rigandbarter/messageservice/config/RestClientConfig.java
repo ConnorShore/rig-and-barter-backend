@@ -1,6 +1,7 @@
-package com.rigandbarter.notificationservice.config;
+package com.rigandbarter.messageservice.config;
 
-import com.rigandbarter.notificationservice.client.ListingServiceClient;
+
+import com.rigandbarter.messageservice.client.ListingServiceClient;
 import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
