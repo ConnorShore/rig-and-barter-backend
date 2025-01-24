@@ -25,7 +25,8 @@ public class KakfaEventConsumerImpl extends RBEventConsumer {
     private final ObjectMapper objectMapper;
     private final ConcurrentMessageListenerContainer listenerContainer;
 
-    public KakfaEventConsumerImpl(String queueName,
+    public KakfaEventConsumerImpl(String groupId,
+                                  String queueName,
                                   Function<RBEvent, Void> handlerFunction,
                                   Class<? extends RBEvent> type,
                                   Environment environment,
@@ -41,7 +42,7 @@ public class KakfaEventConsumerImpl extends RBEventConsumer {
 
         Map<String, Object> consumerConfig = Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, kafkaUrl,
-                GROUP_ID_CONFIG, "RigAndBarterEventId"
+                GROUP_ID_CONFIG, groupId
         );
 
         DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory =

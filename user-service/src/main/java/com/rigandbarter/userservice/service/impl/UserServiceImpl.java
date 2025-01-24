@@ -8,6 +8,7 @@ import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
 import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
 import com.rigandbarter.eventlibrary.events.UserCreatedEvent;
+import com.rigandbarter.userservice.client.PaymentServiceClient;
 import com.rigandbarter.userservice.dto.*;
 import com.rigandbarter.userservice.mapper.UserMapper;
 import com.rigandbarter.userservice.model.UserEntity;
@@ -17,7 +18,6 @@ import com.rigandbarter.userservice.service.IKeycloakService;
 import com.rigandbarter.userservice.service.IUserService;
 import com.rigandbarter.userservice.util.exceptions.UpdateUserException;
 import com.rigandbarter.userservice.util.exceptions.UserRegistrationException;
-import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -37,28 +38,30 @@ public class UserServiceImpl implements IUserService {
     private final RBEventProducer userCreatedProducer;;
     private final String EVENT_SOURCE = "UserService";
 
-    private final WebClient.Builder webClientBuilder;
+    private final PaymentServiceClient paymentServiceClient;
 
     public UserServiceImpl(IKeycloakService keycloakService,
                            IUserRepository userRepository,
                            IProfilePictureRepository profilePictureRepository,
                            RBEventProducerFactory rbEventProducerFactory,
-                           WebClient.Builder webClientBuilder)
+                           PaymentServiceClient paymentServiceClient)
     {
         this.keycloakService = keycloakService;
         this.userRepository = userRepository;
         this.profilePictureRepository = profilePictureRepository;
 
         this.userCreatedProducer = rbEventProducerFactory.createProducer(UserCreatedEvent.class);
-        this.webClientBuilder = webClientBuilder;
+        this.paymentServiceClient = paymentServiceClient;
     }
 
     @Override
     public UserResponse registerUser(UserRegisterRequest userRegisterRequest) throws UserRegistrationException {
         // Register user with keycloak
         String userId = this.keycloakService.registerUser(userRegisterRequest);
-        if(userId == null)
+        if(userId == null) {
+            // TODO: I think this throws a 401, but should be a 500
             throw new UserRegistrationException("Failed to register user with keycloak: " + userRegisterRequest.getEmail());
+        }
 
         // Add user to database
         UserEntity userEntity = null;
@@ -125,13 +128,7 @@ public class UserServiceImpl implements IUserService {
         // Get stripe customer info via web call to payment service
         StripeCustomerResponse stripeCustomerInfo = null;
         if(userEntity.getStripeCustomerId() != null) {
-            stripeCustomerInfo = webClientBuilder.build()
-                    .get()
-                    .uri("http://payment-service/api/payment/profile")
-                    .headers(httpHeaders -> httpHeaders.setBearerAuth(princiapl.getTokenValue()))
-                    .retrieve()
-                    .bodyToMono(StripeCustomerResponse.class)
-                    .block();
+            stripeCustomerInfo = paymentServiceClient.getPaymentProfile("Bearer " + princiapl.getTokenValue());
 
             if (stripeCustomerInfo == null) {
                 String msg = "Failed to retrieve stripe customer info from payment service: " + userEntity.getStripeCustomerId();

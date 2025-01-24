@@ -16,7 +16,6 @@
 	<description>PC Rig and Barter Backend Project</description>
 
 	<modules>
-		<module>discovery-service</module>
 		<module>listing-service</module>
 		<module>transaction-service</module>
 		<module>api-gateway</module>

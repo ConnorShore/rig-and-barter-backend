@@ -31,7 +31,7 @@ public class IEventHandlerImpl extends RBEventHandler implements IEventHandler {
     public void initializeConsumers() {
         log.info("Initializing consumers");
 
-        stripeUserCreatedConsumer = rbEventConsumerFactory.createConsumer(StripeCustomerCreatedEvent.class, this::handleStripeCustomerCreatedEvent);
+        stripeUserCreatedConsumer = rbEventConsumerFactory.createConsumer(getGroupId(), StripeCustomerCreatedEvent.class, this::handleStripeCustomerCreatedEvent);
     }
 
     @Override
@@ -46,6 +46,11 @@ public class IEventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Stopping consumers");
 
         stripeUserCreatedConsumer.stop();
+    }
+
+    @Override
+    public String getGroupId() {
+        return "UserServiceGroup";
     }
 
     @Override

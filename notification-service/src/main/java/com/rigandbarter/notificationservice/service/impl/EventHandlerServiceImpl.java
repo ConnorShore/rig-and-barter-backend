@@ -3,6 +3,7 @@ package com.rigandbarter.notificationservice.service.impl;
 import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
+import com.rigandbarter.notificationservice.client.ListingServiceClient;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotificationType;
 import com.rigandbarter.notificationservice.repository.mapper.FrontEndNotificationMapper;
@@ -20,8 +21,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class EventHandlerServiceImpl implements IEventHandlerService {
 
     private final INotificationService notificationService;
-    private final WebClient.Builder webClientBuilder;
     private final WebSocketService webSocketService;
+
+    private final ListingServiceClient listingServiceClient;
 
     private final String FRONT_END_NOTIFICATION_TITLE = "New Transaction Request!";
 
@@ -35,12 +37,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
         /**
          * TODO: Get user information from JWT decode or from principal on
          */
-        ListingResponse listingResponse = webClientBuilder.build()
-                .get()
-                .uri("http://listing-service/api/listing/{listingId}", event.getListingId())
-                .retrieve()
-                .bodyToMono(ListingResponse.class)
-                .block();
+        ListingResponse listingResponse = listingServiceClient.getListing(event.getListingId());
 
         if (listingResponse == null) {
             String msg = "Failed to retrieve listing from listing service: " + event.getListingId();

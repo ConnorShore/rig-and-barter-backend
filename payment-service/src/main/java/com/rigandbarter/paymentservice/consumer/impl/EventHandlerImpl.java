@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
     private final IEventHandlerService eventHandlerService;
     private RBEventConsumer userCreatedConsumer;
+    // TODO: Bring in progress consumner back online??
 //    private RBEventConsumer transactionInProgressConsumer;
     private RBEventConsumer transactionCompletedConsumer;
 
@@ -30,9 +31,9 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
     public void initializeConsumers() {
         log.info("Initializing consumers");
 
-        userCreatedConsumer = rbEventConsumerFactory.createConsumer(UserCreatedEvent.class, this::handleUserCreatedEvent);
+        userCreatedConsumer = rbEventConsumerFactory.createConsumer(getGroupId(), UserCreatedEvent.class, this::handleUserCreatedEvent);
 //        transactionInProgressConsumer = rbEventConsumerFactory.createConsumer(TransactionInProgressEvent.class, this::handleTransactionInProgressEvent);
-        transactionCompletedConsumer = rbEventConsumerFactory.createConsumer(TransactionCompletedEvent.class, this::handleTransactionCompletedEvent);
+        transactionCompletedConsumer = rbEventConsumerFactory.createConsumer(getGroupId(), TransactionCompletedEvent.class, this::handleTransactionCompletedEvent);
     }
 
     @Override
@@ -51,6 +52,11 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         userCreatedConsumer.stop();
 //        transactionInProgressConsumer.stop();
         transactionCompletedConsumer.stop();
+    }
+
+    @Override
+    public String getGroupId() {
+        return "PaymentServiceGroup";
     }
 
     @Override

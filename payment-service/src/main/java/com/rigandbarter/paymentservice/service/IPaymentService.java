@@ -2,14 +2,14 @@ package com.rigandbarter.paymentservice.service;
 
 import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
-import com.rigandbarter.eventlibrary.events.TransactionInProgressEvent;
 import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
 import com.rigandbarter.core.models.StripePaymentMethodResponse;
 import com.rigandbarter.core.models.StripeCustomerResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.rigandbarter.paymentservice.model.StripeCustomer;
 import com.stripe.exception.StripeException;
-import org.apache.http.auth.AuthenticationException;
+
+import javax.naming.AuthenticationException;
 
 public interface IPaymentService {
 
