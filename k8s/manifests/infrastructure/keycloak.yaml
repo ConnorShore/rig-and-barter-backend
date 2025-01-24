@@ -113,7 +113,7 @@ data:
       "clientSessionMaxLifespan": 0,
       "clientOfflineSessionIdleTimeout": 0,
       "clientOfflineSessionMaxLifespan": 0,
-      "accessCodeLifespan": 300,
+      "accessCodeLifespan": 60,
       "accessCodeLifespanUserAction": 300,
       "accessCodeLifespanLogin": 1800,
       "actionTokenGeneratedByAdminLifespan": 43200,

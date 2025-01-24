@@ -333,19 +333,6 @@ public class PaymentServiceImpl implements IPaymentService {
         }
 
         ListingResponse listing = listingServiceClient.getListing(transactionCompletedEvent.getListingId(), "Bearer " + transactionCompletedEvent.getAuthToken());
-
-//        ListingResponse listing = webClientBuilder.build()
-//                    .get()
-//                    .uri(builder -> builder
-//                            .scheme("http")
-//                            .host("listing-service")
-//                            .path("api/listing/{listingId}")
-//                            .build(transactionCompletedEvent.getListingId()))
-//                    .headers(httpHeaders -> httpHeaders.setBearerAuth(transactionCompletedEvent.getAuthToken()))
-//                    .retrieve()
-//                    .bodyToMono(ListingResponse.class)
-//                    .block();
-
         if(listing == null)
             throw new NotFoundException("Listing item for the transaction does not exist. Cancelling transaction.");
 

@@ -49,6 +49,9 @@ public class ComponentScraperApplication {
 
     public static void main(String[] args) {
         try {
+            // TODO: Have cmd args to allow to just post already created zip files
+            //  so re-scraping doesn't need to occur.
+
             scrapeContent();
             File zipFile = packageScrapedContent();
             sendPackagedContent(zipFile);
