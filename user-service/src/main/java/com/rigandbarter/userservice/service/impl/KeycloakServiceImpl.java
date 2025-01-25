@@ -38,7 +38,11 @@ public class KeycloakServiceImpl implements IKeycloakService {
         final String userEndpoint = "/admin/realms/rig-and-barter-realm/users";
         String url = KEYCLOAK_URL + userEndpoint;
 
+        log.info("User registration endpoint: " + url);
+
         var accessToken = getAccessToken();
+
+        log.info("Recieved access token!");
 
         KeycloakCredentials userCredentials = (KeycloakCredentials.builder()
                 .type("password")
@@ -46,6 +50,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
                 .value(userRegisterRequest.getPassword())
                 .build());
 
+        log.info("Created user credentials");
         KeycloakUserRepresentation userRep = KeycloakUserRepresentation.builder()
                 .enabled(true)
                 .username(userRegisterRequest.getEmail())
@@ -54,6 +59,9 @@ public class KeycloakServiceImpl implements IKeycloakService {
                 .lastName(userRegisterRequest.getLastName())
                 .credentials(List.of(userCredentials))
                 .build();
+
+
+        log.info("Created keycloak user rep. About to get the user");
 
         String userId;
         try {
@@ -73,6 +81,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
             return null;
         }
 
+        log.info("Keycloak user created with id: " + userId);
         return userId;
     }
 

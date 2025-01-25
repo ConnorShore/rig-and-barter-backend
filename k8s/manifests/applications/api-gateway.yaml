@@ -63,10 +63,10 @@ spec:
                 configMapKeyRef:
                   key: PC_BUILDER_SERVICE_URL
                   name: common-config
-            - name: RB_FRONTEND_URL
+            - name: RB_FRONT-END_URL
               valueFrom:
                 configMapKeyRef:
-                  key: RB_FRONTEND_URL
+                  key: RB_FRONT-END_URL
                   name: common-config
             - name: NOTIFICATION_SOCKET_URL
               valueFrom:
