@@ -44,16 +44,6 @@ public class ListingServiceImpl implements IListingService {
         String userId = principal.getSubject();
 
         UserResponse userInfo = userServiceClient.getUser(userId, "Bearer " + principal.getTokenValue());
-
-        // Get the info for the user
-//        UserResponse userInfo = webClientBuilder.build()
-//                .get()
-//                .uri("http://user-service/api/user/" + userId)
-//                .headers(h -> h.setBearerAuth(principal.getTokenValue()))
-//                .retrieve()
-//                .bodyToMono(UserResponse.class)
-//                .block();
-
         if(userInfo == null)
             throw new NotFoundException("Cannot get info for user. User doesn't exist in db");
 
@@ -66,16 +56,6 @@ public class ListingServiceImpl implements IListingService {
                 .build();
 
         String productId = paymentServiceClient.getPaymentProduct(stripeProductRequest, "Bearer " + principal.getTokenValue());
-
-//        String productId = webClientBuilder.build()
-//                .post()
-//                .uri("http://payment-service/api/payment/product")
-//                .headers(h -> h.setBearerAuth(principal.getTokenValue()))
-//                .bodyValue(stripeProductRequest)
-//                .retrieve()
-//                .bodyToMono(String.class)
-//                .block();
-
         if (productId == null) {
             String msg = "Failed to create product in Stripe: " + listingRequest.getTitle();
             log.error(msg);

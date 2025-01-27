@@ -93,9 +93,12 @@ spec:
                   name: user-service-config
             - name: RB_KEYCLOAK_ADMIN_CLIENT_SECRET
               valueFrom:
-                secretKeyRef:
-                  name: keycloak-secrets
-                  key: keycloak_client_secret
+                configMapKeyRef:
+                  key: RB_KEYCLOAK_ADMIN_CLIENT_SECRET
+                  name: user-service-config
+#                secretKeyRef:
+#                  name: keycloak-secrets
+#                  key: keycloak_client_secret
 ---
 apiVersion: v1
 kind: Service
@@ -137,3 +140,5 @@ data:
   AWS_S3_BUCKET-NAME: "rb-user-images-dev"
   RB_KEYCLOAK_URL: "http://keycloak.default.svc.cluster.local:8080"
   RB_KEYCLOAK_ADMIN_CLIENT_ID: "admin-cli"
+  # TODO: USE THJE SECRET VALUE AGAIN
+  RB_KEYCLOAK_ADMIN_CLIENT_SECRET: "pNeQOEH70jFoa2rjQwGUDFF7Uh1cjdyl"

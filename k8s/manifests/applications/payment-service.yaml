@@ -93,7 +93,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  stripe_secret_key: U1RSSVBFX1NFQ1JFVF9LRVk9c2tfdGVzdF81MVBweENnRkFHczY5VkNGQW1nY29ENWxlNlRCNDZkREgwY2hGcXpWVzFWWTg3bUI1c0JEV0RiUEN3TkNyM0FtR3laWXRqczdEeXVXOWhibXpCVGdOelpwTzAwSUZPd2lMcU4=
+  stripe_secret_key: c2tfdGVzdF81MVBweENnRkFHczY5VkNGQW1nY29ENWxlNlRCNDZkREgwY2hGcXpWVzFWWTg3bUI1c0JEV0RiUEN3TkNyM0FtR3laWXRqczdEeXVXOWhibXpCVGdOelpwTzAwSUZPd2lMcU4=
 kind: Secret
 metadata:
   name: stripe-secrets
