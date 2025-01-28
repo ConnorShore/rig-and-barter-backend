@@ -31,7 +31,7 @@ jobs:
         cache: maven
       
     - name: Build and Publish Images
-      run: mvn clean compile spring-boot:build-image -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -DimageLabel=dev -Dskip=true
+      run: mvn clean compile spring-boot:build-image -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -imageVersion=${{ vars.IMAGE_VERSION }} -DimageLabel=dev -Dskip=true
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     # - name: Update dependency graph
