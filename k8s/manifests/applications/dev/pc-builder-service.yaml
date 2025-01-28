@@ -1,35 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: message-service
+  name: pc-builder-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: message-service
+      app: pc-builder-service
   template:
     metadata:
       labels:
-        app: message-service
+        app: pc-builder-service
     spec:
       containers:
-        - name: message-service
-          image: cjshore1996/new-message-service:latest
+        - name: pc-builder-service
+          image: cjshore1996/dev-pc-builder-service:latest
           env:
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
               valueFrom:
                 configMapKeyRef:
                   key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
-                  name: common-config
-            - name: LISTING_SERVICE_URL
-              valueFrom:
-                configMapKeyRef:
-                  key: LISTING_SERVICE_URL
-                  name: common-config
-            - name: RB_FRONT-END_URL
-              valueFrom:
-                configMapKeyRef:
-                  key: RB_FRONT-END_URL
                   name: common-config
             - name: RB_EVENT_BROKER
               valueFrom:
@@ -45,30 +35,30 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   key: RB_STORAGE_DOCUMENT
-                  name: message-service-config
+                  name: pc-builder-service-config
             - name: SPRING_DATA_MONGODB_URI
               valueFrom:
                 configMapKeyRef:
                   key: SPRING_DATA_MONGODB_URI
-                  name: message-service-config
+                  name: pc-builder-service-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: message-service
+  name: pc-builder-service
 spec:
   selector:
-    app: message-service
+    app: pc-builder-service
   ports:
     - protocol: TCP
-      port: 8085
-      targetPort: 8085
+      port: 8088
+      targetPort: 8088
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: message-service-config
+  name: pc-builder-service-config
 data:
   RB_STORAGE_DOCUMENT: "mongodb"
-  SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.default.svc.cluster.local:27017/message-service?authSource=admin"
+  SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.default.svc.cluster.local:27017/pc-builder-service?authSource=admin"
 

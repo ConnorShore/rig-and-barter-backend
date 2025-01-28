@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: transaction-service
-          image: cjshore1996/new-transaction-service:latest
+          image: cjshore1996/dev-transaction-service:latest
           env:
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
               valueFrom:

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: listing-service
-          image: cjshore1996/new-listing-service:latest
+          image: cjshore1996/prod-listing-service:latest
           env:
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
               valueFrom:
