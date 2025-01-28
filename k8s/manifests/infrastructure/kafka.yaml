@@ -17,7 +17,7 @@ spec:
         - name: broker
           image: confluentinc/cp-kafka:7.5.0
           ports:
-            - containerPort: 55899
+            - containerPort: 9029
             - containerPort: 29092
           env:
             - name: KAFKA_BROKER_ID
@@ -55,8 +55,8 @@ spec:
     app: broker
   ports:
     - protocol: TCP
-      port: 55899
-      targetPort: 55899
+      port: 9029
+      targetPort: 9029
       name: kafka
     - protocol: TCP
       port: 29092

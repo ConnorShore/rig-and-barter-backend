@@ -54,6 +54,11 @@ spec:
                 secretKeyRef:
                   key: KEYCLOAK_ADMIN_PASSWORD
                   name: keycloak-secrets
+            - name: KEYCLOAK_ADMIN_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: KEYCLOAK_ADMIN_CLIENT_SECRET
+                  name: keycloak-secrets
           volumeMounts:
             - name: keycloak-realm
               mountPath: /opt/keycloak/data/import
@@ -78,6 +83,7 @@ apiVersion: v1
 data:
   DB_PASSWORD: cGFzc3dvcmQ=
   KEYCLOAK_ADMIN_PASSWORD: YWRtaW4=
+  KEYCLOAK_ADMIN_CLIENT_SECRET: TFlkTW02eGdXTXlzOTZIMklVYkR2ZFdpY2RlWGI4eW4=
 kind: Secret
 metadata:
   name: keycloak-secrets
@@ -956,9 +962,9 @@ data:
           "enabled": true,
           "alwaysDisplayInConsole": false,
           "clientAuthenticatorType": "client-secret",
-          "secret": "**********",
+          "secret": "pNeQOEH70jFoa2rjQwGUDFF7Uh1cjdyl",
           "redirectUris": [
-            "http://localhost:8080/*",
+            "http://localhost:9000/*",
             "http://localhost:4200/*"
           ],
           "webOrigins": [
