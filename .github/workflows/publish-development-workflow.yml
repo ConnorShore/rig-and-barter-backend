@@ -9,8 +9,17 @@
 name: Build and Publish Development Backend Images
 
 on:
-  push:
-    branches: [ "buildTest" ]
+  workflow_dispatch:
+    inputs:
+      Publish:
+        description: 'Whether to publish the image'
+        default: true
+        required: true
+        type: boolean
+      ImageVersion:
+        description: 'The version to tag the docker images with'
+        required: true
+        type: string
   pull_request:
     branches: [ "main" ]
     types:
@@ -18,7 +27,7 @@ on:
 
 jobs:
   publish-development:
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || ${{ inputs.Publish }}
     runs-on: ubuntu-latest
 
     steps:
