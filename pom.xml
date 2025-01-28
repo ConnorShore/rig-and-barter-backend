@@ -36,6 +36,7 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring-cloud.version>2023.0.0</spring-cloud.version>
+		<dockerUsername>placeholder</dockerUsername>
 		<dockerPassword>placeholder</dockerPassword>
 		<imageLabel>dev</imageLabel>
 		<imageVersion>latest</imageVersion>
@@ -48,13 +49,13 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>cjshore1996/${imageLabel}-${project.artifactId}:${imageVersion}</name>
+						<name>${dockerUsername}/${imageLabel}-${project.artifactId}:${imageVersion}</name>
 						<builder>dashaun/builder:tiny</builder>
 						<publish>true</publish>
 					</image>
 					<docker>
 						<publishRegistry>
-							<username>cjshore1996</username>
+							<username>${dockerUsername}</username>
 							<password>${dockerPassword}</password>
 						</publishRegistry>
 					</docker>
