@@ -12,7 +12,6 @@
         <module name="user-service" />
         <module name="listing-service" />
         <module name="message-service" />
-        <module name="discovery-service" />
         <module name="notification-service" />
         <module name="payment-service" />
         <module name="event-library" />
@@ -22,6 +21,9 @@
         <module name="pc-builder-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="discovery-service" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

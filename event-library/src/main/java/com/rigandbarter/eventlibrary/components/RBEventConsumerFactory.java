@@ -19,7 +19,7 @@ public class RBEventConsumerFactory {
 
     private final ObjectMapper objectMapper;
 
-    public RBEventConsumer createConsumer(Class<? extends RBEvent> eventType, Function<RBEvent, Void> handle) {
+    public RBEventConsumer createConsumer(String groupId, Class<? extends RBEvent> eventType, Function<RBEvent, Void> handle) {
         String brokerEnv = environment.getProperty(RBEventProperties.RB_EVENT_BROKER);
 
         if(brokerEnv == null)
@@ -28,7 +28,7 @@ public class RBEventConsumerFactory {
         switch (brokerEnv) {
             case "kafka":
             default:
-                return new KakfaEventConsumerImpl(eventType.getSimpleName(), handle, eventType, environment, objectMapper);
+                return new KakfaEventConsumerImpl(groupId, eventType.getSimpleName(), handle, eventType, environment, objectMapper);
         }
     }
 }

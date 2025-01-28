@@ -16,7 +16,6 @@
 	<description>PC Rig and Barter Backend Project</description>
 
 	<modules>
-		<module>discovery-service</module>
 		<module>listing-service</module>
 		<module>transaction-service</module>
 		<module>api-gateway</module>
@@ -37,7 +36,36 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring-cloud.version>2023.0.0</spring-cloud.version>
+		<dockerPassword>mysql</dockerPassword>
 	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>cjshore1996/new-${project.artifactId}</name>
+						<builder>dashaun/builder:tiny</builder>
+						<publish>true</publish>
+					</image>
+					<docker>
+						<publishRegistry>
+							<username>cjshore1996</username>
+							<password>${dockerPassword}</password>
+						</publishRegistry>
+					</docker>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencyManagement>
 		<dependencies>

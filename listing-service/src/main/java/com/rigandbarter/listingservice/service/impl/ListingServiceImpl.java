@@ -2,6 +2,9 @@ package com.rigandbarter.listingservice.service.impl;
 
 import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.core.models.UserResponse;
+import com.rigandbarter.listingservice.client.PaymentServiceClient;
+import com.rigandbarter.listingservice.client.TransactionServiceClient;
+import com.rigandbarter.listingservice.client.UserServiceClient;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.listingservice.dto.StripeProductRequest;
@@ -10,8 +13,6 @@ import com.rigandbarter.listingservice.repository.document.IListingRepository;
 import com.rigandbarter.listingservice.repository.file.IFileRepository;
 import com.rigandbarter.listingservice.repository.mapper.ListingMapper;
 import com.rigandbarter.listingservice.service.IListingService;
-import jakarta.ws.rs.InternalServerErrorException;
-import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -20,6 +21,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,21 +35,15 @@ public class ListingServiceImpl implements IListingService {
     private final IListingRepository listingRepository;
     private final IFileRepository fileRepository;
 
-    private final WebClient.Builder webClientBuilder;
+    private final UserServiceClient userServiceClient;
+    private final PaymentServiceClient paymentServiceClient;
+    private final TransactionServiceClient transactionServiceClient;
 
     @Override
     public ListingResponse createListing(ListingRequest listingRequest, List<MultipartFile> images, Jwt principal) {
         String userId = principal.getSubject();
 
-        // Get the info for the user
-        UserResponse userInfo = webClientBuilder.build()
-                .get()
-                .uri("http://user-service/api/user/" + userId)
-                .headers(h -> h.setBearerAuth(principal.getTokenValue()))
-                .retrieve()
-                .bodyToMono(UserResponse.class)
-                .block();
-
+        UserResponse userInfo = userServiceClient.getUser(userId, "Bearer " + principal.getTokenValue());
         if(userInfo == null)
             throw new NotFoundException("Cannot get info for user. User doesn't exist in db");
 
@@ -58,15 +55,7 @@ public class ListingServiceImpl implements IListingService {
                 .productPrice(listingRequest.getPrice())
                 .build();
 
-        String productId = webClientBuilder.build()
-                .post()
-                .uri("http://payment-service/api/payment/product")
-                .headers(h -> h.setBearerAuth(principal.getTokenValue()))
-                .bodyValue(stripeProductRequest)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-
+        String productId = paymentServiceClient.getPaymentProduct(stripeProductRequest, "Bearer " + principal.getTokenValue());
         if (productId == null) {
             String msg = "Failed to create product in Stripe: " + listingRequest.getTitle();
             log.error(msg);
@@ -120,18 +109,21 @@ public class ListingServiceImpl implements IListingService {
     @Override
     public void deleteListingById(String listingId, boolean deleteTransaction, Jwt principal) {
         try {
+            // TODO: See if can create a db transaction and if the web request fails, rollback the db transaction
             listingRepository.deleteListingById(listingId);
 
             if(!deleteTransaction)
                 return;
 
-            webClientBuilder.build()
-                    .delete()
-                    .uri("http://transaction-service/api/transaction/{listingId}", listingId)
-                    .headers(h -> h.setBearerAuth(principal.getTokenValue()))
-                    .retrieve()
-                    .toBodilessEntity()
-                    .block();
+            transactionServiceClient.deleteListingTransaction(listingId, "Bearer " + principal.getTokenValue());
+
+//            webClientBuilder.build()
+//                    .delete()
+//                    .uri("http://transaction-service/api/transaction/{listingId}", listingId)
+//                    .headers(h -> h.setBearerAuth(principal.getTokenValue()))
+//                    .retrieve()
+//                    .toBodilessEntity()
+//                    .block();
         } catch (Exception e) {
             throw new NotFoundException("Failed to delete listing with id: " + listingId + " and associated transactions");
         }

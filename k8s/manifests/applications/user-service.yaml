@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: cjshore1996/new-user-service:latest
+          env:
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+                  name: common-config
+            - name: PAYMENT_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: PAYMENT_SERVICE_URL
+                  name: common-config
+            - name: RB_EVENT_BROKER
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_EVENT_BROKER
+                  name: common-config
+            - name: RB_EVENT_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_EVENT_BROKER_URL
+                  name: common-config
+            - name: RB_STORAGE_RELATIONAL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_STORAGE_RELATIONAL
+                  name: user-service-config
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_DATASOURCE_URL
+                  name: user-service-config
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_DATASOURCE_USERNAME
+                  name: user-service-config
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql_root_password
+            - name: SPRING_CLOUD_AWS_REGION_STATIC
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_CLOUD_AWS_REGION_STATIC
+                  name: user-service-config
+            - name: SPRING_CLOUD_AWS_STACK_AUTO
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_CLOUD_AWS_STACK_AUTO
+                  name: user-service-config
+            - name: AWS_S3_BUCKET-NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: AWS_S3_BUCKET-NAME
+                  name: user-service-config
+            - name: SPRING_CLOUD_AWS_CREDENTIALS_ACCESS-KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secrets
+                  key: aws_access_key
+            - name: SPRING_CLOUD_AWS_CREDENTIALS_SECRET-KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secrets
+                  key: aws_secret_key
+            - name: RB_KEYCLOAK_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_KEYCLOAK_URL
+                  name: user-service-config
+            - name: RB_KEYCLOAK_ADMIN_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_KEYCLOAK_ADMIN_CLIENT_ID
+                  name: user-service-config
+            - name: RB_KEYCLOAK_ADMIN_CLIENT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_KEYCLOAK_ADMIN_CLIENT_SECRET
+                  name: user-service-config
+#                secretKeyRef:
+#                  name: keycloak-secrets
+#                  key: keycloak_client_secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  selector:
+    app: user-service
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
+---
+apiVersion: v1
+data:
+  mysql_root_password: bXlzcWw=
+kind: Secret
+metadata:
+  name: mysql-secrets
+---
+apiVersion: v1
+data:
+  keycloak_client_secret: cE5lUU9FSDcwakZvYTJyalF3R1VERkY3VWgxY2pkeWw=
+kind: Secret
+metadata:
+  name: keycloak-secrets
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-service-config
+data:
+  RB_STORAGE_RELATIONAL: "mysql"
+  RB_STORAGE_FILE: "aws-s3"
+  SPRING_DATASOURCE_USERNAME: "root"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql.default.svc.cluster.local:3306/user_service"
+  SPRING_CLOUD_AWS_REGION_STATIC: "us-west-1"
+  SPRING_CLOUD_AWS_STACK_AUTO: "false"
+  AWS_S3_BUCKET-NAME: "rb-user-images-dev"
+  RB_KEYCLOAK_URL: "http://keycloak.default.svc.cluster.local:8080"
+  RB_KEYCLOAK_ADMIN_CLIENT_ID: "admin-cli"
+  # TODO: USE THJE SECRET VALUE AGAIN
+  RB_KEYCLOAK_ADMIN_CLIENT_SECRET: "pNeQOEH70jFoa2rjQwGUDFF7Uh1cjdyl"

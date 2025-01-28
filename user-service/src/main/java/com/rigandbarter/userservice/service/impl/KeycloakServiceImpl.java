@@ -9,6 +9,7 @@ import com.rigandbarter.userservice.model.KeycloakUserRepresentation;
 import com.rigandbarter.userservice.service.IKeycloakService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.representations.idm.ClientRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,11 @@ public class KeycloakServiceImpl implements IKeycloakService {
         final String userEndpoint = "/admin/realms/rig-and-barter-realm/users";
         String url = KEYCLOAK_URL + userEndpoint;
 
+        log.info("User registration endpoint: " + url);
+
         var accessToken = getAccessToken();
+
+        log.info("Recieved access token!");
 
         KeycloakCredentials userCredentials = (KeycloakCredentials.builder()
                 .type("password")
@@ -45,6 +50,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
                 .value(userRegisterRequest.getPassword())
                 .build());
 
+        log.info("Created user credentials");
         KeycloakUserRepresentation userRep = KeycloakUserRepresentation.builder()
                 .enabled(true)
                 .username(userRegisterRequest.getEmail())
@@ -53,6 +59,9 @@ public class KeycloakServiceImpl implements IKeycloakService {
                 .lastName(userRegisterRequest.getLastName())
                 .credentials(List.of(userCredentials))
                 .build();
+
+
+        log.info("Created keycloak user rep. About to get the user");
 
         String userId;
         try {
@@ -72,6 +81,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
             return null;
         }
 
+        log.info("Keycloak user created with id: " + userId);
         return userId;
     }
 
@@ -99,10 +109,10 @@ public class KeycloakServiceImpl implements IKeycloakService {
      * TODO: Maybe move this to a bean?
      */
     private String getAccessToken() {
+
         final String TOKEN_ENDPOINT = "/realms/rig-and-barter-realm/protocol/openid-connect/token";
 
         String url = KEYCLOAK_URL + TOKEN_ENDPOINT;
-
         var credentialData = webClientBuilderNoLb.build()
                 .post()
                 .uri(url)

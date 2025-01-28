@@ -29,7 +29,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
     public void initializeConsumers() {
         log.info("Initializing consumers");
 
-        verifyUserConsumer = rbEventConsumerFactory.createConsumer(UserVerifyEvent.class, this::handleUserVerifyEvent);
+        verifyUserConsumer = rbEventConsumerFactory.createConsumer(getGroupId(), UserVerifyEvent.class, this::handleUserVerifyEvent);
     }
 
     @Override
@@ -44,6 +44,11 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Stopping consumers");
 
         verifyUserConsumer.stop();
+    }
+
+    @Override
+    public String getGroupId() {
+        return "ListingServiceGroup";
     }
 
     @Override

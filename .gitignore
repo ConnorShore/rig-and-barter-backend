@@ -1,4 +1,7 @@
 target/
+data/
+volume-data/
+
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -10,3 +13,4 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 *.csv
 *.zip
+*.log

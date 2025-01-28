@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS user_service;
+CREATE DATABASE IF NOT EXISTS transaction_service;
+CREATE DATABASE IF NOT EXISTS payment_service;

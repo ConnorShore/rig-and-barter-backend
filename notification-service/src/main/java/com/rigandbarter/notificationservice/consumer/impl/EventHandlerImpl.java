@@ -28,7 +28,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
     @Override
     public void initializeConsumers() {
         log.info("Initializing consumers");
-        transactionCreatedConsumer = rbEventConsumerFactory.createConsumer(TransactionCreatedEvent.class, this::handleTransactionCreatedEvent);
+        transactionCreatedConsumer = rbEventConsumerFactory.createConsumer(getGroupId(), TransactionCreatedEvent.class, this::handleTransactionCreatedEvent);
     }
 
     @Override
@@ -41,6 +41,11 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
     public void stopConsumers() {
         log.info("Stopping consumers");
         transactionCreatedConsumer.stop();
+    }
+
+    @Override
+    public String getGroupId() {
+        return "NotificationServiceGroup";
     }
 
     @Override

@@ -9,9 +9,10 @@ import com.rigandbarter.paymentservice.service.IPaymentService;
 import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.auth.AuthenticationException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.naming.AuthenticationException;
 
 @RestController
 @RequiredArgsConstructor
