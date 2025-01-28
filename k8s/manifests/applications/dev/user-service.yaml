@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: cjshore1996/new-user-service:latest
+          image: cjshore1996/dev-user-service:latest
           env:
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
               valueFrom:

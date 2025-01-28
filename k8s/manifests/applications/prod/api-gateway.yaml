@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: cjshore1996/new-api-gateway:latest
+          image: cjshore1996/prod-api-gateway:latest
           ports:
             - containerPort: 9000
           env:
