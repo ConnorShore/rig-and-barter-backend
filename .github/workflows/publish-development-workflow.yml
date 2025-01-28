@@ -9,14 +9,11 @@
 name: Publish Development Backend Images Automated
 
 on:
-  pull_request:
+  push:
     branches: [ "main" ]
-    types:
-      - closed
 
 jobs:
   publish-development:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
