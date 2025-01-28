@@ -38,6 +38,7 @@
 		<spring-cloud.version>2023.0.0</spring-cloud.version>
 		<dockerPassword>placeholder</dockerPassword>
 		<imageLabel>dev</imageLabel>
+		<imageVersion>latest</imageVersion>
 	</properties>
 
 	<build>
@@ -47,10 +48,9 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>cjshore1996/%{imageLabel}-${project.artifactId}</name>
+						<name>cjshore1996/${imageLabel}-${project.artifactId}:${imageVersion}</name>
 						<builder>dashaun/builder:tiny</builder>
 						<publish>true</publish>
-						<version>${project.version}</version>
 					</image>
 					<docker>
 						<publishRegistry>
