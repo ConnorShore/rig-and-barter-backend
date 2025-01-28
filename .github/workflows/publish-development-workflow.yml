@@ -18,12 +18,18 @@ on:
         type: boolean
       ImageVersion:
         description: 'The version to tag the docker images with'
+        default: 'latest'
         required: true
         type: string
+  push:
+    branches: [ "buildTest" ]
   pull_request:
     branches: [ "main" ]
     types:
       - closed
+
+env:
+  IMAGE_VERSION: ${{ inputs.ImageVersion }}
 
 jobs:
   publish-development:
@@ -40,7 +46,7 @@ jobs:
         cache: maven
       
     - name: Build and Publish Images
-      run: mvn clean compile spring-boot:build-image -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -DimageVersion=${{ vars.IMAGE_VERSION }} -DimageLabel=dev -Dskip=true
+      run: mvn clean compile spring-boot:build-image -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -DimageVersion=${{ env.IMAGE_VERSION }} -DimageLabel=dev -Dskip=true
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
