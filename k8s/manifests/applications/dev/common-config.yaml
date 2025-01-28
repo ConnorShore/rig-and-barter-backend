@@ -13,6 +13,7 @@ data:
   COMPONENT_SERVICE_URL: "http://component-service.default.svc.cluster.local:8087"
   PC_BUILDER_SERVICE_URL: "http://pc-builder-service.default.svc.cluster.local:8088"
   SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: "http://keycloak.default.svc.cluster.local:8080/realms/rig-and-barter-realm"
+# TODO: Test if this works
 #  RB_FRONT-END_URL: "http://rig-and-barter-frontend.default.svc.cluser.lcoal:4200"
   RB_FRONT-END_URL: "http://localhost:4200"
   RB_EVENT_BROKER: "kafka"
