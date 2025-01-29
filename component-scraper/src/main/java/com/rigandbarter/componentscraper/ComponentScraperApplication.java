@@ -45,7 +45,8 @@ public class ComponentScraperApplication {
             "hard-drive-failed.txt", "solid-state-drive-failed.txt"
     };
 
-    private static final String POST_URL = "http://localhost:9000/api/component";
+    // TODO: Move to config
+    private static final String POST_URL = "http://localhost:9000/api/component/db";
 
     public static void main(String[] args) {
         try {

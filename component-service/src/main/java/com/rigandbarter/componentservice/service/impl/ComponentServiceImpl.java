@@ -2,8 +2,9 @@ package com.rigandbarter.componentservice.service.impl;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.rigandbarter.componentservice.dto.PagedComponentResponse;
+import com.rigandbarter.componentservice.dto.*;
 import com.rigandbarter.componentservice.mapper.ComponentMapper;
+import com.rigandbarter.componentservice.repository.file.IFileRepository;
 import com.rigandbarter.componentservice.service.IComponentService;
 import com.rigandbarter.componentservice.model.*;
 import com.rigandbarter.componentservice.repository.document.IComponentRepository;
@@ -12,13 +13,17 @@ import com.rigandbarter.core.models.ComponentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static com.rigandbarter.core.models.ComponentCategory.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,23 @@ import java.util.zip.ZipInputStream;
 public class ComponentServiceImpl implements IComponentService {
 
     private final IComponentRepository componentRepository;
+    private final IFileRepository fileRepository;
+
+    @Override
+    public ComponentResponse createComponent(CreateComponentRequest componentRequest, MultipartFile image) {
+        log.info("Uploading image to file storage");
+        var fileExtension = StringUtils.getFilenameExtension(image.getOriginalFilename());
+        var key = UUID.randomUUID() + "." + fileExtension;
+        var imageUrl = fileRepository.uploadFile(key, image);
+
+        log.info("All images successfully uploaded to file storage");
+
+        String id = UUID.randomUUID().toString();
+        Component component = componentRepository.saveComponent(requestToComponent(componentRequest, id, imageUrl));
+
+        log.info("Successfully created component: " + component.getId());
+        return componentToResponse(component);
+    }
 
     @Override
     public List<ComponentResponse> saveAllComponents(MultipartFile zipDataFile) {
@@ -155,6 +177,36 @@ public class ComponentServiceImpl implements IComponentService {
         return files;
     }
 
+    /**
+     * Converts a CreateComponentRequest to a Component
+     * @param request The request to convert
+     * @param id The id to associate with the component
+     * @param imageUrl The image url to associate with the component
+     * @return The converted component
+     */
+    private Component requestToComponent(CreateComponentRequest request, String id, String imageUrl) {
+        Component res = switch (request.getComponentCategory()) {
+            case HARD_DRIVE -> ComponentMapper.dtoToEntity((CreateHardDriveComponentRequest) request, id, imageUrl);
+            case SOLID_STATE_DRIVE -> ComponentMapper.dtoToEntity((CreateSolidStateDriveComponentRequest) request, id, imageUrl);
+            case MOTHERBOARD -> ComponentMapper.dtoToEntity((CreateMotherboardComponentRequest) request, id, imageUrl);
+            case MEMORY -> ComponentMapper.dtoToEntity((CreateMemoryComponentRequest) request, id, imageUrl);
+            case CPU -> ComponentMapper.dtoToEntity((CreateProcessorComponentRequest) request, id, imageUrl);
+            case GPU -> ComponentMapper.dtoToEntity((CreateVideoCardComponentRequest) request, id, imageUrl);
+            case POWER_SUPPLY -> ComponentMapper.dtoToEntity((CreatePowerSupplyComponentRequest) request, id, imageUrl);
+            case CASE -> ComponentMapper.dtoToEntity((CreateCaseComponentRequest) request, id, imageUrl);
+        };
+
+        if (res == null)
+            log.error("Failed to convert component request: " + id);
+
+        return res;
+    }
+
+    /**
+     * Converts a Component to a ComponentResponse
+     * @param component The component to convert
+     * @return The converted component
+     */
     private ComponentResponse componentToResponse(Component component) {
         ComponentResponse res = switch (component.getCategory()) {
             case HARD_DRIVE -> ComponentMapper.entityToDto((HardDriveComponent) component);

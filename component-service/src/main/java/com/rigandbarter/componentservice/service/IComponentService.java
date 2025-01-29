@@ -1,7 +1,7 @@
 package com.rigandbarter.componentservice.service;
 
+import com.rigandbarter.componentservice.dto.CreateComponentRequest;
 import com.rigandbarter.componentservice.dto.PagedComponentResponse;
-import com.rigandbarter.componentservice.model.Component;
 import com.rigandbarter.core.models.ComponentResponse;
 import com.rigandbarter.core.models.ComponentCategory;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,6 +9,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface IComponentService {
+
+    /**
+     * Creates a new component in the db
+     * @param componentRequest The component to create
+     * @param image The image to associate with the component
+     * @return The created component
+     */
+    ComponentResponse createComponent(CreateComponentRequest componentRequest, MultipartFile image);
 
     /**
      * Saves components (that don't already exist) into the db

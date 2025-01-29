@@ -1,9 +1,12 @@
 package com.rigandbarter.componentservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.rigandbarter.componentservice.dto.CreateComponentRequest;
 import com.rigandbarter.componentservice.dto.PagedComponentResponse;
 import com.rigandbarter.core.models.ComponentResponse;
 import com.rigandbarter.core.models.ComponentCategory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,11 +16,23 @@ import java.util.List;
 public interface IComponentController {
 
     /**
+     * Creates a new component to be added to the db of components
+     * @param componentRequest The new component to be added
+     * @param image The images to be added to for the component
+     * @return The created component
+     */
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ResponseStatus(HttpStatus.CREATED)
+    ComponentResponse createComponent(@RequestPart(name = "component") String componentRequest,
+                                      @RequestPart(name = "image") MultipartFile image) throws JsonProcessingException;
+
+
+    /**
      * Updates the component database with new entries
      * @param dataZipFile The zip containing data entries
      * @return List of created components
      */
-    @PostMapping()
+    @PostMapping("db")
     @ResponseStatus(HttpStatus.CREATED)
     List<ComponentResponse> updateComponentDb(@RequestPart(name = "dataZip") MultipartFile dataZipFile);
 

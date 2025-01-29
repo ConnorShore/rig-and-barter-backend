@@ -8,6 +8,13 @@ import java.util.List;
 public interface IComponentRepository {
 
     /**
+     * Saves a component to the db
+     * @param component Component to save
+     * @return The saved component
+     */
+    Component saveComponent(Component component);
+
+    /**
      * Saves all components to db
      * @param components Components to save
      * @return List of the saved components
