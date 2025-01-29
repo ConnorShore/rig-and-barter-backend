@@ -33,6 +33,12 @@ public class ComponentServiceImpl implements IComponentService {
     private final IComponentRepository componentRepository;
     private final IFileRepository fileRepository;
 
+    private static final String[] DATA_FILE_NAMES = {
+            "case.csv", "motherboard.csv", "cpu.csv",
+            "gpu.csv", "memory.csv", "power-supply.csv",
+            "hard-drive.csv", "solid-state-drive.csv"
+    };
+
     @Override
     public ComponentResponse createComponent(CreateComponentRequest componentRequest, MultipartFile image) {
         log.info("Uploading image to file storage");
@@ -59,7 +65,13 @@ public class ComponentServiceImpl implements IComponentService {
             for (String file : files) {
                 componentsToAdd.addAll(extractComponentPojosFromFile(file));
             }
-            // TODO: Delete all created files
+
+            // Delete all files after they have been processed
+            for (String file : DATA_FILE_NAMES) {
+                File f = new File(file);
+                if (f.exists())
+                    f.delete();
+            }
         }
         catch(Exception e) {
             log.error(e.getMessage());
