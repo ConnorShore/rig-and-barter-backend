@@ -177,6 +177,13 @@ public class ComponentServiceImpl implements IComponentService {
         return files;
     }
 
+    /**
+     * Converts a CreateComponentRequest to a Component
+     * @param request The request to convert
+     * @param id The id to associate with the component
+     * @param imageUrl The image url to associate with the component
+     * @return The converted component
+     */
     private Component requestToComponent(CreateComponentRequest request, String id, String imageUrl) {
         Component res = switch (request.getComponentCategory()) {
             case HARD_DRIVE -> ComponentMapper.dtoToEntity((CreateHardDriveComponentRequest) request, id, imageUrl);
@@ -195,6 +202,11 @@ public class ComponentServiceImpl implements IComponentService {
         return res;
     }
 
+    /**
+     * Converts a Component to a ComponentResponse
+     * @param component The component to convert
+     * @return The converted component
+     */
     private ComponentResponse componentToResponse(Component component) {
         ComponentResponse res = switch (component.getCategory()) {
             case HARD_DRIVE -> ComponentMapper.entityToDto((HardDriveComponent) component);
