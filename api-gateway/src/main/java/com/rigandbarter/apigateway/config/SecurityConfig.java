@@ -38,6 +38,7 @@ public class SecurityConfig {
 
     String[] permittedPostUrls = {
             "/api/component",
+            "/api/component/db",
             "/api/user",
     };
 

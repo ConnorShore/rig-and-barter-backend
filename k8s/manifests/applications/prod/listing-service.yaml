@@ -117,5 +117,5 @@ data:
   SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.default.svc.cluster.local:27017/listing-service?authSource=admin"
   SPRING_CLOUD_AWS_REGION_STATIC: "us-west-1"
   SPRING_CLOUD_AWS_STACK_AUTO: "false"
-  AWS_S3_BUCKET-NAME: "rb-listing-images-dev"
+  AWS_S3_BUCKET-NAME: "rb-listing-images-prod"
 

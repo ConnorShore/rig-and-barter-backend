@@ -137,7 +137,7 @@ data:
   SPRING_DATASOURCE_URL: "jdbc:mysql://mysql.default.svc.cluster.local:3306/user_service"
   SPRING_CLOUD_AWS_REGION_STATIC: "us-west-1"
   SPRING_CLOUD_AWS_STACK_AUTO: "false"
-  AWS_S3_BUCKET-NAME: "rb-user-images-dev"
+  AWS_S3_BUCKET-NAME: "rb-user-images-prod"
   RB_KEYCLOAK_URL: "http://keycloak.default.svc.cluster.local:8080"
   RB_KEYCLOAK_ADMIN_CLIENT_ID: "admin-cli"
   # TODO: USE THJE SECRET VALUE AGAIN

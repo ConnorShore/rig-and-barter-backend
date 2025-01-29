@@ -41,6 +41,31 @@ spec:
                 configMapKeyRef:
                   key: SPRING_DATA_MONGODB_URI
                   name: component-service-config
+            - name: SPRING_CLOUD_AWS_REGION_STATIC
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_CLOUD_AWS_REGION_STATIC
+                  name: listing-service-config
+            - name: SPRING_CLOUD_AWS_STACK_AUTO
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_CLOUD_AWS_STACK_AUTO
+                  name: listing-service-config
+            - name: AWS_S3_BUCKET-NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: AWS_S3_BUCKET-NAME
+                  name: listing-service-config
+            - name: SPRING_CLOUD_AWS_CREDENTIALS_ACCESS-KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secrets
+                  key: aws_access_key
+            - name: SPRING_CLOUD_AWS_CREDENTIALS_SECRET-KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secrets
+                  key: aws_secret_key
 ---
 apiVersion: v1
 kind: Service
@@ -55,10 +80,21 @@ spec:
       targetPort: 8087
 ---
 apiVersion: v1
+data:
+  aws_access_key: QUtJQVFSQUhURDI2Q0pBTzNSUkg=
+  aws_secret_key: SjgvNFdNTHdaejFENlpmdlNzMTRMeml2WkNsT0Q2ekE0eGEzZ0Z4ag==
+kind: Secret
+metadata:
+  name: aws-secrets
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: component-service-config
 data:
   RB_STORAGE_DOCUMENT: "mongodb"
   SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.default.svc.cluster.local:27017/component-service?authSource=admin"
+  SPRING_CLOUD_AWS_REGION_STATIC: "us-west-1"
+  SPRING_CLOUD_AWS_STACK_AUTO: "false"
+  AWS_S3_BUCKET-NAME: "rb-component-images-dev"
 

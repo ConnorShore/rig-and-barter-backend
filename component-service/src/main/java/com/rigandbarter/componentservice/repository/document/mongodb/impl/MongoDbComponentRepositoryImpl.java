@@ -31,6 +31,11 @@ public class MongoDbComponentRepositoryImpl extends SimpleMongoRepository<Compon
     }
 
     @Override
+    public Component saveComponent(Component component) {
+        return super.save(component);
+    }
+
+    @Override
     public List<Component> saveAllComponents(List<Component> components) {
         return super.saveAll(components);
     }
