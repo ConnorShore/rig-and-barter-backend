@@ -28,4 +28,4 @@ jobs:
         cache: maven
       
     - name: Build and Publish Development Images
-      run: mvn clean compile spring-boot:build-image -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -DimageVersion=latest -DimageLabel=dev -Dskip=true
+      run: mvn clean compile spring-boot:build-image -DdockerUsername=${{ vsrs.DOCKER_USERNAME }} -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -DimageVersion=latest -DimageLabel=dev -Dskip=true
