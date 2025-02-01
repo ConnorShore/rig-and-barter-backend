@@ -10,14 +10,14 @@
 
 
 > [!NOTE]
-> If you are interested in the architecture of the app, jump to the [Architecture Section]
+> If you are interested in the architecture of the app, jump to the [Architecture Section](#architecture).
 
 
 # Overview
-PC Rig and Barter is a tool to help you design PC builds and aquire the different components you need to create your perfect build.
+PC Rig and Barter is a tool to help you design PC builds and acquire the different components you need to create your perfect build.
 
 > [!NOTE]
-> This project is still under development. New features and enhancements will be continually added and imprvoed upon over time.
+> This project is still under development. New features and enhancements will be continually added and improved upon over time.
 
 # Capabilities
 PC Rig and Barter contains a variety of features to help you design PC builds as well as fostering a marketplace to buy and sell PC components and even manage the payment of the buying and selling process.
@@ -30,13 +30,12 @@ This is the *Barter* portion of PC Rig and Barter.  Users are able to create lis
 
 <img src="https://pc-rb-public-assets.s3.us-west-1.amazonaws.com/ListingsPage.png" alt="Listing Gallery"/>
 
-<img src="https://pc-rb-public-assets.s3.us-west-1.amazonaws.com/Listing.png"  
-alt="Listing Details Page"/>
+<img src="https://pc-rb-public-assets.s3.us-west-1.amazonaws.com/Listing.png" alt="Listing Details Page"/>
 
 ### Streamline flow to Purchase Listings
 While other marketplaces require users to meet and pay in person for listed items, while that is still an option with PC Rig and Barter, this app also allows the purchasing of listed components to be facilitated directly through PC Rig and Barter.
 
-When a buyer *Requests a Purchase* of a listing, a new *Transaction* is created between the buyer and seller to facilitate the purchase process. This creates a simple flow from purchase request to compeletion of the purchase.
+When a buyer *Requests a Purchase* of a listing, a new *Transaction* is created between the buyer and seller to facilitate the purchase process. This creates a simple flow from purchase request to completion of the purchase.
 
 <img src="https://pc-rb-public-assets.s3.us-west-1.amazonaws.com/Transactions.png" alt="Transaction Page"/>
 
@@ -54,7 +53,7 @@ This is the *Rig* portion of PC Rig and Barter.  Any user who has created an acc
 
 <img src="https://pc-rb-public-assets.s3.us-west-1.amazonaws.com/Messages.png" alt="PC Builder Page"/>
 
-> ![NOTE]
+> [!NOTE]
 > This feature is still being developed and will include some cool and necessary features such as compatability checking between components, AI component suggestions and more!
 
 # Architecture
@@ -67,12 +66,12 @@ The backend is a collection of microservices written in Java using Spring Boot 3
 * **
 
 ### Databases
-Currently the databases being utalized are:
+Currently the databases being utilized are:
 * **MySQL**
 * **MongoDB**
 * **AWS S3**
 
-The architecture of the services allow me to very easily swap to different database poviders or types depending on my needs going forward, especially related to costs.
+The architecture of the services allow me to very easily swap to different database providers or types depending on my needs going forward, especially related to costs.
 
 > ![NOTE]
 > Currently I'm working on building a home server so I can deploy and host this myself instead of paying for cloud providers as they get expensive for a personal project.
