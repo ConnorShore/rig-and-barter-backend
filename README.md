@@ -46,12 +46,12 @@ To enable purchasing through the app directly, the user needs to connect a bank 
 ### User Messaging
 When a *Transaction* is created, a new message group is created between the buyer and seller as well so they can communicate to answer any questions, negotiate on price, or to discuss a meetup location (if they aren't verified buyers/sellers).
 
-<img src="https://pc-rb-public-assets.s3.us-west-1.amazonaws.com/PaymentInfo.png" alt="User Payment Info Page"/>
+<img src="https://pc-rb-public-assets.s3.us-west-1.amazonaws.com/Messages.png" alt="User Payment Info Page"/>
 
 ### PC Builder
 This is the *Rig* portion of PC Rig and Barter.  Any user who has created an account has the ability to create their own PC builds.  This allows user to select components and save their configurations so they can work toward building their dream PC or just experiement with different builds.
 
-<img src="https://pc-rb-public-assets.s3.us-west-1.amazonaws.com/Messages.png" alt="PC Builder Page"/>
+<img src="https://pc-rb-public-assets.s3.us-west-1.amazonaws.com/PCBuilder.png" alt="PC Builder Page"/>
 
 > [!NOTE]
 > This feature is still being developed and will include some cool and necessary features such as compatability checking between components, AI component suggestions and more!
