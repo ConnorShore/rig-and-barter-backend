@@ -73,7 +73,7 @@ Currently the databases being utilized are:
 
 The architecture of the services allow me to very easily swap to different database providers or types depending on my needs going forward, especially related to costs.
 
-> ![NOTE]
+> [!NOTE]
 > Currently I'm working on building a home server so I can deploy and host this myself instead of paying for cloud providers as they get expensive for a personal project.
 
 ## Frontend
