@@ -3,6 +3,7 @@ package com.rigandbarter.listingservice.consumer.impl;
 import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.components.RBEventConsumer;
 import com.rigandbarter.eventlibrary.components.RBEventConsumerFactory;
+import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
 import com.rigandbarter.eventlibrary.events.UserCreatedEvent;
 import com.rigandbarter.eventlibrary.events.UserVerifyEvent;
 import com.rigandbarter.eventlibrary.model.RBEvent;
@@ -19,6 +20,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
     private final IEventHandlerService eventHandlerService;
 
     private RBEventConsumer verifyUserConsumer;
+    private RBEventConsumer transactionCompletedConsumer;
 
     public EventHandlerImpl(RBEventConsumerFactory rbEventConsumerFactory, IEventHandlerService eventHandlerService) {
         super(rbEventConsumerFactory);
@@ -30,6 +32,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Initializing consumers");
 
         verifyUserConsumer = rbEventConsumerFactory.createConsumer(getGroupId(), UserVerifyEvent.class, this::handleUserVerifyEvent);
+        transactionCompletedConsumer = rbEventConsumerFactory.createConsumer(getGroupId(), TransactionCompletedEvent.class, this::handleTransactionCompletedEvent);
     }
 
     @Override
@@ -37,6 +40,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Starting consumers");
 
         verifyUserConsumer.start();
+        transactionCompletedConsumer.start();
     }
 
     @Override
@@ -44,6 +48,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         log.info("Stopping consumers");
 
         verifyUserConsumer.stop();
+        transactionCompletedConsumer.stop();
     }
 
     @Override
@@ -60,6 +65,19 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
 
         if (!result.isSuccess())
             log.error("Failed to handle User Verify Event: " + result.getErrorMessage());
+
+        return null;
+    }
+
+    @Override
+    public Void handleTransactionCompletedEvent(RBEvent event) {
+        log.info("Received transaction compoleted event: " + event.getId());
+
+        TransactionCompletedEvent transactionCompletedEvent = (TransactionCompletedEvent)event;
+        RBResultStatus<Void> result = eventHandlerService.handleTransactionCompletedEvent(transactionCompletedEvent);
+
+        if (!result.isSuccess())
+            log.error("Failed to handle transaction compoleted Event: " + result.getErrorMessage());
 
         return null;
     }

@@ -71,6 +71,7 @@ spec:
   capacity:
       storage: 1Gi
   hostPath:
+    # TODO: Move this to variable value so can specify nas or other storage
     path: /data/mysql
 ---
 apiVersion: v1

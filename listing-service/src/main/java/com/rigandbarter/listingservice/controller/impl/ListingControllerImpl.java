@@ -43,7 +43,7 @@ public class ListingControllerImpl implements IListingController {
 
     @Override
     public void deleteListingById(String listingId, boolean deleteTransaction, Jwt principal) {
-        listingService.deleteListingById(listingId, deleteTransaction, principal);
+        listingService.deleteListingById(listingId, deleteTransaction, principal.getTokenValue());
     }
 
     @Override

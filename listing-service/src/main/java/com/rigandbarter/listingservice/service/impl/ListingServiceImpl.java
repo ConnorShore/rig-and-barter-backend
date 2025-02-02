@@ -107,23 +107,14 @@ public class ListingServiceImpl implements IListingService {
     }
 
     @Override
-    public void deleteListingById(String listingId, boolean deleteTransaction, Jwt principal) {
+    public void deleteListingById(String listingId, boolean deleteTransaction, String authToken) {
         try {
             // TODO: See if can create a db transaction and if the web request fails, rollback the db transaction
             listingRepository.deleteListingById(listingId);
 
-            if(!deleteTransaction)
-                return;
+            if(deleteTransaction)
+                transactionServiceClient.deleteListingTransaction(listingId, "Bearer " + authToken);
 
-            transactionServiceClient.deleteListingTransaction(listingId, "Bearer " + principal.getTokenValue());
-
-//            webClientBuilder.build()
-//                    .delete()
-//                    .uri("http://transaction-service/api/transaction/{listingId}", listingId)
-//                    .headers(h -> h.setBearerAuth(principal.getTokenValue()))
-//                    .retrieve()
-//                    .toBodilessEntity()
-//                    .block();
         } catch (Exception e) {
             throw new NotFoundException("Failed to delete listing with id: " + listingId + " and associated transactions");
         }

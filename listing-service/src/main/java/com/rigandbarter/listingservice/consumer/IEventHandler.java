@@ -6,8 +6,13 @@ public interface IEventHandler {
 
     /**
      * Handles the consumption of the user verify event
-     * @param event
-     * @return
+     * @param event the event to handle
      */
     Void handleUserVerifyEvent(RBEvent event);
+
+    /**
+     * Handles the consumption of the transaction completed event
+     * @param event the event to handle
+     */
+    Void handleTransactionCompletedEvent(RBEvent event);
 }
