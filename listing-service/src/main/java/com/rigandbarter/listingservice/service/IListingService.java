@@ -42,7 +42,7 @@ public interface IListingService {
      * Deletes a specific listing by its id
      * @param listingId The id of the listing to delete
      * @param deleteTransaction True if should delete associated transactions
-     * @param principal The auth principal of the user
+     * @param authToken The auth token of the user
      */
-    void deleteListingById(String listingId, boolean deleteTransaction, Jwt principal);
+    void deleteListingById(String listingId, boolean deleteTransaction, String authToken);
 }

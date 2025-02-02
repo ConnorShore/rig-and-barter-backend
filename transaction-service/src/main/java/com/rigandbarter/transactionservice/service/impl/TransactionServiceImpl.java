@@ -160,7 +160,7 @@ public class TransactionServiceImpl implements ITransactionService {
             transactionCompletedProducer.send(event, this::handleFailedTransactionCompletedEventSend);
         }
 
-        this.transactionRepository.save(transaction);
+        transaction = this.transactionRepository.save(transaction);
         return TransactionMapper.entityToDto(transaction);
     }
 
