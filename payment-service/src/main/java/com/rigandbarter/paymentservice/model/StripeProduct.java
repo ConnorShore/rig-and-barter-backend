@@ -15,7 +15,8 @@ public class StripeProduct {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String userId; // Listing userId (may want to use their stripe id?)
-    private String stripeId;
+    private String stripeProductId;
+    private String stripePriceId;
     private String name;
     private String description;
     private String currency;

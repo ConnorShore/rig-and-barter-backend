@@ -27,7 +27,8 @@ public class Listing {
     private String description;
     private LocalDateTime creationDate;
     private Double price;
-    private String stripeId;
+    private String stripeProductId;
+    private String stripePriceId;
     private List<String> imageUrls;
     private ComponentCategory componentCategory;
     private UserBasicInfoResponse userInfo;

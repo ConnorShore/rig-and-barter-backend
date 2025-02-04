@@ -5,6 +5,7 @@ import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
 import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
 import com.rigandbarter.core.models.StripePaymentMethodResponse;
 import com.rigandbarter.core.models.StripeCustomerResponse;
+import com.rigandbarter.core.models.StripeProductCreationResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.rigandbarter.paymentservice.model.StripeCustomer;
 import com.stripe.exception.StripeException;
@@ -16,10 +17,18 @@ public interface IPaymentService {
     /**
      * Creates a product in Stripe and our db
      * @param stripeProductRequest The details of the product
-     * @return The Stripe id of the product
+     * @return The Stripe ids of the product and price
      * @throws StripeException Fails to create product/price in Stripe
      */
-    String createStripeProduct(StripeProductRequest stripeProductRequest) throws StripeException;
+    StripeProductCreationResponse createStripeProduct(StripeProductRequest stripeProductRequest) throws StripeException;
+
+    /**
+     * Updates the price of a product in Stripe
+     * @param productId The id of the product to update
+     * @param price The new price of the product
+     * @throws StripeException Fails to update the product price
+     */
+    void updateStripeProductPrice(String productId, double price) throws StripeException;
 
     /**
      * Creates a customer in stripe and our db

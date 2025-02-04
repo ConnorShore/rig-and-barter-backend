@@ -11,6 +11,7 @@ import com.rigandbarter.paymentservice.client.ListingServiceClient;
 import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
 import com.rigandbarter.core.models.StripePaymentMethodResponse;
 import com.rigandbarter.core.models.StripeCustomerResponse;
+import com.rigandbarter.core.models.StripeProductCreationResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.rigandbarter.paymentservice.mapper.StripeMapper;
 import com.rigandbarter.paymentservice.model.StripeCustomer;
@@ -25,6 +26,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.param.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
@@ -38,6 +40,12 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class PaymentServiceImpl implements IPaymentService {
+
+    @Value("${rb.front-end.url}")
+    private String FRONT_END_URL;
+
+    @Value("${server.port}")
+    private String SERVER_PORT;
 
     private final String EVENT_SOURCE = "PaymentService";
     private final String stripeSecretKey;
@@ -68,7 +76,7 @@ public class PaymentServiceImpl implements IPaymentService {
     }
 
     @Override
-    public String createStripeProduct(StripeProductRequest stripeProductRequest) throws StripeException {
+    public StripeProductCreationResponse createStripeProduct(StripeProductRequest stripeProductRequest) throws StripeException {
         Stripe.apiKey = stripeSecretKey;
 
         // Save the product to stripe
@@ -84,6 +92,7 @@ public class PaymentServiceImpl implements IPaymentService {
         PriceCreateParams params =
                 PriceCreateParams
                         .builder()
+                        .setActive(true)
                         .setProduct(product.getId())
                         .setCurrency(USD_CURRENCY)
                         .setUnitAmount(unitPriceInCents)
@@ -94,7 +103,8 @@ public class PaymentServiceImpl implements IPaymentService {
 
         // Save the product to the database
         StripeProduct stripeProduct = StripeProduct.builder()
-                .stripeId(product.getId())
+                .stripeProductId(product.getId())
+                .stripePriceId(price.getId())
                 .userId(stripeProductRequest.getUserId())
                 .name(stripeProductRequest.getName())
                 .description(stripeProductRequest.getDescription())
@@ -104,7 +114,48 @@ public class PaymentServiceImpl implements IPaymentService {
 
         stripeProductRepository.save(stripeProduct);
 
-        return product.getId();
+        return StripeProductCreationResponse.builder()
+                .stripeProductId(product.getId())
+                .stripePriceId(price.getId())
+                .build();
+    }
+
+    @Override
+    public void updateStripeProductPrice(String productId, double price) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        StripeProduct stripeProduct = stripeProductRepository.findByStripeProductId(productId);
+        if(stripeProduct == null)
+            throw new NotFoundException("Product with id: " + productId + " not found");
+
+        Product product = Product.retrieve(productId);
+        if(product == null)
+            throw new NotFoundException("Product with id: " + productId + " not found in Stripe.");
+
+        Price productPrice = Price.retrieve(stripeProduct.getStripePriceId());
+        if(productPrice == null)
+            throw new NotFoundException("Price with id: " + stripeProduct.getStripePriceId() + " not found in Stripe.");
+
+        // Set the price to inactive and delete it
+        productPrice.setActive(false);
+        productPrice.setDeleted(true);
+
+        // Create a new price
+        Long unitPriceInCents = (long) (price * 100);
+        PriceCreateParams params =
+                PriceCreateParams
+                        .builder()
+                        .setActive(true)
+                        .setProduct(product.getId())
+                        .setCurrency(USD_CURRENCY)
+                        .setUnitAmount(unitPriceInCents)
+                        .build();
+
+        Price newPrice = Price.create(params);
+
+        stripeProduct.setStripePriceId(newPrice.getId());
+        stripeProduct.setPriceInCents(unitPriceInCents);
+        stripeProductRepository.save(stripeProduct);
     }
 
     @Override
@@ -170,11 +221,12 @@ public class PaymentServiceImpl implements IPaymentService {
         String accountId = null;
         String redirectUrl = null;
         try {
+            String refreshUrl = String.format("http://localhost:%s/api/payment/reauth", SERVER_PORT);
             AccountLinkCreateParams linkParams =
                     AccountLinkCreateParams.builder()
                             .setAccount(account.getId())
-                            .setRefreshUrl("http://localhost:8080/api/payment/reauth")
-                            .setReturnUrl("http://localhost:4200")
+                            .setRefreshUrl(refreshUrl)
+                            .setReturnUrl(FRONT_END_URL)
                             .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
                             .build();
 

@@ -54,6 +54,16 @@ public interface IListingController {
     void deleteListingById(@PathVariable String listingId, @RequestParam boolean removeTransaction, @AuthenticationPrincipal Jwt principal);
 
     /**
+     * Updates the price of a listing
+     * @param listingId The id of the listing to update
+     * @param price The new price of the listing
+     * @param principal The auth principal (user)
+     */
+    @PutMapping("{listingId}/price")
+    @ResponseStatus(HttpStatus.OK)
+    void updateListingPrice(@PathVariable String listingId, @RequestBody double price, @AuthenticationPrincipal Jwt principal);
+
+    /**
      * Status endpoint to see if service is running
      */
     @GetMapping("status")
