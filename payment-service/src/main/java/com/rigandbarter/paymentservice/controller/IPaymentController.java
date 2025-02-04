@@ -4,6 +4,7 @@ package com.rigandbarter.paymentservice.controller;
 import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
 import com.rigandbarter.core.models.StripePaymentMethodResponse;
 import com.rigandbarter.core.models.StripeCustomerResponse;
+import com.rigandbarter.core.models.StripeProductCreationResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.stripe.exception.StripeException;
 import org.springframework.http.HttpStatus;
@@ -44,7 +45,17 @@ public interface IPaymentController {
      */
     @PostMapping("product")
     @ResponseStatus(HttpStatus.CREATED)
-    String createProduct(@RequestBody StripeProductRequest productRequest) throws StripeException;
+    StripeProductCreationResponse createProduct(@RequestBody StripeProductRequest productRequest) throws StripeException;
+
+    /**
+     * Updates the price of a product
+     * @param productId The id of the product to update
+     * @param price The new price of the product
+     * @throws StripeException Fails to update the product price
+     */
+    @PutMapping("product/{productId}/price")
+    @ResponseStatus(HttpStatus.OK)
+    void updateProductPrice(@PathVariable String productId, @RequestBody double price) throws StripeException;
 
     /**
      * Creates a stripe connected account for the user

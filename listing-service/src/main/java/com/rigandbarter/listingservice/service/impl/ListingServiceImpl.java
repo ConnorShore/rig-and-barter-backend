@@ -1,6 +1,5 @@
 package com.rigandbarter.listingservice.service.impl;
 
-import com.rigandbarter.core.models.UserBasicInfo;
 import com.rigandbarter.core.models.UserResponse;
 import com.rigandbarter.listingservice.client.PaymentServiceClient;
 import com.rigandbarter.listingservice.client.TransactionServiceClient;
@@ -13,13 +12,13 @@ import com.rigandbarter.listingservice.repository.document.IListingRepository;
 import com.rigandbarter.listingservice.repository.file.IFileRepository;
 import com.rigandbarter.listingservice.repository.mapper.ListingMapper;
 import com.rigandbarter.listingservice.service.IListingService;
+import com.rigandbarter.core.models.StripeProductCreationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
@@ -55,8 +54,8 @@ public class ListingServiceImpl implements IListingService {
                 .productPrice(listingRequest.getPrice())
                 .build();
 
-        String productId = paymentServiceClient.getPaymentProduct(stripeProductRequest, "Bearer " + principal.getTokenValue());
-        if (productId == null) {
+        StripeProductCreationResponse product = paymentServiceClient.getPaymentProduct(stripeProductRequest, "Bearer " + principal.getTokenValue());
+        if (product.getStripeProductId() == null) {
             String msg = "Failed to create product in Stripe: " + listingRequest.getTitle();
             log.error(msg);
 
@@ -74,7 +73,7 @@ public class ListingServiceImpl implements IListingService {
 
         // Save the listing data to the document db
         Listing listing = listingRepository.saveListing(
-                ListingMapper.dtoToEntity(listingRequest, userId, productId, imageUrls,
+                ListingMapper.dtoToEntity(listingRequest, userId, product.getStripeProductId(), product.getStripePriceId(), imageUrls,
                         userInfo.getBasicInfo(),
                         userInfo.getStripeInfo().isVerified()
                 )
@@ -95,6 +94,18 @@ public class ListingServiceImpl implements IListingService {
     public ListingResponse getListingById(String listingId) {
         Listing listing = listingRepository.getListingById(listingId);
         return ListingMapper.entityToDto(listing);
+    }
+
+    @Override
+    public void updateListingPrice(String listingId, double price, String authToken) {
+        Listing listing = listingRepository.getListingById(listingId);
+        if(listing == null)
+            throw new NotFoundException("Listing with id: " + listingId + " not found");
+
+        listing.setPrice(price);
+        listingRepository.saveListing(listing);
+
+        paymentServiceClient.updateProductPrice(listing.getStripeProductId(), price, "Bearer " + authToken);
     }
 
     @Override

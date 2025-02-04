@@ -4,6 +4,7 @@ import com.rigandbarter.paymentservice.controller.IPaymentController;
 import com.rigandbarter.paymentservice.dto.StripePaymentMethodRequest;
 import com.rigandbarter.core.models.StripePaymentMethodResponse;
 import com.rigandbarter.core.models.StripeCustomerResponse;
+import com.rigandbarter.core.models.StripeProductCreationResponse;
 import com.rigandbarter.paymentservice.dto.StripeProductRequest;
 import com.rigandbarter.paymentservice.service.IPaymentService;
 import com.stripe.exception.StripeException;
@@ -32,8 +33,13 @@ public class PaymentControllerImpl implements IPaymentController {
     }
 
     @Override
-    public String createProduct(StripeProductRequest productRequest) throws StripeException {
+    public StripeProductCreationResponse createProduct(StripeProductRequest productRequest) throws StripeException {
         return paymentService.createStripeProduct(productRequest);
+    }
+
+    @Override
+    public void updateProductPrice(String productId, double price) throws StripeException {
+        paymentService.updateStripeProductPrice(productId, price);
     }
 
     @Override

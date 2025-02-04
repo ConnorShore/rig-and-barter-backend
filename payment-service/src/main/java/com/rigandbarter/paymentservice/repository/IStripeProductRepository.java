@@ -13,8 +13,8 @@ public interface IStripeProductRepository {
 
     /**
      * Finds the stripe product with specified id
-     * @param stripeId The stripe id of the stripe product to find
+     * @param stripeProductId The stripe product id of the stripe product to find
      * @return The transacitno if found
      */
-    StripeProduct findByStripeId(String stripeId);
+    StripeProduct findByStripeProductId(String stripeProductId);
 }

@@ -43,15 +43,16 @@ public class ListingMapper {
      * @return The created listing
      */
     public static Listing dtoToEntity(ListingRequest listingRequest, String userId,
-                                      String stripeId, List<String> imageUrls, UserBasicInfoResponse userInfo,
-                                      boolean userVerified) {
+                                      String stripeProductId, String stripePriceId, List<String> imageUrls,
+                                      UserBasicInfoResponse userInfo, boolean userVerified) {
         return Listing.builder()
                 .id(UUID.randomUUID().toString())
                 .userId(userId)
                 .title(listingRequest.getTitle())
                 .description(listingRequest.getDescription())
                 .price(listingRequest.getPrice())
-                .stripeId(stripeId)
+                .stripePriceId(stripePriceId)
+                .stripeProductId(stripeProductId)
                 .creationDate(LocalDateTime.now())
                 .componentCategory(listingRequest.getComponentCategory())
                 .imageUrls(imageUrls)

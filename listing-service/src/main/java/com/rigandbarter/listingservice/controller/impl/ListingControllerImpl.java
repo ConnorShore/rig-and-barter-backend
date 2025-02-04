@@ -47,6 +47,11 @@ public class ListingControllerImpl implements IListingController {
     }
 
     @Override
+    public void updateListingPrice(String listingId, double price, Jwt principal) {
+        listingService.updateListingPrice(listingId, price, principal.getTokenValue());
+    }
+
+    @Override
     public String healthCheck() {
         return "Listing Service is running...";
     }

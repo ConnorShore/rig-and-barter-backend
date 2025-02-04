@@ -32,6 +32,14 @@ public interface IListingService {
     ListingResponse getListingById(String listingId);
 
     /**
+     * Updates the price of a listing
+     * @param listingId The id of the listing to update
+     * @param price The new price of the listing
+     * @param authToken The auth token of the user
+     */
+    void updateListingPrice(String listingId, double price, String authToken);
+
+    /**
      * Sets the listings for the user to be verified or not
      * @param userId The id of the user to get listings for
      * @param verified The verification status to set
