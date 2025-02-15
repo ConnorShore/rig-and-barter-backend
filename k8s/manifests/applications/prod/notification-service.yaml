@@ -51,6 +51,8 @@ spec:
                 configMapKeyRef:
                   key: SPRING_DATA_MONGODB_URI
                   name: notification-service-config
+      imagePullSecrets:
+        - name: regcred
 ---
 apiVersion: v1
 kind: Service

@@ -71,6 +71,8 @@ spec:
                 configMapKeyRef:
                   key: RB_STRIPE_FEE_PERCENT
                   name: payment-service-config
+      imagePullSecrets:
+        - name: regcred
 ---
 apiVersion: v1
 kind: Service

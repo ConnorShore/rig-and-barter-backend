@@ -25,7 +25,7 @@ public class RestClientConfig {
     private final ObservationRegistry observationRegistry;
 
     @Bean
-    public ListingServiceClient paymentServiceClient() {
+    public ListingServiceClient listingServiceClient() {
         RestClient restClient = RestClient.builder()
                 .baseUrl(listingServiceUrl)
                 .requestFactory(getClientRequestFactory())

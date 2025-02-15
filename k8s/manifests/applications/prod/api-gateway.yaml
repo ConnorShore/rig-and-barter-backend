@@ -78,6 +78,8 @@ spec:
                 configMapKeyRef:
                   key: MESSAGE_SOCKET_URL
                   name: api-gateway-config
+      imagePullSecrets:
+        - name: regcred
 ---
 apiVersion: v1
 kind: Service

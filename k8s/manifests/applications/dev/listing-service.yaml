@@ -86,6 +86,8 @@ spec:
                 secretKeyRef:
                   name: aws-secrets
                   key: aws_secret_key
+      imagePullSecrets:
+        - name: regcred
 ---
 apiVersion: v1
 kind: Service
@@ -101,8 +103,8 @@ spec:
 ---
 apiVersion: v1
 data:
-  aws_access_key: QUtJQVFSQUhURDI2Q0pBTzNSUkg=
-  aws_secret_key: SjgvNFdNTHdaejFENlpmdlNzMTRMeml2WkNsT0Q2ekE0eGEzZ0Z4ag==
+  aws_access_key: QUtJQVFSQUhURDI2RVRMS080SFk=
+  aws_secret_key: YnRDWXBvS2VxbzJsRXN1eEtpdlExYm5nYVdIZ2xUV09jVmNQb3dxUQ==
 kind: Secret
 metadata:
   name: aws-secrets

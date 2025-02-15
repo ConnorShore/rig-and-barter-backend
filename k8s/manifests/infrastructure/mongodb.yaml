@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: mongo:7.0.5
+          image: mongo:4.4.18
+#          image: mongo:7.0.5
           ports:
             - containerPort: 27017
           env:
@@ -35,7 +36,7 @@ spec:
 #                  name: mongodb-config
           volumeMounts:
             - name: mongodb-data
-              mountPath: /data/db
+              mountPath: /data/mongodb
       volumes:
         - name: mongodb-data
           persistentVolumeClaim:
@@ -61,28 +62,16 @@ metadata:
   name: mongodb-secrets
 ---
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: mongodb-pv
-spec:
-  storageClassName: 'standard'
-  accessModes:
-    - ReadWriteOnce
-  capacity:
-    storage: 1Gi
-  hostPath:
-    path: /data/mongodb
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mongodb-pvc
 spec:
+  storageClassName: nfs-client
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 10Gi
 ---
 apiVersion: v1
 kind: ConfigMap

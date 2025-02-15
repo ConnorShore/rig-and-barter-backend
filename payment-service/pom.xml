@@ -27,12 +27,12 @@
         </dependency>
         <dependency>
             <groupId>com.rigandbarter</groupId>
-            <artifactId>event-library</artifactId>
+            <artifactId>core-library</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.rigandbarter</groupId>
-            <artifactId>core-library</artifactId>
+            <artifactId>event-library</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

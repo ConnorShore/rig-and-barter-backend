@@ -99,6 +99,8 @@ spec:
 #                secretKeyRef:
 #                  name: keycloak-secrets
 #                  key: keycloak_client_secret
+      imagePullSecrets:
+        - name: regcred
 ---
 apiVersion: v1
 kind: Service
@@ -118,6 +120,14 @@ data:
 kind: Secret
 metadata:
   name: mysql-secrets
+---
+apiVersion: v1
+data:
+  aws_access_key: QUtJQVFSQUhURDI2RVRMS080SFk=
+  aws_secret_key: YnRDWXBvS2VxbzJsRXN1eEtpdlExYm5nYVdIZ2xUV09jVmNQb3dxUQ==
+kind: Secret
+metadata:
+  name: aws-secrets
 ---
 apiVersion: v1
 data:
