@@ -51,7 +51,8 @@
 					<image>
 						<name>${dockerUsername}/${imageLabel}-${project.artifactId}:${imageVersion}</name>
 <!--						<builder>dashaun/builder:tiny</builder>-->
-						<builder>dashaun/builder-multiarch:tiny</builder>
+<!--						<builder>dashaun/builder-multiarch:tiny</builder>-->
+						<builder>dashaun/builder-arm:20240403</builder>y
 						<publish>true</publish>
 					</image>
 					<docker>
