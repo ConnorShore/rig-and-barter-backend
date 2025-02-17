@@ -26,9 +26,12 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '17'
-        # distribution: 'graalvm'
-        distribution: 'temurin'
+        distribution: 'jetbrains'
+        # distribution: 'temurin'
         cache: maven
+
+    - name: Docker Setup Docker
+      uses: docker/setup-docker-action@v4.1.0
       
     - name: Build and Publish Development Images
       run: mvn clean install -U compile spring-boot:build-image -Dspring-boot.build-image.imagePlatform=linux/arm64 -DdockerUsername=${{ vars.DOCKER_USERNAME }} -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -DimageVersion=latest -DimageLabel=dev -Dskip=true
