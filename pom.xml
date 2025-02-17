@@ -44,6 +44,31 @@
 
 	<build>
 		<plugins>
+<!--			<plugin>-->
+<!--				<groupId>com.google.cloud.tools</groupId>-->
+<!--				<artifactId>jib-maven-plugin</artifactId>-->
+<!--				<version>3.4.4</version>-->
+<!--				<configuration>-->
+<!--					<from>-->
+<!--						<image>eclipse-temurin:17.0.4.1_1-jre</image>-->
+<!--					</from>-->
+<!--					<to>-->
+<!--						<image>docker.io/${dockerUsername}/${imageLabel}-${project.artifactId}:${imageVersion}</image>-->
+<!--						<auth>-->
+<!--							<username>${dockerUsername}</username>-->
+<!--							<password>${dockerPassword}</password>-->
+<!--						</auth>-->
+<!--					</to>-->
+<!--				</configuration>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<phase>package</phase>-->
+<!--						<goals>-->
+<!--							<goal>dockerBuild</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -51,9 +76,9 @@
 					<image>
 						<name>${dockerUsername}/${imageLabel}-${project.artifactId}:${imageVersion}</name>
 <!--						<builder>dashaun/builder:tiny</builder>-->
-<!--						<builder>dashaun/builder-multiarch:tiny</builder>-->
-							<builder>dashaun/java-native-builder-multiarch:7.37.0</builder>
-<!--						<builder>dashaun/builder-arm:20240403</builder>y-->
+						<builder>dashaun/builder-multiarch:tiny</builder>
+<!--							<builder>dashaun/java-native-builder-multiarch:7.37.0</builder>-->
+<!--						<builder>dashaun/builder-arm:20240403</builder>-->
 						<publish>true</publish>
 					</image>
 					<docker>
