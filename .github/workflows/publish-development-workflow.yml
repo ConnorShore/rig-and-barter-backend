@@ -14,7 +14,7 @@ on:
 
 jobs:
   publish-development:
-    runs-on: macos-15
+    runs-on: macos-14
     # runs-on: ubuntu-24.04-arm
     # runs-on: ubuntu-latest
 
