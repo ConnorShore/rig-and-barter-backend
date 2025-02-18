@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.rigandbarter</groupId>
             <artifactId>core-library</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
