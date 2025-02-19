@@ -36,11 +36,8 @@ jobs:
         brew install docker
         colima start
 
-    - name: Build and Install deps
+    - name: Build and Publish Development Images
       run: |
         mvn clean install -U -DdockerUsername=${{ vars.DOCKER_USERNAME }} -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -DimageVersion=latest
         mvn compile -DdockerUsername=${{ vars.DOCKER_USERNAME }} -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -DimageVersion=latest -DimageLabel=dev
         mvn spring-boot:build-image -DdockerUsername=${{ vars.DOCKER_USERNAME }} -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -DimageVersion=latest -DimageLabel=dev -Dskip=true
-
-    - name: Build and Publish Development Images
-      run: mvn clean compile spring-boot:build-image -DdockerUsername=${{ vars.DOCKER_USERNAME }} -DdockerPassword=${{ secrets.DOCKER_PASSWORD }} -DimageVersion=latest -DimageLabel=dev -Dskip=true
