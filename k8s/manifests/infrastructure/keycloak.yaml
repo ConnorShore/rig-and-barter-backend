@@ -821,7 +821,7 @@ data:
           "clientId": "angular-client",
           "name": "",
           "description": "",
-          "rootUrl": "http://localhost:4200",
+          "rootUrl": "https://pc-rig-and-barter.com",
           "adminUrl": "",
           "baseUrl": "",
           "surrogateAuthRequired": false,
@@ -829,9 +829,8 @@ data:
           "alwaysDisplayInConsole": false,
           "clientAuthenticatorType": "client-secret",
           "redirectUris": [
-            "http://localhost:4200/*",
-            "http://localhost:4200",
-            "http://localhost:9000"
+            "https://pc-rig-and-barter.com/*",
+            "https://pc-rig-and-barter.com"
           ],
           "webOrigins": [
             "*"
