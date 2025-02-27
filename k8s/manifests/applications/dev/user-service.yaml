@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: user-service
+  namespace: rig-and-barter
 spec:
   replicas: 1
   selector:
@@ -106,6 +107,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: user-service
+  namespace: rig-and-barter
 spec:
   selector:
     app: user-service
@@ -115,40 +117,44 @@ spec:
       targetPort: 8083
 ---
 apiVersion: v1
-data:
-  mysql_root_password: bXlzcWw=
 kind: Secret
 metadata:
   name: mysql-secrets
+  namespace: rig-and-barter
+data:
+  mysql_root_password: bXlzcWw=
 ---
 apiVersion: v1
-data:
-  aws_access_key: QUtJQVFSQUhURDI2RVRMS080SFk=
-  aws_secret_key: YnRDWXBvS2VxbzJsRXN1eEtpdlExYm5nYVdIZ2xUV09jVmNQb3dxUQ==
 kind: Secret
 metadata:
   name: aws-secrets
+  namespace: rig-and-barter
+data:
+  aws_access_key: QUtJQVFSQUhURDI2RVRMS080SFk=
+  aws_secret_key: YnRDWXBvS2VxbzJsRXN1eEtpdlExYm5nYVdIZ2xUV09jVmNQb3dxUQ==
 ---
 apiVersion: v1
-data:
-  keycloak_client_secret: cE5lUU9FSDcwakZvYTJyalF3R1VERkY3VWgxY2pkeWw=
 kind: Secret
 metadata:
   name: keycloak-secrets
+  namespace: rig-and-barter
+data:
+  keycloak_client_secret: cE5lUU9FSDcwakZvYTJyalF3R1VERkY3VWgxY2pkeWw=
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: user-service-config
+  namespace: rig-and-barter
 data:
   RB_STORAGE_RELATIONAL: "mysql"
   RB_STORAGE_FILE: "aws-s3"
   SPRING_DATASOURCE_USERNAME: "root"
-  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql.default.svc.cluster.local:3306/user_service"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql.rig-and-barter.svc.cluster.local:3306/user_service"
   SPRING_CLOUD_AWS_REGION_STATIC: "us-west-1"
   SPRING_CLOUD_AWS_STACK_AUTO: "false"
   AWS_S3_BUCKET-NAME: "rb-user-images-dev"
-  RB_KEYCLOAK_URL: "http://keycloak.default.svc.cluster.local:8080"
+  RB_KEYCLOAK_URL: "http://keycloak.rig-and-barter.svc.cluster.local:8080"
   RB_KEYCLOAK_ADMIN_CLIENT_ID: "admin-cli"
   # TODO: USE THJE SECRET VALUE AGAIN
   RB_KEYCLOAK_ADMIN_CLIENT_SECRET: "pNeQOEH70jFoa2rjQwGUDFF7Uh1cjdyl"

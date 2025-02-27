@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: listing-service
+  namespace: rig-and-barter
 spec:
   replicas: 1
   selector:
@@ -93,6 +94,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: listing-service
+  namespace: rig-and-barter
 spec:
   selector:
     app: listing-service
@@ -102,21 +104,23 @@ spec:
       targetPort: 8080
 ---
 apiVersion: v1
-data:
-  aws_access_key: QUtJQVFSQUhURDI2RVRMS080SFk=
-  aws_secret_key: YnRDWXBvS2VxbzJsRXN1eEtpdlExYm5nYVdIZ2xUV09jVmNQb3dxUQ==
 kind: Secret
 metadata:
   name: aws-secrets
+  namespace: rig-and-barter
+data:
+  aws_access_key: QUtJQVFSQUhURDI2RVRMS080SFk=
+  aws_secret_key: YnRDWXBvS2VxbzJsRXN1eEtpdlExYm5nYVdIZ2xUV09jVmNQb3dxUQ==
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: listing-service-config
+  namespace: rig-and-barter
 data:
   RB_STORAGE_FILE: "aws-s3"
   RB_STORAGE_DOCUMENT: "mongodb"
-  SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.default.svc.cluster.local:27017/listing-service?authSource=admin"
+  SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.rig-and-barter.svc.cluster.local:27017/listing-service?authSource=admin"
   SPRING_CLOUD_AWS_REGION_STATIC: "us-west-1"
   SPRING_CLOUD_AWS_STACK_AUTO: "false"
   AWS_S3_BUCKET-NAME: "rb-listing-images-dev"

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak
+  namespace: rig-and-barter
 spec:
   replicas: 1
   selector:
@@ -71,6 +72,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: keycloak
+  namespace: rig-and-barter
 spec:
   selector:
     app: keycloak
@@ -80,18 +82,20 @@ spec:
       targetPort: 8080
 ---
 apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-secrets
+  namespace: rig-and-barter
 data:
   DB_PASSWORD: cGFzc3dvcmQ=
   KEYCLOAK_ADMIN_PASSWORD: YWRtaW4=
   KEYCLOAK_ADMIN_CLIENT_SECRET: TFlkTW02eGdXTXlzOTZIMklVYkR2ZFdpY2RlWGI4eW4=
-kind: Secret
-metadata:
-  name: keycloak-secrets
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: keycloak-realm-config
+  namespace: rig-and-barter
 data:
   DB_VENDOR: "MYSQL"
   DB_ADDR: "mysql"
