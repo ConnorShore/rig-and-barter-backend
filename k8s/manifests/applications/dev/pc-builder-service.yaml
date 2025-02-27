@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pc-builder-service
+  namespace: rig-and-barter
 spec:
   replicas: 1
   selector:
@@ -48,6 +49,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pc-builder-service
+  namespace: rig-and-barter
 spec:
   selector:
     app: pc-builder-service
@@ -60,7 +62,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: pc-builder-service-config
+  namespace: rig-and-barter
 data:
   RB_STORAGE_DOCUMENT: "mongodb"
-  SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.default.svc.cluster.local:27017/pc-builder-service?authSource=admin"
+  SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.rig-and-barter.svc.cluster.local:27017/pc-builder-service?authSource=admin"
 
