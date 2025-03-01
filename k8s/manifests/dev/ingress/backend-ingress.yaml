@@ -4,7 +4,6 @@ kind: IngressRoute
 metadata:
   name: pc-rig-and-barter-backend-route
   namespace: rig-and-barter
-#  namespace: default
   annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:

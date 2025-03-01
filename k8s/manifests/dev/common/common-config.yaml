@@ -14,7 +14,9 @@ data:
   COMPONENT_SERVICE_URL: "http://component-service.rig-and-barter.svc.cluster.local:8087"
   PC_BUILDER_SERVICE_URL: "http://pc-builder-service.rig-and-barter.svc.cluster.local:8088"
 
+  RB_KEYCLOAK_URL: "http://keycloak.rig-and-barter.svc.cluster.local:8080"
   SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: "https://pc-rig-and-barter.com/realms/rig-and-barter-realm"
+
   RB_FRONT-END_URL: "https://pc-rig-and-barter.com"
   RB_EVENT_BROKER: "kafka"
   RB_EVENT_BROKER_URL: "broker.rig-and-barter.svc.cluster.local:29092"

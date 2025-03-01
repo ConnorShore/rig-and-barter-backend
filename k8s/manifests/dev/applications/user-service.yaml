@@ -49,9 +49,9 @@ spec:
                   name: user-service-config
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
-                configMapKeyRef:
-                  key: SPRING_DATASOURCE_USERNAME
-                  name: user-service-config
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql_root_username
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -86,20 +86,17 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   key: RB_KEYCLOAK_URL
-                  name: user-service-config
+                  name: common-config
             - name: RB_KEYCLOAK_ADMIN_CLIENT_ID
               valueFrom:
-                configMapKeyRef:
-                  key: RB_KEYCLOAK_ADMIN_CLIENT_ID
-                  name: user-service-config
+                secretKeyRef:
+                  name: keycloak-secrets
+                  key: rb_keycloak_admin_client_id
             - name: RB_KEYCLOAK_ADMIN_CLIENT_SECRET
               valueFrom:
-                configMapKeyRef:
-                  key: RB_KEYCLOAK_ADMIN_CLIENT_SECRET
-                  name: user-service-config
-#                secretKeyRef:
-#                  name: keycloak-secrets
-#                  key: keycloak_client_secret
+                secretKeyRef:
+                  name: keycloak-secrets
+                  key: rb_keycloak_admin_client_secret
       imagePullSecrets:
         - name: regcred
 ---
@@ -117,31 +114,6 @@ spec:
       targetPort: 8083
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: mysql-secrets
-  namespace: rig-and-barter
-data:
-  mysql_root_password: bXlzcWw=
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: aws-secrets
-  namespace: rig-and-barter
-data:
-  aws_access_key: QUtJQVFSQUhURDI2RVRMS080SFk=
-  aws_secret_key: YnRDWXBvS2VxbzJsRXN1eEtpdlExYm5nYVdIZ2xUV09jVmNQb3dxUQ==
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: keycloak-secrets
-  namespace: rig-and-barter
-data:
-  keycloak_client_secret: cE5lUU9FSDcwakZvYTJyalF3R1VERkY3VWgxY2pkeWw=
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: user-service-config
@@ -154,7 +126,3 @@ data:
   SPRING_CLOUD_AWS_REGION_STATIC: "us-west-1"
   SPRING_CLOUD_AWS_STACK_AUTO: "false"
   AWS_S3_BUCKET-NAME: "rb-user-images-dev"
-  RB_KEYCLOAK_URL: "http://keycloak.rig-and-barter.svc.cluster.local:8080"
-  RB_KEYCLOAK_ADMIN_CLIENT_ID: "admin-cli"
-  # TODO: USE THJE SECRET VALUE AGAIN
-  RB_KEYCLOAK_ADMIN_CLIENT_SECRET: "pNeQOEH70jFoa2rjQwGUDFF7Uh1cjdyl"

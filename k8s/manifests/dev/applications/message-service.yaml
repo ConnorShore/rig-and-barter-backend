@@ -1,26 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pc-builder-service
+  name: message-service
   namespace: rig-and-barter
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pc-builder-service
+      app: message-service
   template:
     metadata:
       labels:
-        app: pc-builder-service
+        app: message-service
     spec:
       containers:
-        - name: pc-builder-service
-          image: cjshore1996/dev-pc-builder-service:latest
+        - name: message-service
+          image: cjshore1996/dev-message-service:latest
           env:
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
               valueFrom:
                 configMapKeyRef:
                   key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+                  name: common-config
+            - name: LISTING_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: LISTING_SERVICE_URL
+                  name: common-config
+            - name: RB_FRONT-END_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_FRONT-END_URL
                   name: common-config
             - name: RB_EVENT_BROKER
               valueFrom:
@@ -36,34 +46,40 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   key: RB_STORAGE_DOCUMENT
-                  name: pc-builder-service-config
+                  name: message-service-config
             - name: SPRING_DATA_MONGODB_URI
               valueFrom:
-                configMapKeyRef:
-                  key: SPRING_DATA_MONGODB_URI
-                  name: pc-builder-service-config
+                secretKeyRef:
+                  key: mongodb_connection_string
+                  name: message-service-secrets
       imagePullSecrets:
         - name: regcred
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: pc-builder-service
+  name: message-service
   namespace: rig-and-barter
 spec:
   selector:
-    app: pc-builder-service
+    app: message-service
   ports:
     - protocol: TCP
-      port: 8088
-      targetPort: 8088
+      port: 8085
+      targetPort: 8085
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: message-service-secrets
+  namespace: rig-and-barter
+data:
+  mongodb_connection_string: bW9uZ29kYjovL3JhYmFkbWluOnpuMnglMjY5U1BQVW0lMjVZa2dAbW9uZ29kYi5yaWctYW5kLWJhcnRlci5zdmMuY2x1c3Rlci5sb2NhbDoyNzAxNy9tZXNzYWdlLXNlcnZpY2U/YXV0aFNvdXJjZT1hZG1pbg==
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: pc-builder-service-config
+  name: message-service-config
   namespace: rig-and-barter
 data:
   RB_STORAGE_DOCUMENT: "mongodb"
-  SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.rig-and-barter.svc.cluster.local:27017/pc-builder-service?authSource=admin"
-
