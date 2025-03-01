@@ -55,14 +55,6 @@ spec:
     app: mysql
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: mysql-secrets
-  namespace: rig-and-barter
-data:
-  mysql_root_password: bXlzcWw=
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-pvc
