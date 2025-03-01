@@ -54,9 +54,9 @@ spec:
                   name: payment-service-config
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
-                configMapKeyRef:
-                  key: SPRING_DATASOURCE_USERNAME
-                  name: payment-service-config
+                secretKeyRef:
+                  key: mysql_root_username
+                  name: mysql-secrets
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -91,14 +91,6 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: mysql-secrets
-  namespace: rig-and-barter
-data:
-  mysql_root_password: bXlzcWw=
----
-apiVersion: v1
-kind: Secret
-metadata:
   name: stripe-secrets
   namespace: rig-and-barter
 data:
@@ -111,6 +103,5 @@ metadata:
   namespace: rig-and-barter
 data:
   RB_STORAGE_RELATIONAL: "mysql"
-  SPRING_DATASOURCE_USERNAME: "root"
   SPRING_DATASOURCE_URL: "jdbc:mysql://mysql.rig-and-barter.svc.cluster.local:3306/payment_service"
   RB_STRIPE_FEE_PERCENT: "0.07"

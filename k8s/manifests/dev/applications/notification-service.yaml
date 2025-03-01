@@ -49,9 +49,9 @@ spec:
                   name: notification-service-config
             - name: SPRING_DATA_MONGODB_URI
               valueFrom:
-                configMapKeyRef:
-                  key: SPRING_DATA_MONGODB_URI
-                  name: notification-service-config
+                secretKeyRef:
+                  key: mongodb_connection_string
+                  name: notification-service-secrets
       imagePullSecrets:
         - name: regcred
 ---
@@ -69,11 +69,17 @@ spec:
       targetPort: 8082
 ---
 apiVersion: v1
+kind: Secret
+metadata:
+  name: notification-service-secrets
+  namespace: rig-and-barter
+data:
+  mongodb_connection_string: bW9uZ29kYjovL3JhYmFkbWluOnpuMngmOVNQUFVtJVlrZ0Btb25nb2RiLnJpZy1hbmQtYmFydGVyLnN2Yy5jbHVzdGVyLmxvY2FsOjI3MDE3L25vdGlmaWNhdGlvbi1zZXJ2aWNlP2F1dGhTb3VyY2U9YWRtaW4=
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: notification-service-config
   namespace: rig-and-barter
 data:
   RB_STORAGE_DOCUMENT: "mongodb"
-  SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.rig-and-barter.svc.cluster.local:27017/notification-service?authSource=admin"
-
