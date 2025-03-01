@@ -64,7 +64,7 @@ metadata:
   name: pc-builder-service-secrets
   namespace: rig-and-barter
 data:
-  mongodb_connection_string: bW9uZ29kYjovL3JhYmFkbWluOnpuMngmOVNQUFVtJVlrZ0Btb25nb2RiLnJpZy1hbmQtYmFydGVyLnN2Yy5jbHVzdGVyLmxvY2FsOjI3MDE3L3BjLWJ1aWxkZXItc2VydmljZT9hdXRoU291cmNlPWFkbWlu
+  mongodb_connection_string: bW9uZ29kYjovL3JhYmFkbWluOnpuMnglMjY5U1BQVW0lMjVZa2dAbW9uZ29kYi5yaWctYW5kLWJhcnRlci5zdmMuY2x1c3Rlci5sb2NhbDoyNzAxNy9wYy1idWlsZGVyLXNlcnZpY2U/YXV0aFNvdXJjZT1hZG1pbg==
 ---
 apiVersion: v1
 kind: ConfigMap

@@ -74,7 +74,7 @@ metadata:
   name: notification-service-secrets
   namespace: rig-and-barter
 data:
-  mongodb_connection_string: bW9uZ29kYjovL3JhYmFkbWluOnpuMngmOVNQUFVtJVlrZ0Btb25nb2RiLnJpZy1hbmQtYmFydGVyLnN2Yy5jbHVzdGVyLmxvY2FsOjI3MDE3L25vdGlmaWNhdGlvbi1zZXJ2aWNlP2F1dGhTb3VyY2U9YWRtaW4=
+  mongodb_connection_string: bW9uZ29kYjovL3JhYmFkbWluOnpuMnglMjY5U1BQVW0lMjVZa2dAbW9uZ29kYi5yaWctYW5kLWJhcnRlci5zdmMuY2x1c3Rlci5sb2NhbDoyNzAxNy9ub3RpZmljYXRpb24tc2VydmljZT9hdXRoU291cmNlPWFkbWlu
 ---
 apiVersion: v1
 kind: ConfigMap
