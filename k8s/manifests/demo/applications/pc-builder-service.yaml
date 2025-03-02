@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pc-builder-service
+  namespace: demo-rig-and-barter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pc-builder-service
+  template:
+    metadata:
+      labels:
+        app: pc-builder-service
+    spec:
+      containers:
+        - name: pc-builder-service
+          image: cjshore1996/demo-pc-builder-service:latest
+          env:
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+                  name: common-config
+            - name: RB_EVENT_BROKER
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_EVENT_BROKER
+                  name: common-config
+            - name: RB_EVENT_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_EVENT_BROKER_URL
+                  name: common-config
+            - name: RB_STORAGE_DOCUMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_STORAGE_DOCUMENT
+                  name: pc-builder-service-config
+            - name: SPRING_DATA_MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  key: mongodb_connection_string
+                  name: pc-builder-service-secrets
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pc-builder-service
+  namespace: demo-rig-and-barter
+spec:
+  selector:
+    app: pc-builder-service
+  ports:
+    - protocol: TCP
+      port: 8088
+      targetPort: 8088
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pc-builder-service-secrets
+  namespace: demo-rig-and-barter
+data:
+  mongodb_connection_string: bW9uZ29kYjovL3JhYmFkbWluOnpuMnglMjY5U1BQVW0lMjVZa2dAbW9uZ29kYi5yaWctYW5kLWJhcnRlci5zdmMuY2x1c3Rlci5sb2NhbDoyNzAxNy9wYy1idWlsZGVyLXNlcnZpY2U/YXV0aFNvdXJjZT1hZG1pbg==
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pc-builder-service-config
+  namespace: demo-rig-and-barter
+data:
+  RB_STORAGE_DOCUMENT: "mongodb"
+

@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: demo-rig-and-barter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: cjshore1996/demo-user-service:latest
+          env:
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+                  name: common-config
+            - name: PAYMENT_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: PAYMENT_SERVICE_URL
+                  name: common-config
+            - name: RB_EVENT_BROKER
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_EVENT_BROKER
+                  name: common-config
+            - name: RB_EVENT_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_EVENT_BROKER_URL
+                  name: common-config
+            - name: RB_STORAGE_RELATIONAL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_STORAGE_RELATIONAL
+                  name: user-service-config
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_DATASOURCE_URL
+                  name: user-service-config
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql_root_username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql_root_password
+            - name: SPRING_CLOUD_AWS_REGION_STATIC
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_CLOUD_AWS_REGION_STATIC
+                  name: user-service-config
+            - name: SPRING_CLOUD_AWS_STACK_AUTO
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_CLOUD_AWS_STACK_AUTO
+                  name: user-service-config
+            - name: AWS_S3_BUCKET-NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: AWS_S3_BUCKET-NAME
+                  name: user-service-config
+            - name: SPRING_CLOUD_AWS_CREDENTIALS_ACCESS-KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secrets
+                  key: aws_access_key
+            - name: SPRING_CLOUD_AWS_CREDENTIALS_SECRET-KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secrets
+                  key: aws_secret_key
+            - name: RB_KEYCLOAK_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_KEYCLOAK_URL
+                  name: common-config
+            - name: RB_KEYCLOAK_ADMIN_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secrets
+                  key: rb_keycloak_admin_client_id
+            - name: RB_KEYCLOAK_ADMIN_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secrets
+                  key: rb_keycloak_admin_client_secret
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: demo-rig-and-barter
+spec:
+  selector:
+    app: user-service
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-service-config
+  namespace: demo-rig-and-barter
+data:
+  RB_STORAGE_RELATIONAL: "mysql"
+  RB_STORAGE_FILE: "aws-s3"
+  SPRING_DATASOURCE_USERNAME: "root"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql.rig-and-barter.svc.cluster.local:3306/user_service"
+  SPRING_CLOUD_AWS_REGION_STATIC: "us-west-1"
+  SPRING_CLOUD_AWS_STACK_AUTO: "false"
+  AWS_S3_BUCKET-NAME: "rb-user-images-dev"

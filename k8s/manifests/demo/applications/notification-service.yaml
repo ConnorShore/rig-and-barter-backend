@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: demo-rig-and-barter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: cjshore1996/demo-notification-service:latest
+          env:
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+                  name: common-config
+            - name: LISTING_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: LISTING_SERVICE_URL
+                  name: common-config
+            - name: RB_FRONT-END_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_FRONT-END_URL
+                  name: common-config
+            - name: RB_EVENT_BROKER
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_EVENT_BROKER
+                  name: common-config
+            - name: RB_EVENT_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_EVENT_BROKER_URL
+                  name: common-config
+            - name: RB_STORAGE_DOCUMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_STORAGE_DOCUMENT
+                  name: notification-service-config
+            - name: SPRING_DATA_MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  key: mongodb_connection_string
+                  name: notification-service-secrets
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+  namespace: demo-rig-and-barter
+spec:
+  selector:
+    app: notification-service
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: notification-service-secrets
+  namespace: demo-rig-and-barter
+data:
+  mongodb_connection_string: bW9uZ29kYjovL3JhYmFkbWluOnpuMnglMjY5U1BQVW0lMjVZa2dAbW9uZ29kYi5yaWctYW5kLWJhcnRlci5zdmMuY2x1c3Rlci5sb2NhbDoyNzAxNy9ub3RpZmljYXRpb24tc2VydmljZT9hdXRoU291cmNlPWFkbWlu
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notification-service-config
+  namespace: demo-rig-and-barter
+data:
+  RB_STORAGE_DOCUMENT: "mongodb"
