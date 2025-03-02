@@ -138,9 +138,10 @@ public class ComponentServiceImpl implements IComponentService {
      */
     private List<Component> extractComponentPojosFromFile(String fileAbsolutePath) throws FileNotFoundException {
         log.info("Extracting file: " + fileAbsolutePath);
+        Reader reader = new BufferedReader(new FileReader(fileAbsolutePath));
+
         String fileName = Path.of(fileAbsolutePath).getFileName().toString();
         log.info("File name to parse: " + fileName);
-        Reader reader = new BufferedReader(new FileReader(fileName));
         Class classToUse = switch (fileName) {
             case "case.csv" -> CaseComponent.class;
             case "motherboard.csv" -> MotherboardComponent.class;
