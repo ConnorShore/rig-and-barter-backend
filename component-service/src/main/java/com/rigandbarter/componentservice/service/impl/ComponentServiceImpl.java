@@ -204,7 +204,7 @@ public class ComponentServiceImpl implements IComponentService {
             out.close();
             zipStream.closeEntry();
 
-            files.add(entryName);
+            files.add(file.getAbsolutePath());
             log.info("Successfully wrote file: " + entryName);
         }
         zipStream.close();
