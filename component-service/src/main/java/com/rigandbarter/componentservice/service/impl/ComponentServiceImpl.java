@@ -179,7 +179,7 @@ public class ComponentServiceImpl implements IComponentService {
         ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipDataFile.getBytes()));
         ZipEntry entry;
         String tempDir = System.getProperty("java.io.tmpdir");
-        log.inf("Temp directory: " + tempDir);
+        log.info("Temp directory: " + tempDir);
         while ((entry = zipStream.getNextEntry()) != null) {
 
             String entryName = entry.getName();
