@@ -133,11 +133,13 @@ public class ComponentServiceImpl implements IComponentService {
 
     /**
      * Creates a list of Component pojos from the passed in csv file
-     * @param fileName The csv file to parse for objects
+     * @param fileAbsolutePath The csv file to parse for objects
      * @return The list of components created from file
      */
-    private List<Component> extractComponentPojosFromFile(String fileName) throws FileNotFoundException {
-        log.info("Extracting file: " + fileName);
+    private List<Component> extractComponentPojosFromFile(String fileAbsolutePath) throws FileNotFoundException {
+        log.info("Extracting file: " + fileAbsolutePath);
+        String fileName = Path.of(fileAbsolutePath).getFileName().toString();
+        log.info("File name to parse: " + fileName);
         Reader reader = new BufferedReader(new FileReader(fileName));
         Class classToUse = switch (fileName) {
             case "case.csv" -> CaseComponent.class;
@@ -187,7 +189,7 @@ public class ComponentServiceImpl implements IComponentService {
 
             // Create file attributes
             FileAttribute<?>[] attrs = new FileAttribute<?>[0];
-            File file = Files.createTempFile(Path.of(tempDir), entryName, ".csv", attrs).toFile();
+            File file = Files.createFile(Path.of(tempDir, entryName), attrs).toFile();
 
             log.info("File created to write out to: " + file.getAbsolutePath());
 
@@ -205,7 +207,7 @@ public class ComponentServiceImpl implements IComponentService {
             zipStream.closeEntry();
 
             files.add(file.getAbsolutePath());
-            log.info("Successfully wrote file: " + entryName);
+            log.info("Successfully wrote file: " + file.getAbsolutePath());
         }
         zipStream.close();
 
