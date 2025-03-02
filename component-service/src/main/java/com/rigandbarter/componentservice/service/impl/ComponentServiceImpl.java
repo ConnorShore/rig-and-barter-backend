@@ -133,6 +133,7 @@ public class ComponentServiceImpl implements IComponentService {
      * @return The list of components created from file
      */
     private List<Component> extractComponentPojosFromFile(String fileName) throws FileNotFoundException {
+        log.info("Extracting file: " + fileName);
         Reader reader = new BufferedReader(new FileReader(fileName));
         Class classToUse = switch (fileName) {
             case "case.csv" -> CaseComponent.class;
@@ -153,6 +154,7 @@ public class ComponentServiceImpl implements IComponentService {
                 .withIgnoreEmptyLine(true)
                 .build();
 
+        log.info("Parsing csv file to class");
         return csvReader.parse();
     }
 
@@ -163,14 +165,18 @@ public class ComponentServiceImpl implements IComponentService {
      * @throws IOException If fails to read file
      */
     private List<String> createFilesFromZip(MultipartFile zipDataFile) throws IOException {
+        log.info("Creating files from zip data: " + zipDataFile.getName());
+        log.info("Creating zip stream. Current directory: " + System.getProperty("user.dir"));
         List<String> files = new ArrayList<>();
         ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipDataFile.getBytes()));
         ZipEntry entry;
         while ((entry = zipStream.getNextEntry()) != null) {
 
             String entryName = entry.getName();
+            log.info("Creating file: " + entryName);
 
             FileOutputStream out = new FileOutputStream(entryName);
+            log.info("successfully created file");
 
             byte[] byteBuff = new byte[4096];
             int bytesRead = 0;
@@ -183,6 +189,7 @@ public class ComponentServiceImpl implements IComponentService {
             zipStream.closeEntry();
 
             files.add(entryName);
+            log.info("Successfully wrote file: " + entryName);
         }
         zipStream.close();
 

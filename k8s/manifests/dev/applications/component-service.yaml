@@ -39,9 +39,9 @@ spec:
                   name: component-service-config
             - name: SPRING_DATA_MONGODB_URI
               valueFrom:
-                configMapKeyRef:
-                  key: SPRING_DATA_MONGODB_URI
-                  name: component-service-config
+                secretKeyRef:
+                  key: mongodb_connection_string
+                  name: component-service-secrets
             - name: SPRING_CLOUD_AWS_REGION_STATIC
               valueFrom:
                 configMapKeyRef:
@@ -84,13 +84,20 @@ spec:
       targetPort: 8087
 ---
 apiVersion: v1
+kind: Secret
+metadata:
+  name: component-service-secrets
+  namespace: rig-and-barter
+data:
+  mongodb_connection_string: bW9uZ29kYjovL3JhYmFkbWluOnpuMnglMjY5U1BQVW0lMjVZa2dAbW9uZ29kYi5yaWctYW5kLWJhcnRlci5zdmMuY2x1c3Rlci5sb2NhbDoyNzAxNy9jb21wb25lbnQtc2VydmljZT9hdXRoU291cmNlPWFkbWlu
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: component-service-config
   namespace: rig-and-barter
 data:
   RB_STORAGE_DOCUMENT: "mongodb"
-  SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.rig-and-barter.svc.cluster.local:27017/component-service?authSource=admin"
   SPRING_CLOUD_AWS_REGION_STATIC: "us-west-1"
   SPRING_CLOUD_AWS_STACK_AUTO: "false"
   AWS_S3_BUCKET-NAME: "rb-component-images-dev"
