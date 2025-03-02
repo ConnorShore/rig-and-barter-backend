@@ -46,15 +46,17 @@ public class ComponentScraperApplication {
     };
 
     // TODO: Move to config
-    private static final String POST_URL = "http://localhost:9000/api/component/db";
+    private static final String POST_URL = "https://pc-rig-and-barter.com/api/component/db";
+//    private static final String POST_URL = "http://localhost:9000/api/component/db";
 
     public static void main(String[] args) {
         try {
             // TODO: Have cmd args to allow to just post already created zip files
             //  so re-scraping doesn't need to occur.
 
-            scrapeContent();
-            File zipFile = packageScrapedContent();
+//            scrapeContent();
+//            File zipFile = packageScrapedContent();
+            File zipFile = new File("/Users/cshore/Documents/Development/PC Rig and Barter/rig-and-barter-backend/component-scraper/dist/out/data_files.zip");
             sendPackagedContent(zipFile);
 
             System.out.println("All scrapers have finished execution!");

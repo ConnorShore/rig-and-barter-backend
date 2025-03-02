@@ -137,11 +137,9 @@ public class ComponentServiceImpl implements IComponentService {
      * @return The list of components created from file
      */
     private List<Component> extractComponentPojosFromFile(String fileAbsolutePath) throws FileNotFoundException {
-        log.info("Extracting file: " + fileAbsolutePath);
         Reader reader = new BufferedReader(new FileReader(fileAbsolutePath));
 
         String fileName = Path.of(fileAbsolutePath).getFileName().toString();
-        log.info("File name to parse: " + fileName);
         Class classToUse = switch (fileName) {
             case "case.csv" -> CaseComponent.class;
             case "motherboard.csv" -> MotherboardComponent.class;
@@ -161,7 +159,6 @@ public class ComponentServiceImpl implements IComponentService {
                 .withIgnoreEmptyLine(true)
                 .build();
 
-        log.info("Parsing csv file to class");
         return csvReader.parse();
     }
 
@@ -172,30 +169,20 @@ public class ComponentServiceImpl implements IComponentService {
      * @throws IOException If fails to read file
      */
     private List<String> createFilesFromZip(MultipartFile zipDataFile) throws IOException {
-        log.info("Creating files from zip data: " + zipDataFile.getName());
-        log.info("Creating zip stream. Current directory: " + System.getProperty("user.dir"));
-
-        String currentDir2 = Paths.get("").toAbsolutePath().normalize().toString();
-        System.out.println("Current working directory (Method 2): " + currentDir2);
-
         List<String> files = new ArrayList<>();
         ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipDataFile.getBytes()));
-        ZipEntry entry;
+
         String tempDir = System.getProperty("java.io.tmpdir");
-        log.info("Temp directory: " + tempDir);
+        ZipEntry entry;
         while ((entry = zipStream.getNextEntry()) != null) {
 
             String entryName = entry.getName();
-            log.info("Creating file: " + entryName);
 
             // Create file attributes
             FileAttribute<?>[] attrs = new FileAttribute<?>[0];
             File file = Files.createFile(Path.of(tempDir, entryName), attrs).toFile();
 
-            log.info("File created to write out to: " + file.getAbsolutePath());
-
             FileOutputStream out = new FileOutputStream(file);
-            log.info("successfully created file");
 
             byte[] byteBuff = new byte[4096];
             int bytesRead = 0;
@@ -208,7 +195,6 @@ public class ComponentServiceImpl implements IComponentService {
             zipStream.closeEntry();
 
             files.add(file.getAbsolutePath());
-            log.info("Successfully wrote file: " + file.getAbsolutePath());
         }
         zipStream.close();
 
