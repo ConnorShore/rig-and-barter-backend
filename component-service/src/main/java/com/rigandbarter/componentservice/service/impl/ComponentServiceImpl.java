@@ -17,6 +17,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -167,15 +171,27 @@ public class ComponentServiceImpl implements IComponentService {
     private List<String> createFilesFromZip(MultipartFile zipDataFile) throws IOException {
         log.info("Creating files from zip data: " + zipDataFile.getName());
         log.info("Creating zip stream. Current directory: " + System.getProperty("user.dir"));
+
+        String currentDir2 = Paths.get("").toAbsolutePath().normalize().toString();
+        System.out.println("Current working directory (Method 2): " + currentDir2);
+
         List<String> files = new ArrayList<>();
         ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipDataFile.getBytes()));
         ZipEntry entry;
+        String tempDir = System.getProperty("java.io.tmpdir");
+        log.inf("Temp directory: " + tempDir);
         while ((entry = zipStream.getNextEntry()) != null) {
 
             String entryName = entry.getName();
             log.info("Creating file: " + entryName);
 
-            FileOutputStream out = new FileOutputStream(entryName);
+            // Create file attributes
+            FileAttribute<?>[] attrs = new FileAttribute<?>[0];
+            File file = Files.createTempFile(Path.of(tempDir), entryName, ".csv", attrs).toFile();
+
+            log.info("File created to write out to: " + file.getAbsolutePath());
+
+            FileOutputStream out = new FileOutputStream(file);
             log.info("successfully created file");
 
             byte[] byteBuff = new byte[4096];
