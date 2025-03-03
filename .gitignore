@@ -1,6 +1,7 @@
 target/
 data/
 volume-data/
+**/secrets/
 .idea/
 
 pom.xml.tag
