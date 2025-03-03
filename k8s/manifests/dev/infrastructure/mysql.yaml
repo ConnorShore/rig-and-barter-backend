@@ -27,7 +27,7 @@ spec:
                   name: mysql-secrets
                   key: mysql_root_password
           volumeMounts:
-            - mountPath: /data/mysql
+            - mountPath: /data/mysql-dev
               name: mysql-data
             - mountPath: /docker-entrypoint-initdb.d
               name: mysql-config

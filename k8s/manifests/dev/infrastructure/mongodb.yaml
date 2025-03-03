@@ -32,7 +32,7 @@ spec:
                   name: mongodb-secrets
           volumeMounts:
             - name: mongodb-data
-              mountPath: /data/mongodb
+              mountPath: /data/mongodb-dev
       volumes:
         - name: mongodb-data
           persistentVolumeClaim:

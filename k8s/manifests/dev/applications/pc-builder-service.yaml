@@ -59,14 +59,6 @@ spec:
       targetPort: 8088
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: pc-builder-service-secrets
-  namespace: rig-and-barter
-data:
-  mongodb_connection_string: bW9uZ29kYjovL3JhYmFkbWluOnpuMnglMjY5U1BQVW0lMjVZa2dAbW9uZ29kYi5yaWctYW5kLWJhcnRlci5zdmMuY2x1c3Rlci5sb2NhbDoyNzAxNy9wYy1idWlsZGVyLXNlcnZpY2U/YXV0aFNvdXJjZT1hZG1pbg==
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: pc-builder-service-config

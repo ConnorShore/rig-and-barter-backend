@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       imageLabel:
-        description: 'Image LAbel'
+        description: 'Image Label'
         required: true
         default: 'dev'
         type: choice

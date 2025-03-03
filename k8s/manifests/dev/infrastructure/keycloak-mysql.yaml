@@ -41,7 +41,7 @@ spec:
                   name: keycloak-mysql-secrets
           volumeMounts:
             - name: keycloak-mysql-data
-              mountPath: /data/mysql
+              mountPath: /data/mysql-dev
       volumes:
         - name: keycloak-mysql-data
           persistentVolumeClaim:
