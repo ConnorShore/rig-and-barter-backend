@@ -4,7 +4,7 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.rigandbarter.componentservice.dto.*;
 import com.rigandbarter.componentservice.mapper.ComponentMapper;
-import com.rigandbarter.componentservice.repository.file.IFileRepository;
+import com.rigandbarter.componentservice.repository.object.IObjectRepository;
 import com.rigandbarter.componentservice.service.IComponentService;
 import com.rigandbarter.componentservice.model.*;
 import com.rigandbarter.componentservice.repository.document.IComponentRepository;
@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +26,13 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static com.rigandbarter.core.models.ComponentCategory.*;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ComponentServiceImpl implements IComponentService {
 
     private final IComponentRepository componentRepository;
-    private final IFileRepository fileRepository;
+    private final IObjectRepository fileRepository;
 
     private static final String[] DATA_FILE_NAMES = {
             "case.csv", "motherboard.csv", "cpu.csv",

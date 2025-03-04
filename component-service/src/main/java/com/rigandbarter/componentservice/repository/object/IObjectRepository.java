@@ -1,8 +1,8 @@
-package com.rigandbarter.componentservice.repository.file;
+package com.rigandbarter.componentservice.repository.object;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public interface IFileRepository {
+public interface IObjectRepository {
 
     /**
      * Uploads a file to file/blob storage

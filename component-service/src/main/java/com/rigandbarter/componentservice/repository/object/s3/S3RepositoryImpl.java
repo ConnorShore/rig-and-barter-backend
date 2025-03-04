@@ -1,6 +1,6 @@
-package com.rigandbarter.componentservice.repository.file.s3;
+package com.rigandbarter.componentservice.repository.object.s3;
 
-import com.rigandbarter.componentservice.repository.file.IFileRepository;
+import com.rigandbarter.componentservice.repository.object.IObjectRepository;
 import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Template;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @Repository
 @ConditionalOnProperty(value = "rb.storage.file", havingValue = "aws-s3")
 @Slf4j
-public class S3RepositoryImpl implements IFileRepository {
+public class S3RepositoryImpl implements IObjectRepository {
 
     @Autowired
     private S3Template s3Template;

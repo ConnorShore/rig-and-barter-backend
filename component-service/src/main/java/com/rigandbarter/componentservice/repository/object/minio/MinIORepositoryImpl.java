@@ -1,8 +1,8 @@
-package com.rigandbarter.listingservice.repository.object.minio;
+package com.rigandbarter.componentservice.repository.object.minio;
 
+import com.rigandbarter.componentservice.repository.object.IObjectRepository;
 import com.rigandbarter.core.util.MinIOFileUtil;
-import com.rigandbarter.listingservice.repository.object.IObjectRepository;
-import io.minio.*;
+import io.minio.MinioClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,13 +19,13 @@ public class MinIORepositoryImpl implements IObjectRepository {
     private String MINIO_URL;
 
     @Value("${minio.bucket-name}")
-    private String LISTING_IMAGES_BUCKET;
+    private String COMPONENT_IMAGES_BUCKET;
 
     @Autowired
     private MinioClient minioClient;
 
     @Override
     public String uploadFile(String key, MultipartFile file) {
-        return MinIOFileUtil.uploadFile(minioClient, LISTING_IMAGES_BUCKET, key, file, MINIO_URL);
+        return MinIOFileUtil.uploadFile(minioClient, COMPONENT_IMAGES_BUCKET, key, file, MINIO_URL);
     }
 }
