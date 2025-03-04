@@ -9,7 +9,7 @@ import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.listingservice.dto.StripeProductRequest;
 import com.rigandbarter.listingservice.model.Listing;
 import com.rigandbarter.listingservice.repository.document.IListingRepository;
-import com.rigandbarter.listingservice.repository.file.IFileRepository;
+import com.rigandbarter.listingservice.repository.object.IObjectRepository;
 import com.rigandbarter.listingservice.repository.mapper.ListingMapper;
 import com.rigandbarter.listingservice.service.IListingService;
 import com.rigandbarter.core.models.StripeProductCreationResponse;
@@ -32,7 +32,7 @@ import java.util.UUID;
 public class ListingServiceImpl implements IListingService {
 
     private final IListingRepository listingRepository;
-    private final IFileRepository fileRepository;
+    private final IObjectRepository fileRepository;
 
     private final UserServiceClient userServiceClient;
     private final PaymentServiceClient paymentServiceClient;

@@ -1,6 +1,6 @@
-package com.rigandbarter.userservice.repository.file.s3;
+package com.rigandbarter.userservice.repository.object.s3;
 
-import com.rigandbarter.userservice.repository.file.IProfilePictureRepository;
+import com.rigandbarter.userservice.repository.object.IProfilePictureRepository;
 import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Template;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
-
-import java.io.IOException;
 
 @Repository
 @ConditionalOnProperty(value = "rb.storage.file", havingValue = "aws-s3")

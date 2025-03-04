@@ -1,4 +1,4 @@
-package com.rigandbarter.userservice.repository.file;
+package com.rigandbarter.userservice.repository.object;
 
 import org.springframework.web.multipart.MultipartFile;
 

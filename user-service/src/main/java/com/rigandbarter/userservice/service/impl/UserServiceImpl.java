@@ -12,7 +12,7 @@ import com.rigandbarter.userservice.client.PaymentServiceClient;
 import com.rigandbarter.userservice.dto.*;
 import com.rigandbarter.userservice.mapper.UserMapper;
 import com.rigandbarter.userservice.model.UserEntity;
-import com.rigandbarter.userservice.repository.file.IProfilePictureRepository;
+import com.rigandbarter.userservice.repository.object.IProfilePictureRepository;
 import com.rigandbarter.userservice.repository.relational.IUserRepository;
 import com.rigandbarter.userservice.service.IKeycloakService;
 import com.rigandbarter.userservice.service.IUserService;
@@ -23,7 +23,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
