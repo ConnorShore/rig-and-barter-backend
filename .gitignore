@@ -1,7 +1,7 @@
 target/
 data/
 volume-data/
-**/secrets/
+**/insecure-secrets/
 .idea/
 
 pom.xml.tag
