@@ -65,8 +65,8 @@ spec:
             - name: MINIO_SECRET-KEY
               valueFrom:
                 secretKeyRef:
-                key: minio_secret_key
-                name: minio-secrets
+                  key: minio_secret_key
+                  name: minio-secrets
 
       imagePullSecrets:
         - name: regcred

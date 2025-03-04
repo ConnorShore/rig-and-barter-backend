@@ -79,7 +79,7 @@ spec:
                   name: minio-secrets
             - name: MINIO_SECRET-KEY
               valueFrom:
-                  secretKeyRef:
+                secretKeyRef:
                   key: minio_secret_key
                   name: minio-secrets
 
@@ -105,7 +105,7 @@ metadata:
   name: listing-service-config
   namespace: rig-and-barter
 data:
-  RB_STORAGE_FILE: "minio
+  RB_STORAGE_FILE: "minio"
   RB_STORAGE_DOCUMENT: "mongodb"
   MINIO_BUCKET-NAME: "rb-listing-images-dev"
 
