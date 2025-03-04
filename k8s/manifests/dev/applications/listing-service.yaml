@@ -62,31 +62,27 @@ spec:
                 secretKeyRef:
                   key: mongodb_connection_string
                   name: listing-service-secrets
-            - name: SPRING_CLOUD_AWS_REGION_STATIC
+            - name: MINIO_URL
               valueFrom:
                 configMapKeyRef:
-                  key: SPRING_CLOUD_AWS_REGION_STATIC
-                  name: listing-service-config
-            - name: SPRING_CLOUD_AWS_STACK_AUTO
+                  key: MINIO_URL
+                  name: common-config
+            - name: MINIO_BUCKET-NAME
               valueFrom:
                 configMapKeyRef:
-                  key: SPRING_CLOUD_AWS_STACK_AUTO
+                  key: MINIO_BUCKET-NAME
                   name: listing-service-config
-            - name: AWS_S3_BUCKET-NAME
-              valueFrom:
-                configMapKeyRef:
-                  key: AWS_S3_BUCKET-NAME
-                  name: listing-service-config
-            - name: SPRING_CLOUD_AWS_CREDENTIALS_ACCESS-KEY
+            - name: MINIO_ACCESS-KEY
               valueFrom:
                 secretKeyRef:
-                  name: aws-secrets
-                  key: aws_access_key
-            - name: SPRING_CLOUD_AWS_CREDENTIALS_SECRET-KEY
+                  key: minio_access_key
+                  name: minio-secrets
+            - name: MINIO_SECRET-KEY
               valueFrom:
-                secretKeyRef:
-                  name: aws-secrets
-                  key: aws_secret_key
+                  secretKeyRef:
+                  key: minio_secret_key
+                  name: minio-secrets
+
       imagePullSecrets:
         - name: regcred
 ---
@@ -109,9 +105,8 @@ metadata:
   name: listing-service-config
   namespace: rig-and-barter
 data:
-  RB_STORAGE_FILE: "aws-s3"
+  RB_STORAGE_FILE: "minio
   RB_STORAGE_DOCUMENT: "mongodb"
-  SPRING_CLOUD_AWS_REGION_STATIC: "us-west-1"
-  SPRING_CLOUD_AWS_STACK_AUTO: "false"
-  AWS_S3_BUCKET-NAME: "rb-listing-images-dev"
+  MINIO_BUCKET-NAME: "rb-listing-images-dev"
+
 
