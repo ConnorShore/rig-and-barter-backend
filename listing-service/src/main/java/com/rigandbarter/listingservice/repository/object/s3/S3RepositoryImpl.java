@@ -1,10 +1,8 @@
-package com.rigandbarter.listingservice.repository.file.s3;
+package com.rigandbarter.listingservice.repository.object.s3;
 
-import com.rigandbarter.listingservice.repository.file.IFileRepository;
-import io.awspring.cloud.autoconfigure.s3.S3TransferManagerAutoConfiguration;
+import com.rigandbarter.listingservice.repository.object.IObjectRepository;
 import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Template;
-import io.awspring.cloud.s3.TransferManagerS3OutputStreamProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,12 +14,11 @@ import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 
 import java.io.IOException;
-import java.util.List;
 
 @Repository
 @ConditionalOnProperty(value = "rb.storage.file", havingValue = "aws-s3")
 @Slf4j
-public class S3RepositoryImpl implements IFileRepository {
+public class S3RepositoryImpl implements IObjectRepository {
 
     @Autowired
     private S3Template s3Template;
