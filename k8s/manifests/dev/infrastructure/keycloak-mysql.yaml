@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak-mysql
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 spec:
   replicas: 1
   selector:
@@ -51,7 +51,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: keycloak-mysql
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 spec:
   selector:
     app: keycloak-mysql
@@ -64,7 +64,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: keycloak-mysql-pvc
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 spec:
   storageClassName: nfs-client
   accessModes:
@@ -77,7 +77,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: keycloak-mysql-config
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 data:
   mysql_database: "keycloak"
 ---
@@ -85,7 +85,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: keycloak-mysql-secrets
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 data:
   mysql_user: cmFiYWRtaW4=
   mysql_password: em4yeCY5U1BQVW0lWWtn

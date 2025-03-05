@@ -19,6 +19,7 @@ on:
         options:
           - dev
           - demo
+          - prod
 
 jobs:
   publish-development:
