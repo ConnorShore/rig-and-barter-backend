@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 spec:
   replicas: 1
   selector:
@@ -72,7 +72,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: keycloak
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 spec:
   selector:
     app: keycloak
@@ -85,7 +85,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: keycloak-realm-config
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 data:
   db_vendor: "MYSQL"
   db_addr: "mysql"
@@ -815,7 +815,7 @@ data:
           "clientId": "angular-client",
           "name": "",
           "description": "",
-          "rootUrl": "https://pc-rig-and-barter.com",
+          "rootUrl": "https://dev.pc-rig-and-barter.com",
           "adminUrl": "",
           "baseUrl": "",
           "surrogateAuthRequired": false,
@@ -823,8 +823,8 @@ data:
           "alwaysDisplayInConsole": false,
           "clientAuthenticatorType": "client-secret",
           "redirectUris": [
-            "https://pc-rig-and-barter.com/*",
-            "https://pc-rig-and-barter.com"
+            "https://dev.pc-rig-and-barter.com/*",
+            "https://dev.pc-rig-and-barter.com"
           ],
           "webOrigins": [
             "*"
@@ -950,7 +950,7 @@ data:
           "name": "",
           "description": "",
           "rootUrl": "",
-          "adminUrl": "https://pc-rig-and-barter.com",
+          "adminUrl": "https://dev.pc-rig-and-barter.com",
           "baseUrl": "",
           "surrogateAuthRequired": false,
           "enabled": true,
@@ -2519,7 +2519,7 @@ data:
         "oauth2DeviceCodeLifespan": "600",
         "parRequestUriLifespan": "60",
         "clientSessionMaxLifespan": "0",
-        "frontendUrl": "https://pc-rig-and-barter.com",
+        "frontendUrl": "https://dev.pc-rig-and-barter.com",
         "acr.loa.map": "{}"
       },
       "keycloakVersion": "24.0.1",

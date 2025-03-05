@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: listing-service
+  namespace: demo-rig-and-barter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: listing-service
+  template:
+    metadata:
+      labels:
+        app: listing-service
+    spec:
+      containers:
+        - name: listing-service
+          image: cjshore1996/demo-listing-service:latest
+          env:
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+                  name: common-config
+            - name: TRANSACTION_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: TRANSACTION_SERVICE_URL
+                  name: common-config
+            - name: USER_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: USER_SERVICE_URL
+                  name: common-config
+            - name: PAYMENT_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: PAYMENT_SERVICE_URL
+                  name: common-config
+            - name: RB_EVENT_BROKER
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_EVENT_BROKER
+                  name: common-config
+            - name: RB_EVENT_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_EVENT_BROKER_URL
+                  name: common-config
+            - name: RB_STORAGE_FILE
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_STORAGE_FILE
+                  name: listing-service-config
+            - name: RB_STORAGE_DOCUMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: RB_STORAGE_DOCUMENT
+                  name: listing-service-config
+            - name: SPRING_DATA_MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  key: mongodb_connection_string
+                  name: listing-service-secrets
+            - name: MINIO_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: MINIO_URL
+                  name: common-config
+            - name: MINIO_BUCKET-NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: MINIO_BUCKET-NAME
+                  name: listing-service-config
+            - name: MINIO_ACCESS-KEY
+              valueFrom:
+                secretKeyRef:
+                  key: minio_access_key
+                  name: minio-secrets
+            - name: MINIO_SECRET-KEY
+              valueFrom:
+                secretKeyRef:
+                  key: minio_secret_key
+                  name: minio-secrets
+
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: listing-service
+  namespace: demo-rig-and-barter
+spec:
+  selector:
+    app: listing-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: listing-service-config
+  namespace: demo-rig-and-barter
+data:
+  RB_STORAGE_FILE: "minio"
+  RB_STORAGE_DOCUMENT: "mongodb"
+  MINIO_BUCKET-NAME: "rb-listing-images-demo"
+
+

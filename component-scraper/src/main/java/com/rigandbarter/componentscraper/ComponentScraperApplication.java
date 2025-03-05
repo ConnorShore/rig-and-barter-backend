@@ -54,9 +54,9 @@ public class ComponentScraperApplication {
             // TODO: Have cmd kargs to allow to just post already created zip files
             //  so re-scraping doesn't need to occur.
 
-            scrapeContent();
-            File zipFile = packageScrapedContent();
-//            File zipFile = new File("./component-scraper/dist/out/data_files.zip");
+//            scrapeContent();
+//            File zipFile = packageScrapedContent();
+            File zipFile = new File("./component-scraper/dist/out/data_files.zip");
             sendPackagedContent(zipFile);
 
             System.out.println("All scrapers have finished execution!");

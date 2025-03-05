@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: listing-service
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 spec:
   replicas: 1
   selector:
@@ -90,7 +90,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: listing-service
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 spec:
   selector:
     app: listing-service
@@ -103,7 +103,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: listing-service-config
-  namespace: rig-and-barter
+  namespace: dev-rig-and-barter
 data:
   RB_STORAGE_FILE: "minio"
   RB_STORAGE_DOCUMENT: "mongodb"

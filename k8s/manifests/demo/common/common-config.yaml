@@ -1,0 +1,24 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-config
+  namespace: demo-rig-and-barter
+data:
+  LISTING_SERVICE_URL: "http://listing-service.demo-rig-and-barter.svc.cluster.local:8080"
+  TRANSACTION_SERVICE_URL: "http://transaction-service.demo-rig-and-barter.svc.cluster.local:8081"
+  NOTIFICATION_SERVICE_URL: "http://notification-service.demo-rig-and-barter.svc.cluster.local:8082"
+  USER_SERVICE_URL: "http://user-service.demo-rig-and-barter.svc.cluster.local:8083"
+  PAYMENT_SERVICE_URL: "http://payment-service.demo-rig-and-barter.svc.cluster.local:8084"
+  MESSAGE_SERVICE_URL: "http://message-service.demo-rig-and-barter.svc.cluster.local:8085"
+  COMPONENT_SERVICE_URL: "http://component-service.demo-rig-and-barter.svc.cluster.local:8087"
+  PC_BUILDER_SERVICE_URL: "http://pc-builder-service.demo-rig-and-barter.svc.cluster.local:8088"
+
+  MINIO_URL: "https://objects.pc-rig-and-barter.com"
+
+  RB_KEYCLOAK_URL: "http://keycloak.demo-rig-and-barter.svc.cluster.local:8080"
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: "https://demo.pc-rig-and-barter.com/realms/rig-and-barter-realm"
+
+  RB_FRONT-END_URL: "https://demo.pc-rig-and-barter.com"
+  RB_EVENT_BROKER: "kafka"
+  RB_EVENT_BROKER_URL: "broker.demo-rig-and-barter.svc.cluster.local:29092"
