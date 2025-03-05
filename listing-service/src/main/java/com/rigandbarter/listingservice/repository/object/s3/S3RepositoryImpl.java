@@ -4,6 +4,7 @@ import com.rigandbarter.listingservice.repository.object.IObjectRepository;
 import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Template;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -48,5 +49,10 @@ public class S3RepositoryImpl implements IObjectRepository {
         log.info("Successfully uploaded file to S3");
         // Return s3 resource url
         return resourceUrl;
+    }
+
+    @Override
+    public void deleteFile(String key) {
+        throw new NotImplementedException();
     }
 }

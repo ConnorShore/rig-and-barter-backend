@@ -28,4 +28,9 @@ public class MinIORepositoryImpl implements IObjectRepository {
     public String uploadFile(String key, MultipartFile file) {
         return MinIOFileUtil.uploadFile(minioClient, LISTING_IMAGES_BUCKET, key, file, MINIO_URL);
     }
+
+    @Override
+    public void deleteFile(String key) {
+        MinIOFileUtil.removeFile(minioClient, LISTING_IMAGES_BUCKET, key, MINIO_URL);
+    }
 }
