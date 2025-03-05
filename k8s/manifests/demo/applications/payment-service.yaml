@@ -89,14 +89,6 @@ spec:
       targetPort: 8084
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: stripe-secrets
-  namespace: demo-rig-and-barter
-data:
-  stripe_secret_key: c2tfdGVzdF81MVBweENnRkFHczY5VkNGQW1nY29ENWxlNlRCNDZkREgwY2hGcXpWVzFWWTg3bUI1c0JEV0RiUEN3TkNyM0FtR3laWXRqczdEeXVXOWhibXpCVGdOelpwTzAwSUZPd2lMcU4=
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: payment-service-config
