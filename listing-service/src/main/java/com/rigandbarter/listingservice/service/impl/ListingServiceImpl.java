@@ -26,13 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ListingServiceImpl implements IListingService {
 
     private final IListingRepository listingRepository;
-    private final IObjectRepository fileRepository;
+    private final IObjectRepository objectRepository;
 
     private final UserServiceClient userServiceClient;
     private final PaymentServiceClient paymentServiceClient;
@@ -68,7 +70,7 @@ public class ListingServiceImpl implements IListingService {
         for(MultipartFile image : images) {
             var fileExtension = StringUtils.getFilenameExtension(image.getOriginalFilename());
             var key = UUID.randomUUID() + "." + fileExtension;
-            imageUrls.add(fileRepository.uploadFile(key, image));
+            imageUrls.add(objectRepository.uploadFile(key, image));
         }
 
         // Save the listing data to the document db
@@ -121,8 +123,20 @@ public class ListingServiceImpl implements IListingService {
     public void deleteListingById(String listingId, boolean deleteTransaction, String authToken) {
         try {
             // TODO: See if can create a db transaction and if the web request fails, rollback the db transaction
+
+            // Delete images of the listing
+            Listing listing = listingRepository.getListingById(listingId);
+            List<String> images = listing.getImageUrls().stream()
+                    .map(url -> url.substring(url.lastIndexOf("/") + 1))
+                    .toList();
+
+            for(String image : images)
+                objectRepository.deleteFile(image);
+
+            // Delete the listing
             listingRepository.deleteListingById(listingId);
 
+            // Delete the transaction if needed
             if(deleteTransaction)
                 transactionServiceClient.deleteListingTransaction(listingId, "Bearer " + authToken);
 
