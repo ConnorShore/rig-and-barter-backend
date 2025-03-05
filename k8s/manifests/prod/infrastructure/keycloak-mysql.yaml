@@ -80,13 +80,3 @@ metadata:
   namespace: rig-and-barter
 data:
   mysql_database: "keycloak"
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: keycloak-mysql-secrets
-  namespace: rig-and-barter
-data:
-  mysql_user: cmFiYWRtaW4=
-  mysql_password: em4yeCY5U1BQVW0lWWtn
-  mysql_root_password: cm9vdA==
