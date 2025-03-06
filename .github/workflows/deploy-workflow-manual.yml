@@ -6,15 +6,15 @@ on:
       - main
   workflow_dispatch:
     inputs:
-        environment:
-            description: 'Environment'
-            required: true
-            default: 'dev'
-            type: choice
-            options:
-            - dev
-            - demo
-            - prod
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - demo
+        - prod
 
 jobs:
   deploy-backend:
