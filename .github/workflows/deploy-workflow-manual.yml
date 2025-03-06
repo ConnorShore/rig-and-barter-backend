@@ -40,7 +40,7 @@ jobs:
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
-        args: apply -f k8s/manifests/dev/ingress--recursive
+        args: apply -f k8s/manifests/dev/ingress --recursive
 
     - uses: actions-hub/kubectl@master
       name: Deploy Infrastructure Routes
