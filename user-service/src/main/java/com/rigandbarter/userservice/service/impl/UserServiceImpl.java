@@ -207,6 +207,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void setUserStripeCustomerInfo(StripeCustomerCreatedEvent stripeCustomerCreatedEvent) throws UpdateUserException {
+        log.info("Setting user's stripe customer info");
         var userEntity = this.userRepository.findByUserId(stripeCustomerCreatedEvent.getUserId());
 
         if(userEntity == null)
@@ -214,6 +215,8 @@ public class UserServiceImpl implements IUserService {
 
         userEntity.setStripeCustomerId(stripeCustomerCreatedEvent.getStripeCustomerId());
         this.userRepository.save(userEntity);
+
+        log.info("Successfully set user's stripe customer info");
     }
 
     /**

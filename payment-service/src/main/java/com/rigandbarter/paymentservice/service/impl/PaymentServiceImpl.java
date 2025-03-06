@@ -77,6 +77,7 @@ public class PaymentServiceImpl implements IPaymentService {
 
     @Override
     public StripeProductCreationResponse createStripeProduct(StripeProductRequest stripeProductRequest) throws StripeException {
+        log.info("Creating stripe product");
         Stripe.apiKey = stripeSecretKey;
 
         // Save the product to stripe
@@ -86,7 +87,7 @@ public class PaymentServiceImpl implements IPaymentService {
                         .setDescription(stripeProductRequest.getDescription())
                         .build();
         Product product = Product.create(productParams);
-        System.out.println("Success! Here is your product id: " + product.getId());
+        log.info("Success! Here is your product id: " + product.getId());
 
         Long unitPriceInCents = (long) (stripeProductRequest.getProductPrice() * 100);
         PriceCreateParams params =
@@ -99,7 +100,7 @@ public class PaymentServiceImpl implements IPaymentService {
                         .build();
 
         Price price = Price.create(params);
-        System.out.println("Success! Here is your price id: " + price.getId());
+        log.info("Success! Here is your price id: " + price.getId());
 
         // Save the product to the database
         StripeProduct stripeProduct = StripeProduct.builder()
@@ -113,6 +114,7 @@ public class PaymentServiceImpl implements IPaymentService {
                 .build();
 
         stripeProductRepository.save(stripeProduct);
+        log.info("Saved stripe product to db");
 
         return StripeProductCreationResponse.builder()
                 .stripeProductId(product.getId())
@@ -160,6 +162,7 @@ public class PaymentServiceImpl implements IPaymentService {
 
     @Override
     public StripeCustomer createStripeCustomer(UserBasicInfo basicInfo) throws StripeException {
+        log.info("Creating stripe customer");
         Stripe.apiKey = stripeSecretKey;
 
         CustomerCreateParams params =
@@ -170,6 +173,8 @@ public class PaymentServiceImpl implements IPaymentService {
 
         Customer customer = Customer.create(params);
 
+        log.info("Stripe customer created!");
+
         StripeCustomer stripeCustomer = StripeCustomer.builder()
                 .userId(basicInfo.getUserId())
                 .stripeId(customer.getId())
@@ -178,6 +183,7 @@ public class PaymentServiceImpl implements IPaymentService {
                 .build();
 
         stripeCustomerRepository.save(stripeCustomer);
+        log.info("Creating stripe customer saved in DB");
 
         // Create event to update user object with stripe customer
         StripeCustomerCreatedEvent stripeCustomerCreatedEvent = StripeCustomerCreatedEvent.builder()
@@ -187,6 +193,9 @@ public class PaymentServiceImpl implements IPaymentService {
                 .userId(stripeCustomer.getUserId())
                 .stripeCustomerId(stripeCustomer.getStripeId())
                 .build();
+
+
+        log.info("Sending event to update user object with stripe customer");
         stripeCustomerCreatedProducer.send(stripeCustomerCreatedEvent);
 
         return stripeCustomer;

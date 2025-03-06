@@ -42,6 +42,7 @@ public class ListingServiceImpl implements IListingService {
 
     @Override
     public ListingResponse createListing(ListingRequest listingRequest, List<MultipartFile> images, Jwt principal) {
+        log.info("Creating listing for user: " + principal.getSubject());
         String userId = principal.getSubject();
 
         UserResponse userInfo = userServiceClient.getUser(userId, "Bearer " + principal.getTokenValue());
@@ -83,6 +84,7 @@ public class ListingServiceImpl implements IListingService {
         if(listing == null)
             throw new InternalServerErrorException("Failed to save listing to the database");
 
+        log.info("Successfully saved listing to the database");
         return ListingMapper.entityToDto(listing);
     }
 
