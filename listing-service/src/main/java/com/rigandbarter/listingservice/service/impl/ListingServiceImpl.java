@@ -43,6 +43,7 @@ public class ListingServiceImpl implements IListingService {
     @Override
     public ListingResponse createListing(ListingRequest listingRequest, List<MultipartFile> images, Jwt principal) {
         log.info("Creating listing for user: " + principal.getSubject());
+
         String userId = principal.getSubject();
 
         UserResponse userInfo = userServiceClient.getUser(userId, "Bearer " + principal.getTokenValue());

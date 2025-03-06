@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: broker
   namespace: dev-rig-and-barter
@@ -46,6 +46,13 @@ spec:
                 configMapKeyRef:
                   key: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
                   name: kafka-config
+          volumeMounts:
+            - mountPath: /data/kafka-dev
+              name: kafka-data
+      volumes:
+        - name: kafka-data
+          persistentVolumeClaim:
+            claimName: kafka-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -64,6 +71,19 @@ spec:
       port: 29092
       targetPort: 29092
       name: kafka-internal
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-pvc
+  namespace: dev-rig-and-barter
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
 ---
 apiVersion: v1
 kind: ConfigMap
