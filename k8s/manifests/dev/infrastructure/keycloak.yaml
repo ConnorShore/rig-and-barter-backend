@@ -721,7 +721,7 @@ data:
           "enabled": true,
           "alwaysDisplayInConsole": false,
           "clientAuthenticatorType": "client-secret",          
-          "secret": "pNeQOEH70jFoa2rjQwGUDFF7Uh1cjdyl",
+          "secret": "__KEYCLOAK_SECRET__",
           "redirectUris": [],
           "webOrigins": [],
           "notBefore": 0,
