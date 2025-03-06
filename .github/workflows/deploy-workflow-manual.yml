@@ -22,8 +22,36 @@ jobs:
         ls -la
 
     - uses: actions-hub/kubectl@master
-      name: Deploy
+      name: Deploy Common Configs
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
-        args: get pods --all-namespaces
+        args: apply -f k8s/manifests/dev/common --recursive
+
+    - uses: actions-hub/kubectl@master
+      name: Deploy Sealed Secrets Configs
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/manifests/dev/sealed-secrets --recursive
+
+    - uses: actions-hub/kubectl@master
+      name: Deploy Ingress Routes
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/manifests/dev/ingress--recursive
+
+    - uses: actions-hub/kubectl@master
+      name: Deploy Infrastructure Routes
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/manifests/dev/infrastructure --recursive
+
+    - uses: actions-hub/kubectl@master
+      name: Get status of pods
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: get pods -n dev-rig-and-barter
