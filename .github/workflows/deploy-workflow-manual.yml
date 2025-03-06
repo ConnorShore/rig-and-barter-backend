@@ -1,0 +1,57 @@
+name: Deploy Backend To Kubernetes
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - demo
+        - prod
+
+jobs:
+  deploy-backend:
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v4
+      name: Checkout code
+
+    - uses: actions-hub/kubectl@master
+      name: Deploy Common Configs
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/manifests/${{ inputs.environment }}/common --recursive
+
+    - uses: actions-hub/kubectl@master
+      name: Deploy Sealed Secrets
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/manifests/${{ inputs.environment }}/sealed-secrets --recursive
+
+    - uses: actions-hub/kubectl@master
+      name: Deploy Ingress Routes
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/manifests/${{ inputs.environment }}/ingress --recursive
+
+    - uses: actions-hub/kubectl@master
+      name: Deploy Infrastructure
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/manifests/${{ inputs.environment }}/infrastructure --recursive
+
+    - uses: actions-hub/kubectl@master
+      name: Deploy Applications
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/manifests/${{ inputs.environment }}/applications --recursive
