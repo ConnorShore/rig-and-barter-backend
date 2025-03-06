@@ -49,6 +49,12 @@ jobs:
       with:
         args: apply -f k8s/manifests/dev/infrastructure --recursive
 
+    - name: Wait for Pods to be Deployed
+      shell: bash
+      run: |
+        deploy=$(kubectl get deploy -o name)
+        for i in $deploy; do kubectl rollout status $i -w --timeout=60s; done
+
     - uses: actions-hub/kubectl@master
       name: Get status of pods
       env:
