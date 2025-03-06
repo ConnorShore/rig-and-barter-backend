@@ -1,13 +1,6 @@
 name: Deploy Backend To Kubernetes
 
 on:
-  pull_request:
-    branches:
-      - main
-    inputs:
-      environment:
-        description: 'Environment'
-        default: 'dev'
   workflow_dispatch:
     inputs:
       environment:
