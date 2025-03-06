@@ -2,24 +2,25 @@ name: Deploy Backend To Kubernetes
 
 on:
   pull_request:
-#  workflow_dispatch:
+  workflow_dispatch:
+    inputs:
+        environment:
+            description: 'Environment'
+            required: true
+            default: 'dev'
+            type: choice
+            options:
+            - dev
+            - demo
+            - prod
 
 jobs:
   deploy-backend:
     runs-on: self-hosted
 
-    steps:
-    - shell: bash
-      run: |
-        echo "Deploying Backend to Kubernetes"
-
+  steps:
     - uses: actions/checkout@v4
-
-    - shell: bash
-      run: |
-        echo "Checked out code"
-        echo "Getting current dir"
-        ls -la
+      name: Checkout code
 
     - uses: actions-hub/kubectl@master
       name: Deploy Common Configs
@@ -29,7 +30,7 @@ jobs:
         args: apply -f k8s/manifests/dev/common --recursive
 
     - uses: actions-hub/kubectl@master
-      name: Deploy Sealed Secrets Configs
+      name: Deploy Sealed Secrets
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
@@ -43,21 +44,15 @@ jobs:
         args: apply -f k8s/manifests/dev/ingress --recursive
 
     - uses: actions-hub/kubectl@master
-      name: Deploy Infrastructure Routes
+      name: Deploy Infrastructure
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
         args: apply -f k8s/manifests/dev/infrastructure --recursive
 
-    - name: Wait for Pods to be Deployed
-      shell: bash
-      run: |
-        deploy=$(kubectl get deploy -o name)
-        for i in $deploy; do kubectl rollout status $i -w --timeout=60s; done
-
     - uses: actions-hub/kubectl@master
-      name: Get status of pods
+      name: Deploy Applications
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
-        args: get pods -n dev-rig-and-barter
+        args: apply -f k8s/manifests/dev/applications --recursive
