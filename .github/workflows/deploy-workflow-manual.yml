@@ -12,6 +12,11 @@ on:
         - dev
         - demo
         - prod
+      replicas:
+        description: 'Replicas'
+        required: true
+        default: '1'
+        type: number
 
 jobs:
   deploy-backend:
@@ -21,9 +26,13 @@ jobs:
     - uses: actions/checkout@v4
       name: Checkout code
 
+    - name: Insert Replica count on all files
+      run: |
+        find k8s/manifests/${{ inputs.environment }} -type f -name "*.yaml" -exec sed -i "s/__REPLICAS__/${{ inputs.replicas }}/g" {} \;
+        
     - name: Replace Keycloak Access Key in Deployment
       run: |
-          sed -i "s/__KEYCLOAK_SECRET__/${{ secrets.KEYCLOAK_SECRET }}/g" k8s/manifests/${{ inputs.environment }}/infrastructure/keycloak.yaml
+        sed -i "s/__KEYCLOAK_SECRET__/${{ secrets.KEYCLOAK_SECRET }}/g" k8s/manifests/${{ inputs.environment }}/infrastructure/keycloak.yaml
 
     - uses: actions-hub/kubectl@master
       name: Deploy Common Configs

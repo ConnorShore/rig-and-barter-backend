@@ -4,7 +4,7 @@ metadata:
   name: keycloak
   namespace: demo-rig-and-barter
 spec:
-  replicas: 1
+  replicas: __REPLICAS__
   selector:
     matchLabels:
       app: keycloak
