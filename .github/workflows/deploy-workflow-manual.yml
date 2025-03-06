@@ -18,9 +18,11 @@ jobs:
     - shell: bash
       run: |
         echo "Checked out code"
+        echo "Getting current dir"
+        ls -la
 
     - uses: actions-hub/kubectl@master
-      name: Test Get Pods
+      name: Deploy
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
