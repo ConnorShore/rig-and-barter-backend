@@ -62,6 +62,9 @@ jobs:
       with:
         args: apply -f k8s/manifests/${{ inputs.environment }}/infrastructure --recursive
 
+    - name: Delay for 15 seconds to allow infrastructure to be initialized
+      run: sleep 15
+
     - uses: actions-hub/kubectl@master
       name: Deploy Applications
       env:
