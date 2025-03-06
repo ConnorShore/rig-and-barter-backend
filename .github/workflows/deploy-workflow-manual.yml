@@ -18,7 +18,7 @@ jobs:
   deploy-backend:
     runs-on: self-hosted
 
-  steps:
+    steps:
     - uses: actions/checkout@v4
       name: Checkout code
 
