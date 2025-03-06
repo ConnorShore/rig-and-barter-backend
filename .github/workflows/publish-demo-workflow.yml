@@ -8,7 +8,6 @@
 
 name: Publish Demo Backend Images Automated
 
-
 on:
   workflow_dispatch:
 

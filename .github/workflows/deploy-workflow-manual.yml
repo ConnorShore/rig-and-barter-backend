@@ -21,6 +21,10 @@ jobs:
     - uses: actions/checkout@v4
       name: Checkout code
 
+    - name: Replace Keycloak Access Key in Deployment
+      run: |
+          sed -i "s/__KEYCLOAK_SECRET__/${{ secrets.KEYCLOAK_SECRET }}/g" k8s/manifests/${{ inputs.environment }}/applications/keycloak-deployment.yaml
+
     - uses: actions-hub/kubectl@master
       name: Deploy Common Configs
       env:
