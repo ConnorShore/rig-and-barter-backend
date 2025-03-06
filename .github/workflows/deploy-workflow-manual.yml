@@ -9,15 +9,15 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - uses: action/echo@v2
-      with:
-        message: "Deploying Backend to Kubernetes"
+    - shell: bash
+      run: |
+        echo "Deploying Backend to Kubernetes"
 
     - uses: actions/checkout@v4
 
-    - uses: action/echo@v2
-      with:
-        message: "Checked out code"  
+    - shell: bash
+      run: |
+        echo "Checked out code"
 
     - uses: actions-hub/kubectl@master
       name: Test Get Pods
