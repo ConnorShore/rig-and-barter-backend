@@ -6,7 +6,7 @@ metadata:
   name: mysql
   namespace: rig-and-barter
 spec:
-  replicas: __REPLICAS__
+  replicas: 1
   selector:
     matchLabels:
       app: mysql

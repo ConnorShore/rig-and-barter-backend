@@ -4,7 +4,7 @@ metadata:
   name: keycloak-mysql
   namespace: dev-rig-and-barter
 spec:
-  replicas: __REPLICAS__
+  replicas: 1
   selector:
     matchLabels:
       app: keycloak-mysql
