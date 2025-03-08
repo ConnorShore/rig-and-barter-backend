@@ -45,7 +45,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build the Docker image
-        run: docker buildx build --platform linux/amd64,linux/arm64 -t $AccountID/${{ inputs.imageLabel }}-$ImageName:$Version --push .
+        run: docker buildx build --platform linux/amd64,linux/arm64 -t $AccountId/${{ inputs.imageLabel }}-$ImageName:$Version --push .
 
   publish-development:
     runs-on: ubuntu-24.04-arm
