@@ -14,10 +14,7 @@ on:
 
 jobs:
   publish-development:
-#    runs-on: macos-15
     runs-on: ubuntu-24.04-arm
-    # runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -26,15 +23,8 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '17'
-#        distribution: 'jetbrains'
         distribution: 'temurin'
         cache: maven
-
-    - name: Setup docker (missing on MacOS)
-      if: runner.os == 'macos'
-      run: |
-        brew install docker
-        colima start
 
     - name: Build and Publish Development Images
       run: |
