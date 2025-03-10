@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CompleteTransactionRequest {
     private String transactionId;
+    private boolean manualTransaction;
     private String paymentMethodId;
 }

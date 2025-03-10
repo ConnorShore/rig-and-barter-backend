@@ -39,6 +39,13 @@ public interface ITransactionRepository {
     List<Transaction> findAllByBuyerId(String buyerId);
 
     /**
+     * Gets all transactions for the listing
+     * @param listingId The listing id to get transactions for
+     * @return The list of transactions for a given listing
+     */
+    List<Transaction> findAllByListingId(String listingId);
+
+    /**
      * Deletes the transaction with the given id
      * @param transactionId The id of the transaction to delete
      */

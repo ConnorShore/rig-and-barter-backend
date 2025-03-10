@@ -1,4 +1,4 @@
-package com.rigandbarter.transactionservice.model;
+package com.rigandbarter.core.models;
 
 public enum TransactionState {
     REQUESTED,

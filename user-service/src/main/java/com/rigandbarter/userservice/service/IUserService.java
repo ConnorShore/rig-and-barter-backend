@@ -48,4 +48,11 @@ public interface IUserService {
      * @param stripeCustomerCreatedEvent
      */
     void setUserStripeCustomerInfo(StripeCustomerCreatedEvent stripeCustomerCreatedEvent) throws UpdateUserException;
+
+    /**
+     * Checks if the user is verified
+     * @param userId The id of the user to check
+     * @return True if the user is verified, false otherwise
+     */
+    boolean isUserVerified(String userId, Jwt principal);
 }

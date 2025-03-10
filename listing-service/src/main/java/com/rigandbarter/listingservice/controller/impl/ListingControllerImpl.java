@@ -2,6 +2,7 @@ package com.rigandbarter.listingservice.controller.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rigandbarter.core.models.TransactionResponse;
 import com.rigandbarter.listingservice.controller.IListingController;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.core.models.ListingResponse;
@@ -49,6 +50,11 @@ public class ListingControllerImpl implements IListingController {
     @Override
     public void updateListingPrice(String listingId, double price, Jwt principal) {
         listingService.updateListingPrice(listingId, price, principal.getTokenValue());
+    }
+
+    @Override
+    public List<TransactionResponse> getActiveTransactionsForListing(String listingId, Jwt principal) {
+        return listingService.getActiveTransactionsForListing(listingId, principal.getTokenValue());
     }
 
     @Override

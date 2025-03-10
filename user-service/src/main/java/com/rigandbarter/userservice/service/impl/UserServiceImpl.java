@@ -219,6 +219,26 @@ public class UserServiceImpl implements IUserService {
         log.info("Successfully set user's stripe customer info");
     }
 
+    @Override
+    public boolean isUserVerified(String userId, Jwt principal) {
+        var userEntity = userRepository.findByUserId(userId);
+        if (userEntity.getStripeCustomerId() == null)
+            return false;
+
+        // Get stripe customer info via web call to payment service
+        StripeCustomerResponse stripeCustomerInfo = paymentServiceClient.getPaymentProfile("Bearer " + principal.getTokenValue());
+        if (stripeCustomerInfo == null) {
+            String msg = "Failed to retrieve stripe customer info from payment service: " + userEntity.getStripeCustomerId();
+            throw new NotFoundException(msg);
+        }
+
+        if (!stripeCustomerInfo.getStripeId().equals(userEntity.getStripeCustomerId())) {
+            throw new NotFoundException("Stripe ID Mismatch on user entity and stripe customer");
+        }
+
+        return stripeCustomerInfo.isVerified();
+    }
+
     /**
      * Handler for when a transaction created event fails to send
      * @param error The error from the sending failure

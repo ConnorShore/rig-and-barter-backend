@@ -1,6 +1,5 @@
-package com.rigandbarter.transactionservice.dto;
+package com.rigandbarter.core.models;
 
-import com.rigandbarter.transactionservice.model.TransactionState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

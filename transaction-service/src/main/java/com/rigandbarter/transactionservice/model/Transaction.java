@@ -1,5 +1,6 @@
 package com.rigandbarter.transactionservice.model;
 
+import com.rigandbarter.core.models.TransactionState;
 import jakarta.persistence.*;
 import lombok.*;
 

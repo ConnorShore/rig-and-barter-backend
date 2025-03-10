@@ -47,6 +47,11 @@ public class UserControllerImpl implements IUserController {
     }
 
     @Override
+    public boolean isUserVerified(String userId, Jwt principal) {
+        return this.userService.isUserVerified(userId, principal);
+    }
+
+    @Override
     public UserBasicInfoResponse setUserBasicInfo(String userId, String userInfoJson, MultipartFile profilePic, Jwt principal)
             throws UpdateUserException, JsonProcessingException {
         if(!userId.equals(principal.getSubject()))
