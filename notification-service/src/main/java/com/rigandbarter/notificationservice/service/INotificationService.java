@@ -22,6 +22,12 @@ public interface INotificationService {
     void deleteNotifications(List<String> notificationIds);
 
     /**
+     * Deletes all notifications for the specified user
+     * @param userId The id of the user to delete notifications for
+     */
+    void deleteNotificationsForUser(String userId);
+
+    /**
      * Gets all front end notifications for the specified user
      * @param userId User id for whom to get notifications for
      * @return All active notifications for the user

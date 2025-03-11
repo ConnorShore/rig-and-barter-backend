@@ -34,6 +34,12 @@ public class NotificationServiceImpl implements INotificationService {
     }
 
     @Override
+    public void deleteNotificationsForUser(String userId) {
+        notificationRepository.deleteNotificationsForUser(userId);
+        log.info("Deleted notifications for user {}", userId);
+    }
+
+    @Override
     public void markNotificationAsSeen(String notificationId) {
         notificationRepository.markNotificationAsSeen(notificationId);
     }
