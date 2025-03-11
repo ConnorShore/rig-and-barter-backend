@@ -17,11 +17,11 @@ public interface ITransactionController {
      * Endpoint to create a transaction
      * @param principal The auth principal (user)
      * @param transactionRequest The details of the transaction to create
-     * @return The ID of the created transaction
+     * @return The created transaction
      */
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    String createTransaction(@AuthenticationPrincipal Jwt principal,
+    TransactionResponse createTransaction(@AuthenticationPrincipal Jwt principal,
                                     @RequestBody TransactionRequest transactionRequest);
 
     /**

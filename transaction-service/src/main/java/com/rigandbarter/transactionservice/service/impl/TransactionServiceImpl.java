@@ -43,7 +43,7 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public Transaction createTransaction(TransactionRequest transactionRequest) {
+    public TransactionResponse createTransaction(TransactionRequest transactionRequest) {
         // Save the transaction to the database
         Transaction transaction = this.transactionRepository.save(TransactionMapper.dtoToEntity(transactionRequest));
         if(transaction == null)
@@ -61,7 +61,7 @@ public class TransactionServiceImpl implements ITransactionService {
                 .build();
 
         transactionCreatedProducer.send(event, this::handleFailedTransactionCreatedEventSend);
-        return transaction;
+        return TransactionMapper.entityToDto(transaction);
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface ITransactionService {
      * @param transactionRequest The transaction to process
      * @return The transaction if everything was handled
      */
-    Transaction createTransaction(TransactionRequest transactionRequest);
+    TransactionResponse createTransaction(TransactionRequest transactionRequest);
 
     /**
      * Gets the specified transaction for the user
