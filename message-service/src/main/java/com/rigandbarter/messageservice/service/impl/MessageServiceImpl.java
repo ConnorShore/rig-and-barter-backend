@@ -53,4 +53,9 @@ public class MessageServiceImpl implements IMessageService {
 
         return MessageMapper.messageGroupEntityToDto(group);
     }
+
+    @Override
+    public void deleteMessagesForUser(String userId) {
+        this.messageRepository.deleteMessagesForUser(userId);
+    }
 }

@@ -63,6 +63,19 @@ public class MongoDbMessageRepositoryImpl extends SimpleMongoRepository<MessageG
     }
 
     @Override
+    public void deleteMessagesForUser(String userId) {
+        Criteria buyer = Criteria.where("buyerId").is(userId);
+        Query query = new Query();
+        query.addCriteria(buyer);
+        mongoTemplate.remove(query);
+
+        Criteria seller = Criteria.where("sellerId").is(userId);
+        query = new Query();
+        query.addCriteria(seller);
+        mongoTemplate.remove(query);
+    }
+
+    @Override
     public MessageGroup getMessageGroupById(String groupId) {
         return super.findById(groupId).orElse(null);
     }

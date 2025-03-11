@@ -9,4 +9,10 @@ public interface IEventHandler {
      * @param event The Transaction Created Event to handle
      */
     Void handleTransactionCreatedEvent(RBEvent event);
+
+    /**
+     * Handles the consumption of the User Deleted Event
+     * @param event The User Deleted Event to handle
+     */
+    Void handleUserDeletedEvent(RBEvent event);
 }

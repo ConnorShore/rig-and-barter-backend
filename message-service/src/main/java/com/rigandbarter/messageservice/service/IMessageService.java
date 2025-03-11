@@ -36,4 +36,10 @@ public interface IMessageService {
      * @return The message group
      */
     MessageGroupResponse getMessageGroupForUser(String groupId);
+
+    /**
+     * Deletes all messages for the given user
+     * @param userId The id of the user to delete messages for
+     */
+    void deleteMessagesForUser(String userId);
 }
