@@ -1,5 +1,6 @@
 package com.rigandbarter.listingservice.service.impl;
 
+import com.rigandbarter.core.models.TransactionResponse;
 import com.rigandbarter.core.models.UserResponse;
 import com.rigandbarter.listingservice.client.PaymentServiceClient;
 import com.rigandbarter.listingservice.client.TransactionServiceClient;
@@ -146,5 +147,10 @@ public class ListingServiceImpl implements IListingService {
         } catch (Exception e) {
             throw new NotFoundException("Failed to delete listing with id: " + listingId + " and associated transactions");
         }
+    }
+
+    @Override
+    public List<TransactionResponse> getActiveTransactionsForListing(String listingId, String authToken) {
+        return transactionServiceClient.getActiveTransactionsForListing(listingId, authToken);
     }
 }

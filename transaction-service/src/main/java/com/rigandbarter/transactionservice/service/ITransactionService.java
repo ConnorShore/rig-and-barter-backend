@@ -1,7 +1,7 @@
 package com.rigandbarter.transactionservice.service;
 
 import com.rigandbarter.transactionservice.dto.TransactionRequest;
-import com.rigandbarter.transactionservice.dto.TransactionResponse;
+import com.rigandbarter.core.models.TransactionResponse;
 import com.rigandbarter.transactionservice.model.Transaction;
 import org.springframework.security.oauth2.jwt.Jwt;
 
@@ -43,10 +43,11 @@ public interface ITransactionService {
      * Marks the transaction as completed
      * @param transactionId The id of the transaction to complete
      * @param paymentMethodId The id of the payment method to use (null if the seller)
+     * @param isManualTransaction True if the transaction is being done in person between buyer and seller
      * @param principal The auth object of the user
      * @return The updated transaction
      */
-    TransactionResponse completeTransaction(String transactionId, String paymentMethodId, Jwt principal);
+    TransactionResponse completeTransaction(String transactionId, String paymentMethodId, boolean isManualTransaction, Jwt principal);
 
     /**
      * Marks the transaction as completed
@@ -59,7 +60,13 @@ public interface ITransactionService {
     /**
      * Deletes the transaction based on id (Maybe listingId as well)
      * @param id The id within the transaction to be deleted
-     * @return
      */
     void deleteTransaction(String id);
+
+    /**
+     * Gets active transactions for the given listing
+     * @param listingId The id of the listing to get transactions for
+     * @return The list of active transactions for the given listing
+     */
+    List<TransactionResponse> getActiveTransactionsForListing(String listingId);
 }

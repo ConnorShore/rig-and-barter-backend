@@ -1,5 +1,6 @@
 package com.rigandbarter.listingservice.service;
 
+import com.rigandbarter.core.models.TransactionResponse;
 import com.rigandbarter.listingservice.dto.ListingRequest;
 import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.listingservice.model.Listing;
@@ -53,4 +54,12 @@ public interface IListingService {
      * @param authToken The auth token of the user
      */
     void deleteListingById(String listingId, boolean deleteTransaction, String authToken);
+
+    /**
+     * Gets all active transactions for a listing
+     * @param listingId The id of the listing to get transactions for
+     * @param authToken The auth token of the user
+     * @return List of active transactions for given listing
+     */
+    List<TransactionResponse> getActiveTransactionsForListing(String listingId, String authToken);
 }

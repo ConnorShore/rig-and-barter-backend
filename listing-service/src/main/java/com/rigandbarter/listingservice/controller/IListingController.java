@@ -2,6 +2,7 @@ package com.rigandbarter.listingservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rigandbarter.core.models.ListingResponse;
+import com.rigandbarter.core.models.TransactionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -62,6 +63,14 @@ public interface IListingController {
     @PutMapping("{listingId}/price")
     @ResponseStatus(HttpStatus.OK)
     void updateListingPrice(@PathVariable String listingId, @RequestBody double price, @AuthenticationPrincipal Jwt principal);
+
+    /**
+     * Updates the quantity of a listing
+     * @param listingId The id of listing to get transactions for
+     */
+    @GetMapping("{listingId}/transactions")
+    @ResponseStatus(HttpStatus.OK)
+    List<TransactionResponse> getActiveTransactionsForListing(@PathVariable String listingId, @AuthenticationPrincipal Jwt principal);
 
     /**
      * Status endpoint to see if service is running

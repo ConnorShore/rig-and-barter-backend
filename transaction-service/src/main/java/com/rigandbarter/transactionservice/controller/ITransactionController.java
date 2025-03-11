@@ -2,7 +2,7 @@ package com.rigandbarter.transactionservice.controller;
 
 import com.rigandbarter.transactionservice.dto.CompleteTransactionRequest;
 import com.rigandbarter.transactionservice.dto.TransactionRequest;
-import com.rigandbarter.transactionservice.dto.TransactionResponse;
+import com.rigandbarter.core.models.TransactionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -41,6 +41,15 @@ public interface ITransactionController {
     @GetMapping("{transactionId}")
     @ResponseStatus(HttpStatus.OK)
     TransactionResponse getTransaction(@PathVariable String transactionId, @AuthenticationPrincipal Jwt principal);
+
+    /**
+     * Gets all active transactions for the listing
+     * @param listingId The listing id to get the transactions for
+     * @return List of active transactions for the given listing
+     */
+    @GetMapping("listing/{listingId}")
+    @ResponseStatus(HttpStatus.OK)
+    List<TransactionResponse> getActiveTransactionsForListing(@PathVariable String listingId);
 
     /**
      * Deletes the specified transactions for the user

@@ -46,7 +46,7 @@ public class ComponentScraperApplication {
     };
 
     // TODO: Move to config
-    private static final String POST_URL = "https://pc-rig-and-barter.com/api/component/db";
+    private static final String POST_URL = "https://demo.pc-rig-and-barter.com/api/component/db";
 //    private static final String POST_URL = "http://localhost:9000/api/component/db";
 
     public static void main(String[] args) {

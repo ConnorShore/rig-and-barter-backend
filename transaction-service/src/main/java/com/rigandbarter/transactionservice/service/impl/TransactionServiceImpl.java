@@ -6,9 +6,9 @@ import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionInProgressEvent;
 import com.rigandbarter.transactionservice.dto.TransactionRequest;
-import com.rigandbarter.transactionservice.dto.TransactionResponse;
+import com.rigandbarter.core.models.TransactionResponse;
 import com.rigandbarter.transactionservice.model.Transaction;
-import com.rigandbarter.transactionservice.model.TransactionState;
+import com.rigandbarter.core.models.TransactionState;
 import com.rigandbarter.transactionservice.repository.ITransactionRepository;
 import com.rigandbarter.transactionservice.repository.mapper.TransactionMapper;
 import com.rigandbarter.transactionservice.service.ITransactionService;
@@ -123,7 +123,7 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public TransactionResponse completeTransaction(String transactionId, String paymentMethodId, Jwt principal) {
+    public TransactionResponse completeTransaction(String transactionId, String paymentMethodId, boolean isManualTransaction, Jwt principal) {
         String userId = principal.getSubject();
 
         Transaction transaction = this.transactionRepository.findByUniqueId(transactionId);
@@ -139,8 +139,11 @@ public class TransactionServiceImpl implements ITransactionService {
         if(userId.equals(transaction.getSellerId()))
             transaction.setSellerCompleted(true);
 
-        // If both buyer and seller have completed the transaction, send event to complete payment
-        if(transaction.isBuyerCompleted() && transaction.isSellerCompleted()) {
+        // If both buyer and seller have completed the transaction,
+        // OR
+        // It is a manual transaction and the seller has completed the transaction
+        // send event to complete payment
+        if((isManualTransaction || transaction.isBuyerCompleted()) && transaction.isSellerCompleted()) {
             transaction.setState(TransactionState.COMPLETED);
             transaction.setCompletionDate(LocalDateTime.now());
 
@@ -182,6 +185,14 @@ public class TransactionServiceImpl implements ITransactionService {
     public void deleteTransaction(String id) {
         this.transactionRepository.deleteByUniqueId(id);
         this.transactionRepository.deleteByListingId(id);
+    }
+
+    @Override
+    public List<TransactionResponse> getActiveTransactionsForListing(String listingId) {
+        return this.transactionRepository.findAllByListingId(listingId).stream()
+                .filter(transaction -> transaction.getCompletionDate() == null)
+                .map(TransactionMapper::entityToDto)
+                .toList();
     }
 
     /**

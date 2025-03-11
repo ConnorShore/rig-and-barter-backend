@@ -1,9 +1,9 @@
 package com.rigandbarter.transactionservice.repository.mapper;
 
 import com.rigandbarter.transactionservice.dto.TransactionRequest;
-import com.rigandbarter.transactionservice.dto.TransactionResponse;
+import com.rigandbarter.core.models.TransactionResponse;
 import com.rigandbarter.transactionservice.model.Transaction;
-import com.rigandbarter.transactionservice.model.TransactionState;
+import com.rigandbarter.core.models.TransactionState;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

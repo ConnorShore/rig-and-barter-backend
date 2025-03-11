@@ -3,7 +3,7 @@ package com.rigandbarter.transactionservice.controller.impl;
 import com.rigandbarter.transactionservice.controller.ITransactionController;
 import com.rigandbarter.transactionservice.dto.CompleteTransactionRequest;
 import com.rigandbarter.transactionservice.dto.TransactionRequest;
-import com.rigandbarter.transactionservice.dto.TransactionResponse;
+import com.rigandbarter.core.models.TransactionResponse;
 import com.rigandbarter.transactionservice.service.ITransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +36,11 @@ public class TransactionControllerImpl implements ITransactionController {
     }
 
     @Override
+    public List<TransactionResponse> getActiveTransactionsForListing(String listingId) {
+        return transactionService.getActiveTransactionsForListing(listingId);
+    }
+
+    @Override
     public void deleteTransaction(String id) {
         this.transactionService.deleteTransaction(id);
     }
@@ -47,7 +52,12 @@ public class TransactionControllerImpl implements ITransactionController {
 
     @Override
     public TransactionResponse completeTransaction(String transactionId, CompleteTransactionRequest completeTransactionRequest, Jwt principal) {
-        return this.transactionService.completeTransaction(transactionId, completeTransactionRequest.getPaymentMethodId(), principal);
+        return this.transactionService.completeTransaction(
+                transactionId,
+                completeTransactionRequest.getPaymentMethodId(),
+                completeTransactionRequest.isManualTransaction(),
+                principal
+        );
     }
 
     @Override
