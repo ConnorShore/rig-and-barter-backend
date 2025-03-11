@@ -23,4 +23,10 @@ public interface IUserRepository {
      * @return The UserEntity with associated email, null if not found
      */
     UserEntity findByUserId(String userId);
+
+    /**
+     * Deletes the user with the specified id
+     * @param userId The id of the user to delete
+     */
+    void deleteByUserId(String userId);
 }

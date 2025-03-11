@@ -47,6 +47,14 @@ public class UserControllerImpl implements IUserController {
     }
 
     @Override
+    public void deleteUser(String userId, Jwt principal) {
+        if(!userId.equals(principal.getSubject()))
+            throw new UserAuthorizationException(("Current user does not have permission to delete another user's profile"));
+
+        this.userService.deleteUserById(userId);
+    }
+
+    @Override
     public boolean isUserVerified(String userId, Jwt principal) {
         return this.userService.isUserVerified(userId, principal);
     }

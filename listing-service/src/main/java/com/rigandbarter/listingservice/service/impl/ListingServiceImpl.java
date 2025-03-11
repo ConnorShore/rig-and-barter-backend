@@ -97,6 +97,11 @@ public class ListingServiceImpl implements IListingService {
     }
 
     @Override
+    public List<ListingResponse> getAllListingsForUser(String userId) {
+        return List.of();
+    }
+
+    @Override
     public ListingResponse getListingById(String listingId) {
         Listing listing = listingRepository.getListingById(listingId);
         return ListingMapper.entityToDto(listing);
@@ -146,6 +151,27 @@ public class ListingServiceImpl implements IListingService {
 
         } catch (Exception e) {
             throw new NotFoundException("Failed to delete listing with id: " + listingId + " and associated transactions");
+        }
+    }
+
+    @Override
+    public void deleteAllListingsByUserId(String userId) {
+        try {
+            List<Listing> userListings = listingRepository.getAllListingsForUser(userId);
+            List<String> images = new ArrayList<>();
+            for (Listing userListing : userListings) {
+                images.addAll(userListing.getImageUrls().stream()
+                        .map(url -> url.substring(url.lastIndexOf("/") + 1))
+                        .toList());
+            }
+
+            for (String image : images)
+                objectRepository.deleteFile(image);
+
+            listingRepository.deleteListingsForUser(userId);
+
+        } catch (Exception e) {
+            throw new NotFoundException("Failed to delete listings for user with id: " + userId);
         }
     }
 

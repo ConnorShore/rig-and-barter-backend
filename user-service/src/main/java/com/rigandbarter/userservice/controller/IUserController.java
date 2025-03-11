@@ -54,13 +54,22 @@ public interface IUserController {
     UserBasicInfoResponse getUserBasicInfo(@PathVariable String userId, @AuthenticationPrincipal Jwt principal);
 
     /**
+     * Deletes the user with the specified id
+     * @param userId The id of the user to delete
+     */
+    @DeleteMapping("{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void deleteUser(@PathVariable String userId, @AuthenticationPrincipal Jwt principal);
+
+
+    /**
      * Checks if the user is verified
      * @param userId The user to see if verified
      * @return True if the specified user is verified, false otherwise
      */
     @GetMapping("{userId}/verified")
     @ResponseStatus(HttpStatus.OK)
-    boolean isUserVerified(@PathVariable  String userId, @AuthenticationPrincipal Jwt principal);
+    boolean isUserVerified(@PathVariable String userId, @AuthenticationPrincipal Jwt principal);
 
     /**
      * Health check for the service

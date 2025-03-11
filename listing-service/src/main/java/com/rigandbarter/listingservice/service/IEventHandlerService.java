@@ -2,6 +2,7 @@ package com.rigandbarter.listingservice.service;
 
 import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
+import com.rigandbarter.eventlibrary.events.UserDeletedEvent;
 import com.rigandbarter.eventlibrary.events.UserVerifyEvent;
 
 public interface IEventHandlerService {
@@ -19,4 +20,11 @@ public interface IEventHandlerService {
      * @return Success status
      */
     RBResultStatus<Void> handleTransactionCompletedEvent(TransactionCompletedEvent transactionCompletedEvent);
+
+    /**
+     * Handles the user deleted event
+     * @param userDeletedEvent The event to handle
+     * @return Success status
+     */
+    RBResultStatus<Void> handleUserDeleteEvent(UserDeletedEvent userDeletedEvent);
 }

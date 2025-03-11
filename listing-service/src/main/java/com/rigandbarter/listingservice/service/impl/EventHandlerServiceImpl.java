@@ -2,6 +2,7 @@ package com.rigandbarter.listingservice.service.impl;
 
 import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
+import com.rigandbarter.eventlibrary.events.UserDeletedEvent;
 import com.rigandbarter.eventlibrary.events.UserVerifyEvent;
 import com.rigandbarter.listingservice.service.IEventHandlerService;
 import com.rigandbarter.listingservice.service.IListingService;
@@ -30,6 +31,16 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
     public RBResultStatus<Void> handleTransactionCompletedEvent(TransactionCompletedEvent transactionCompletedEvent) {
         try {
             listingService.deleteListingById(transactionCompletedEvent.getListingId(), false, transactionCompletedEvent.getAuthToken());
+        } catch (Exception e) {
+            return new RBResultStatus<>(false, e.getMessage());
+        }
+        return new RBResultStatus<>(true);
+    }
+
+    @Override
+    public RBResultStatus<Void> handleUserDeleteEvent(UserDeletedEvent userDeletedEvent) {
+        try {
+            listingService.deleteAllListingsByUserId(userDeletedEvent.getUserId());
         } catch (Exception e) {
             return new RBResultStatus<>(false, e.getMessage());
         }
