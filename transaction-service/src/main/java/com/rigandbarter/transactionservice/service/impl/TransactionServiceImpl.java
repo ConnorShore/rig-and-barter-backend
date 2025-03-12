@@ -198,7 +198,8 @@ public class TransactionServiceImpl implements ITransactionService {
     @Override
     public void deleteTransactionsForUser(String userId) {
         log.info("Deleting all transactions for user {}", userId);
-        this.transactionRepository.deleteAllByUserId(userId);
+        this.transactionRepository.deleteByBuyerId(userId);
+        this.transactionRepository.deleteBySellerId(userId);
         log.info("All transactions deleted for user {}", userId);
     }
 
