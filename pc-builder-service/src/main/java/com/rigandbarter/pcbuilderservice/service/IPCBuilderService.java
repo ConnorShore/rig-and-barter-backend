@@ -28,4 +28,10 @@ public interface IPCBuilderService {
      * @param id The id of the build to delete
      */
     void deletePCBuildById(String id);
+
+    /**
+     * Deletes all pc builds for a user
+     * @param userId The id of the user to delete builds for
+     */
+    void deletePCBuildsByUserId(String userId);
 }

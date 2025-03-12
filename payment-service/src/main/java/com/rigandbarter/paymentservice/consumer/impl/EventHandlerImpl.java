@@ -46,6 +46,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         userCreatedConsumer.start();
 //        transactionInProgressConsumer.start();
         transactionCompletedConsumer.start();
+        userDeletedConsumer.start();
     }
 
     @Override
@@ -55,6 +56,7 @@ public class EventHandlerImpl extends RBEventHandler implements IEventHandler {
         userCreatedConsumer.stop();
 //        transactionInProgressConsumer.stop();
         transactionCompletedConsumer.stop();
+        userDeletedConsumer.stop();
     }
 
     @Override

@@ -48,4 +48,11 @@ public class PCBuilderServiceImpl implements IPCBuilderService {
     public void deletePCBuildById(String id) {
         pcBuilderRepository.deleteById(id);
     }
+
+    @Override
+    public void deletePCBuildsByUserId(String userId) {
+        log.info("Deleting all pc builds for user: {}", userId);
+        pcBuilderRepository.deleteAllByUserId(userId);
+        log.info("Deleted all pc builds for user: {}", userId);
+    }
 }
