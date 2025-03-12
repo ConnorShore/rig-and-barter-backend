@@ -80,4 +80,10 @@ public interface IPaymentService {
      * @param transactionCreatedEvent The transaction info
      */
     void completeTransaction(TransactionCompletedEvent transactionCreatedEvent) throws StripeException;
+
+    /**
+     * Deletes all user related resources from the payment service
+     * @param userId The id of the user to delete resources for
+     */
+    void deleteUser(String userId);
 }

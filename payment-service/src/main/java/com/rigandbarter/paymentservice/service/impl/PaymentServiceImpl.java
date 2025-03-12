@@ -401,6 +401,45 @@ public class PaymentServiceImpl implements IPaymentService {
                 buyerCustomer.getStripeId(), sellerCustomer.getAccountId());
     }
 
+    @Override
+    public void deleteUser(String userId) {
+        log.info("Deleting payment service resources for user: " + userId);
+
+        StripeCustomer customer = stripeCustomerRepository.findByUserId(userId);
+        if (customer == null) {
+            log.info("No Stripe customer found for user: " + userId);
+            return;
+        }
+
+        // Delete all payment methods for the user
+        for (StripePaymentMethod paymentMethod : customer.getPaymentMethods()) {
+            try {
+                deletePaymentMethod(paymentMethod.getStripePaymentId(), userId);
+            } catch (Exception e) {
+                log.error("Failed to delete payment method: " + paymentMethod.getStripePaymentId(), e);
+            }
+        }
+
+        // Delete user stripe accounts (if any)
+        if (customer.getAccountId() != null) {
+            try {
+                deleteStripeAccount(customer.getAccountId(), userId, true);
+            } catch (Exception e) {
+                log.error("Failed to delete stripe account: " + customer.getAccountId(), e);
+            }
+        }
+
+        // Delete stripe customer for user
+        try {
+            Customer stripeCustomer = Customer.retrieve(customer.getStripeId());
+            stripeCustomer.delete();
+        } catch (Exception e) {
+            log.error("Failed to delete stripe customer: " + customer.getStripeId(), e);
+        }
+
+        log.info("Deleted payment resources for user: " + userId);
+    }
+
     /**
      * Complete the payment for the listing.
      * @param listing The listing to complete the payment for
