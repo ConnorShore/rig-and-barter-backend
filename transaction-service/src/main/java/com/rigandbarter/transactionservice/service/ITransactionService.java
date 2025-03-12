@@ -69,4 +69,10 @@ public interface ITransactionService {
      * @return The list of active transactions for the given listing
      */
     List<TransactionResponse> getActiveTransactionsForListing(String listingId);
+
+    /**
+     * Deletes all transactions for the given user
+     * @param userId The id of the user to delete transactions for
+     */
+    void deleteTransactionsForUser(String userId);
 }

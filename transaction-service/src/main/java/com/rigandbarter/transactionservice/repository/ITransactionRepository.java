@@ -56,4 +56,10 @@ public interface ITransactionRepository {
      * @param listingId The id of the listing in the transaction to delete
      */
     void deleteByListingId(String listingId);
+
+    /**
+     * Deletes all transactions for the user
+     * @param userId The id of the user
+     */
+    void deleteAllByUserId(String userId);
 }
