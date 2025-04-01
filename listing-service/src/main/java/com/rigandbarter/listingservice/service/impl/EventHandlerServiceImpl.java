@@ -38,7 +38,7 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
     }
 
     @Override
-    public RBResultStatus<Void>     handleUserDeleteEvent(UserDeletedEvent userDeletedEvent) {
+    public RBResultStatus<Void> handleUserDeleteEvent(UserDeletedEvent userDeletedEvent) {
         try {
             listingService.deleteAllListingsByUserId(userDeletedEvent.getUserId());
         } catch (Exception e) {

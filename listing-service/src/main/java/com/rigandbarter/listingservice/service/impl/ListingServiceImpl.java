@@ -142,6 +142,9 @@ public class ListingServiceImpl implements IListingService {
             for(String image : images)
                 objectRepository.deleteFile(image);
 
+            // Delete the stripe product
+            paymentServiceClient.deleteProduct(listing.getStripeProductId(), "Bearer " + authToken);
+
             // Delete the listing
             listingRepository.deleteListingById(listingId);
 

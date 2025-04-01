@@ -18,6 +18,7 @@ import com.rigandbarter.paymentservice.model.StripeCustomer;
 import com.rigandbarter.paymentservice.model.StripePaymentMethod;
 import com.rigandbarter.paymentservice.model.StripeProduct;
 import com.rigandbarter.paymentservice.repository.IStripeCustomerRepository;
+import com.rigandbarter.paymentservice.repository.IStripePaymentMethodRepository;
 import com.rigandbarter.paymentservice.repository.IStripeProductRepository;
 import com.rigandbarter.paymentservice.service.IPaymentService;
 import com.stripe.Stripe;
@@ -41,10 +42,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PaymentServiceImpl implements IPaymentService {
 
-    @Value("${rb.front-end.url}")
+    @Value("${rb.frontend.url}")
     private String FRONT_END_URL;
 
-    @Value("${server.port}")
+    @Value("${rb.stripe.server.port}")
     private String SERVER_PORT;
 
     private final String EVENT_SOURCE = "PaymentService";
@@ -58,18 +59,21 @@ public class PaymentServiceImpl implements IPaymentService {
 
     private final IStripeProductRepository stripeProductRepository;
     private final IStripeCustomerRepository stripeCustomerRepository;
+    private final IStripePaymentMethodRepository stripePaymentMethodRepository;
 
     private final ListingServiceClient listingServiceClient;
 
     public PaymentServiceImpl(String stripeSecretKey, String stripeFeePercent,
                               IStripeProductRepository stripeProductRepository,
                               IStripeCustomerRepository stripeCustomerRepository,
+                              IStripePaymentMethodRepository stripePaymentMethodRepository,
                               RBEventProducerFactory rbEventProducerFactory,
                               ListingServiceClient listingServiceClient) {
         this.stripeSecretKey = stripeSecretKey;
         this.stripeFeePercent = stripeFeePercent;
         this.stripeProductRepository = stripeProductRepository;
         this.stripeCustomerRepository = stripeCustomerRepository;
+        this.stripePaymentMethodRepository = stripePaymentMethodRepository;
         this.stripeCustomerCreatedProducer = rbEventProducerFactory.createProducer(StripeCustomerCreatedEvent.class);
         this.userVerifyProducer = rbEventProducerFactory.createProducer(UserVerifyEvent.class);
         this.listingServiceClient = listingServiceClient;
@@ -158,6 +162,37 @@ public class PaymentServiceImpl implements IPaymentService {
         stripeProduct.setStripePriceId(newPrice.getId());
         stripeProduct.setPriceInCents(unitPriceInCents);
         stripeProductRepository.save(stripeProduct);
+    }
+
+    @Override
+    public void deleteStripeProduct(String productId) throws StripeException {
+        log.info("Deleting stripe product: " + productId);
+
+        Stripe.apiKey = stripeSecretKey;
+
+        StripeProduct stripeProduct = stripeProductRepository.findByStripeProductId(productId);
+        if(stripeProduct == null)
+            throw new NotFoundException("Product with id: " + productId + " not found");
+
+        Product product = Product.retrieve(productId);
+        if(product == null)
+            throw new NotFoundException("Product with id: " + productId + " not found in Stripe.");
+
+        Price productPrice = Price.retrieve(stripeProduct.getStripePriceId());
+        if(productPrice == null)
+            throw new NotFoundException("Price with id: " + stripeProduct.getStripePriceId() + " not found in Stripe.");
+
+        // Set the price to inactive and delete it
+        productPrice.setActive(false);
+        productPrice.setDeleted(true);
+
+        // delete the product
+        product.setActive(false);
+        product.setDeleted(true);
+
+        stripeProductRepository.delete(stripeProduct);
+
+        log.info("Price deleted from stripe: " + productId);
     }
 
     @Override
@@ -354,6 +389,11 @@ public class PaymentServiceImpl implements IPaymentService {
         if(!userContainsPayment)
             throw new AuthenticationException("User[" + userId + "] does not have access to payment: " + paymentId);
 
+        StripePaymentMethod stripePaymentMethod = customer.getPaymentMethods().stream()
+                .filter(p -> p.getStripePaymentId().equals(paymentId))
+                .findFirst()
+                .orElse(null);
+
         customer.setPaymentMethods(
                 customer.getPaymentMethods().stream()
                     .filter(pm -> !pm.getStripePaymentId().equals(paymentId))
@@ -373,6 +413,7 @@ public class PaymentServiceImpl implements IPaymentService {
             // Fail silently
         }
 
+        stripePaymentMethodRepository.delete(stripePaymentMethod);
         stripeCustomerRepository.save(customer);
     }
 
@@ -411,6 +452,9 @@ public class PaymentServiceImpl implements IPaymentService {
             return;
         }
 
+        //TODO: See why the StripeProduct isn't being removed from our db and see why
+        // the Payment method isn't being deleted from our db as well (may have fix in place)
+
         // Delete all payment methods for the user
         for (StripePaymentMethod paymentMethod : customer.getPaymentMethods()) {
             try {
@@ -429,6 +473,16 @@ public class PaymentServiceImpl implements IPaymentService {
             }
         }
 
+        // Delete user products
+        List<StripeProduct> userProducts = stripeProductRepository.findAllByUserId(userId);
+        for(StripeProduct product : userProducts) {
+            try {
+                deleteStripeProduct(product.getStripeProductId());
+            } catch (Exception e) {
+                log.error("Failed to delete stripe product: " + product.getStripeProductId(), e);
+            }
+        }
+
         // Delete stripe customer for user
         try {
             Customer stripeCustomer = Customer.retrieve(customer.getStripeId());
@@ -436,6 +490,11 @@ public class PaymentServiceImpl implements IPaymentService {
         } catch (Exception e) {
             log.error("Failed to delete stripe customer: " + customer.getStripeId(), e);
         }
+
+        // Get latest customer object
+        customer = stripeCustomerRepository.findByUserId(userId);
+
+        stripeCustomerRepository.delete(customer);
 
         log.info("Deleted payment resources for user: " + userId);
     }

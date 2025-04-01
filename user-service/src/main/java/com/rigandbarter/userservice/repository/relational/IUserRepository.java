@@ -25,8 +25,8 @@ public interface IUserRepository {
     UserEntity findByUserId(String userId);
 
     /**
-     * Deletes the user with the specified id
-     * @param userId The id of the user to delete
+     * Deletes the user
+     * @param entity The user entity to delete
      */
-    void deleteByUserId(String userId);
+    void delete(UserEntity entity);
 }

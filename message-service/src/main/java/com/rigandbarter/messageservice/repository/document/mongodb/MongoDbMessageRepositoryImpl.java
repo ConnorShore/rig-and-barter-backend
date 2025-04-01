@@ -67,12 +67,12 @@ public class MongoDbMessageRepositoryImpl extends SimpleMongoRepository<MessageG
         Criteria buyer = Criteria.where("buyerId").is(userId);
         Query query = new Query();
         query.addCriteria(buyer);
-        mongoTemplate.remove(query);
+        mongoTemplate.findAllAndRemove(query, MessageGroup.class);
 
         Criteria seller = Criteria.where("sellerId").is(userId);
         query = new Query();
         query.addCriteria(seller);
-        mongoTemplate.remove(query);
+        mongoTemplate.findAllAndRemove(query, MessageGroup.class);
     }
 
     @Override

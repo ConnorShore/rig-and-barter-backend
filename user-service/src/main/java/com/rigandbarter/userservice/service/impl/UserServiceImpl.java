@@ -234,8 +234,8 @@ public class UserServiceImpl implements IUserService {
         log.info("Deleting user with id: " + userId);
 
         var userEntity = this.userRepository.findByUserId(userId);
-        this.keycloakService.deleteUserByEmail(userEntity.getEmail());
-        this.userRepository.deleteByUserId(userId);
+        this.keycloakService.deleteUser(userEntity.getUserId());
+        this.userRepository.delete(userEntity);
 
         log.info("User [{}] removed from db and keycloak. Sending user deleted event", userId);
 

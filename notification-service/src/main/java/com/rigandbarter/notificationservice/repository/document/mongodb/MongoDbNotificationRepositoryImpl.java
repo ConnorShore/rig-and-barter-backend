@@ -50,7 +50,7 @@ public class MongoDbNotificationRepositoryImpl extends SimpleMongoRepository<Not
     public void deleteNotificationsForUser(String userId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("targetUser").is(userId));
-        mongoTemplate.remove(query);
+        mongoTemplate.findAllAndRemove(query, Notification.class);
     }
 
     @Override

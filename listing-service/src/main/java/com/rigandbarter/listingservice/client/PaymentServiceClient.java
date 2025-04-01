@@ -2,6 +2,7 @@ package com.rigandbarter.listingservice.client;
 
 import com.rigandbarter.listingservice.dto.StripeProductRequest;
 import com.rigandbarter.core.models.StripeProductCreationResponse;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -15,4 +16,7 @@ public interface PaymentServiceClient {
 
     @PutExchange(value = "/api/payment/product/{productId}/price")
     void updateProductPrice(@PathVariable String productId, @RequestBody double price, @RequestHeader("Authorization") String bearerToken);
+
+    @DeleteMapping(value = "/api/payment/product/{productId}")
+    void deleteProduct(@PathVariable String productId, @RequestHeader("Authorization") String bearerToken);
 }

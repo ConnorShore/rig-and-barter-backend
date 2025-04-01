@@ -21,7 +21,7 @@ public interface IKeycloakService {
 
     /**
      * Deletes the user with the specified id
-     * @param email The email of the user to delete
+     * @param userId The id of the user to delete
      */
-    void deleteUserByEmail(String email);
+    void deleteUser(String userId);
 }

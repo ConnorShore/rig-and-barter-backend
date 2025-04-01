@@ -47,6 +47,6 @@ public class MongoDbPCBuilderRepositoryImpl extends SimpleMongoRepository<PCBuil
     public void deleteAllByUserId(String userId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("userId").is(userId));
-        mongoTemplate.remove(query, PCBuild.class);
+        mongoTemplate.findAllAndRemove(query, PCBuild.class);
     }
 }

@@ -66,6 +66,6 @@ public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Listing,
         Criteria user = Criteria.where("userId").is(userId);
         Query query = new Query();
         query.addCriteria(user);
-        mongoTemplate.remove(query);
+        mongoTemplate.findAllAndRemove(query, Listing.class);
     }
 }

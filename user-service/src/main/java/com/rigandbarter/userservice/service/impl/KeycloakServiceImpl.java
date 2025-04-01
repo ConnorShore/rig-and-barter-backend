@@ -105,8 +105,8 @@ public class KeycloakServiceImpl implements IKeycloakService {
     }
 
     @Override
-    public void deleteUserByEmail(String email) {
-        final String deleteUserEndpoint = "/admin/realms/rig-and-barter-realm/users?email=" + email;
+    public void deleteUser(String userId) {
+        final String deleteUserEndpoint = "/admin/realms/rig-and-barter-realm/users/" + userId;
         String url = KEYCLOAK_URL + deleteUserEndpoint;
 
         var accessToken = getAccessToken();

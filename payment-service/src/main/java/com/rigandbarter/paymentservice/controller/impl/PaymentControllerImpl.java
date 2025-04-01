@@ -43,6 +43,11 @@ public class PaymentControllerImpl implements IPaymentController {
     }
 
     @Override
+    public void deleteProduct(String productId) throws StripeException {
+        paymentService.deleteStripeProduct(productId);
+    }
+
+    @Override
     public String createStripeAccountForUser(Jwt principal) throws StripeException {
         return paymentService.createStripeCustomerAccount(principal.getSubject());
     }
