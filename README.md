@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://pc-rb-public-assets.s3.us-west-1.amazonaws.com/logo.png"  
+    <img src="https://objects.pc-rig-and-barter.com/rb-images-public/logo_transparent.png"  
         width="60%" alt="PC Rig and Barter Logo"/>
 </div>
 <br>
