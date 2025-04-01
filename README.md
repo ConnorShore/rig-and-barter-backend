@@ -4,14 +4,11 @@
 </div>
 <br>
 
-<!-- 
 > [!NOTE]
-> Link to demo site: [LINK_TO_DEMO] -->
-
+> Link to demo site: [PC Rig and Barter Demo](https://demo.pc-rig-and-barter.com)
 
 > [!NOTE]
 > If you are interested in the architecture of the app, jump to the [Architecture Section](#architecture).
-
 
 # Overview
 PC Rig and Barter is a tool to help you design PC builds and acquire the different components you need to create your perfect build.
@@ -69,12 +66,12 @@ The backend is a collection of microservices written in Java using Spring Boot 3
 Currently the databases being utilized are:
 * **MySQL**
 * **MongoDB**
-* **AWS S3**
+* **MinIO (For Object Storage)**
 
 The architecture of the services allow me to very easily swap to different database providers or types depending on my needs going forward, especially related to costs.
 
 > [!NOTE]
-> Currently I'm working on building a home server so I can deploy and host this myself instead of paying for cloud providers as they get expensive for a personal project.
+> All the databases and services are self-hosted in my Homelab I created.  My Kubernetes Cluster is a multi-node cluster built with Raspberry PIs. My storage is split between a NAS where MongoDB and MySQL volumes are mounted.  MinIO is running in a Proxmox cluster.  My deployment pipeline agents are self-hosted as well.
 
 ## Frontend
 The frontend is an Angular webapp written in typescript.  I utilized a frontend template as my frontend skills are not nearly as developed as my backend skills.  There aren't any major additional technologies used in the frontend, the only other technology being used is **SockJS** for websocket connections used for messages and notifications.
