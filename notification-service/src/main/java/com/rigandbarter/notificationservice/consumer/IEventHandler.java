@@ -12,4 +12,10 @@ public interface IEventHandler {
     Void handleTransactionCreatedEvent(RBEvent event);
 
     // TODO: Handle transaction in progress and completed events
+
+    /**
+     * Handles the consumption of the User Deleted Event
+     * @param event The User Deleted Event to handle
+     */
+    Void handleUserDeletedEvent(RBEvent event);
 }

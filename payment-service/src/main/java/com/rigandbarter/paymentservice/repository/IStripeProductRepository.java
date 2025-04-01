@@ -2,6 +2,8 @@ package com.rigandbarter.paymentservice.repository;
 
 import com.rigandbarter.paymentservice.model.StripeProduct;
 
+import java.util.List;
+
 public interface IStripeProductRepository {
 
     /**
@@ -17,4 +19,17 @@ public interface IStripeProductRepository {
      * @return The transacitno if found
      */
     StripeProduct findByStripeProductId(String stripeProductId);
+
+    /**
+     * Finds all stripe products with specified user id
+     * @param userId The id of the user to get products for
+     * @return All products for the user
+     */
+    List<StripeProduct> findAllByUserId(String userId);
+
+    /**
+     * Deletes the stripe product
+     * @param stripeProduct The stripe product to delete
+     */
+    void delete(StripeProduct stripeProduct);
 }

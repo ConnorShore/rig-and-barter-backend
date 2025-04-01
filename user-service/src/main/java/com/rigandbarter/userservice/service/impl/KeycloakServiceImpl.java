@@ -104,6 +104,22 @@ public class KeycloakServiceImpl implements IKeycloakService {
         return keycloakUserList.get(0);
     }
 
+    @Override
+    public void deleteUser(String userId) {
+        final String deleteUserEndpoint = "/admin/realms/rig-and-barter-realm/users/" + userId;
+        String url = KEYCLOAK_URL + deleteUserEndpoint;
+
+        var accessToken = getAccessToken();
+
+        webClientBuilderNoLb.build()
+                .delete()
+                .uri(url)
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
+    }
+
 
     /**
      * TODO: Maybe move this to a bean?

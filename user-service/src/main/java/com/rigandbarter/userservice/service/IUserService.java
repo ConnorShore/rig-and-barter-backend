@@ -44,6 +44,13 @@ public interface IUserService {
                                            MultipartFile profilePic) throws UpdateUserException;
 
     /**
+     * Deletes the user with the specified id
+     * @param userId The id user to delete
+     * @param principal The principal of the user making the request
+     */
+    void deleteUserById(String userId);
+
+    /**
      * Adds the stripe customer created info to user
      * @param stripeCustomerCreatedEvent
      */

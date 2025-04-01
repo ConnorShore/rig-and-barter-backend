@@ -18,4 +18,10 @@ public interface IKeycloakService {
      * @return The keycloak user with the specified email, null otherwise
      */
     KeycloakUser getUserByEmail(String email);
+
+    /**
+     * Deletes the user with the specified id
+     * @param userId The id of the user to delete
+     */
+    void deleteUser(String userId);
 }

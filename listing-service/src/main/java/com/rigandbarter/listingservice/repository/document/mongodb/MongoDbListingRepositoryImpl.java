@@ -60,4 +60,12 @@ public class MongoDbListingRepositoryImpl extends SimpleMongoRepository<Listing,
     public void deleteListingById(String listingId) {
         super.deleteById(listingId);
     }
+
+    @Override
+    public void deleteListingsForUser(String userId) {
+        Criteria user = Criteria.where("userId").is(userId);
+        Query query = new Query();
+        query.addCriteria(user);
+        mongoTemplate.findAllAndRemove(query, Listing.class);
+    }
 }

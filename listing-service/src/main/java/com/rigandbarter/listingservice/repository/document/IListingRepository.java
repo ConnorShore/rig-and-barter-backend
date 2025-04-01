@@ -45,4 +45,10 @@ public interface IListingRepository {
      * @param listingId The id of the listing to delete
      */
     void deleteListingById(String listingId);
+
+    /**
+     * Deletes all listings for a specific user
+     * @param userId The id of the user to delete listings for
+     */
+    void deleteListingsForUser(String userId);
 }

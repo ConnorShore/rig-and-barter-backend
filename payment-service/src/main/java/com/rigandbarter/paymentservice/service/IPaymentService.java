@@ -31,6 +31,13 @@ public interface IPaymentService {
     void updateStripeProductPrice(String productId, double price) throws StripeException;
 
     /**
+     * Deletes a product from Stripe
+     * @param productId The id of the product to delete
+     * @throws StripeException Fials to delete product/price in Stripe
+     */
+    void deleteStripeProduct(String productId) throws StripeException;
+
+    /**
      * Creates a customer in stripe and our db
      * @param basicInfo The info of the customer to create
      * @return The created customer
@@ -80,4 +87,10 @@ public interface IPaymentService {
      * @param transactionCreatedEvent The transaction info
      */
     void completeTransaction(TransactionCompletedEvent transactionCreatedEvent) throws StripeException;
+
+    /**
+     * Deletes all user related resources from the payment service
+     * @param userId The id of the user to delete resources for
+     */
+    void deleteUser(String userId);
 }

@@ -3,6 +3,7 @@ package com.rigandbarter.notificationservice.service.impl;
 import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
+import com.rigandbarter.eventlibrary.events.UserDeletedEvent;
 import com.rigandbarter.notificationservice.client.ListingServiceClient;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotification;
 import com.rigandbarter.notificationservice.model.notification.FrontEndNotificationType;
@@ -64,5 +65,17 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
         // Etc
 
         return new RBResultStatus<Void>(true);
+    }
+
+    @Override
+    public RBResultStatus<Void> handleUserDeletedEvent(UserDeletedEvent userDeletedEvent) {
+        try {
+            notificationService.deleteNotificationsForUser(userDeletedEvent.getUserId());
+        } catch (Exception e) {
+            log.error("Failed to delete notifications for user: " + userDeletedEvent.getUserId(), e);
+            return new RBResultStatus<>(false, e.getMessage());
+        }
+
+        return new RBResultStatus<>(true);
     }
 }

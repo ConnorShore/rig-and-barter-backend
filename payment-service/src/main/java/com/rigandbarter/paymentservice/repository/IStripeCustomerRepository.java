@@ -18,4 +18,10 @@ public interface IStripeCustomerRepository {
      * @return The customer if found
      */
     StripeCustomer findByUserId(String userId);
+
+    /**
+     * Deletes the stripe customer
+     * @param stripeCustomer The customer to delete
+     */
+    void delete(StripeCustomer stripeCustomer);
 }

@@ -3,6 +3,7 @@ package com.rigandbarter.messageservice.service.impl;
 import com.rigandbarter.core.models.ListingResponse;
 import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCreatedEvent;
+import com.rigandbarter.eventlibrary.events.UserDeletedEvent;
 import com.rigandbarter.messageservice.client.ListingServiceClient;
 import com.rigandbarter.messageservice.dto.MessageGroupRequest;
 import com.rigandbarter.messageservice.dto.MessageGroupResponse;
@@ -47,6 +48,18 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
         MessageGroupResponse createdGroup = messageService.createMessageGroup(messageGroup);
         if(createdGroup == null)
             return new RBResultStatus<>(false, "Failed to create message group");
+
+        return new RBResultStatus<>(true);
+    }
+
+    @Override
+    public RBResultStatus<Void> handleUserDeletedEvent(UserDeletedEvent userDeletedEvent) {
+        try {
+            this.messageService.deleteMessagesForUser(userDeletedEvent.getUserId());
+        } catch (Exception e) {
+            log.error("Failed to delete messages for user: " + userDeletedEvent.getUserId(), e);
+            return new RBResultStatus<>(false, "Failed to delete messages for user: " + userDeletedEvent.getUserId());
+        }
 
         return new RBResultStatus<>(true);
     }

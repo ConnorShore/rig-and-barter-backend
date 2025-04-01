@@ -28,6 +28,12 @@ public interface INotificationRepository {
     void deleteNotifications(List<String> notificationIds);
 
     /**
+     * Deletes all notifications for the specified user
+     * @param userId The id of the user to delete notifications for
+     */
+    void deleteNotificationsForUser(String userId);
+
+    /**
      * Marks the frontend notification as Seen By User
      * @param notificationId The id of the notification to mark as seen
      */

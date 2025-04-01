@@ -4,6 +4,7 @@ import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionInProgressEvent;
 import com.rigandbarter.eventlibrary.events.UserCreatedEvent;
+import com.rigandbarter.eventlibrary.events.UserDeletedEvent;
 import com.rigandbarter.paymentservice.service.IEventHandlerService;
 import com.rigandbarter.paymentservice.service.IPaymentService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,17 @@ public class EventHandlerServiceImpl implements IEventHandlerService {
     public RBResultStatus<Void> handleTransactionCompletedEvent(TransactionCompletedEvent transactionCreatedEvent) {
         try {
             paymentService.completeTransaction(transactionCreatedEvent);
+        } catch (Exception e) {
+            return new RBResultStatus<>(false, e.getMessage());
+        }
+
+        return new RBResultStatus<>(true);
+    }
+
+    @Override
+    public RBResultStatus<Void> handleUserDeletedEvent(UserDeletedEvent userDeletedEvent) {
+        try {
+            paymentService.deleteUser(userDeletedEvent.getUserId());
         } catch (Exception e) {
             return new RBResultStatus<>(false, e.getMessage());
         }

@@ -4,6 +4,7 @@ import com.rigandbarter.core.models.RBResultStatus;
 import com.rigandbarter.eventlibrary.events.TransactionCompletedEvent;
 import com.rigandbarter.eventlibrary.events.TransactionInProgressEvent;
 import com.rigandbarter.eventlibrary.events.UserCreatedEvent;
+import com.rigandbarter.eventlibrary.events.UserDeletedEvent;
 
 public interface IEventHandlerService {
 
@@ -27,4 +28,11 @@ public interface IEventHandlerService {
      * @return the result of the operation
      */
     RBResultStatus<Void> handleTransactionCompletedEvent(TransactionCompletedEvent transactionCreatedEvent);
+
+    /**
+     * Handle the UserDeletedEvent
+     * @param userDeletedEvent the event to handle
+     * @return the result of the operation
+     */
+    RBResultStatus<Void> handleUserDeletedEvent(UserDeletedEvent userDeletedEvent);
 }

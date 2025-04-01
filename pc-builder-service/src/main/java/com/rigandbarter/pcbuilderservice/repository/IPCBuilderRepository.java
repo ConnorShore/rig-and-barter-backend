@@ -24,4 +24,10 @@ public interface IPCBuilderRepository {
      * @param id The id of the pc build
      */
     void deleteById(String id);
+
+    /**
+     * Deletes all pc builds for a user
+     * @param userId The id of the user to delete pc builds for
+     */
+    void deleteAllByUserId(String userId);
 }

@@ -58,6 +58,15 @@ public interface IPaymentController {
     void updateProductPrice(@PathVariable String productId, @RequestBody double price) throws StripeException;
 
     /**
+     * Deletes a product from Stripe and db
+     * @param productId The id of the product to delete
+     * @throws StripeException Fails to delete the product
+     */
+    @DeleteMapping("product/{productId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void deleteProduct(@PathVariable String productId) throws StripeException;
+
+    /**
      * Creates a stripe connected account for the user
      * @param principal The user to create the account for
      * @return The redirect url to set the account info via stripe

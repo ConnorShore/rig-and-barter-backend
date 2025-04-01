@@ -56,4 +56,16 @@ public interface ITransactionRepository {
      * @param listingId The id of the listing in the transaction to delete
      */
     void deleteByListingId(String listingId);
+
+    /**
+     * Deletes all transactions for the seller
+     * @param sellerId The id of the seller
+     */
+    void deleteBySellerId(String sellerId);
+
+    /**
+     * Deletes all transactions for the buyer
+     * @param buyerId The id of the buyer
+     */
+    void deleteByBuyerId(String buyerId);
 }

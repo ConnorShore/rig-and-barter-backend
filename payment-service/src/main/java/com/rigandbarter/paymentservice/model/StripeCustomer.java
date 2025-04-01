@@ -27,7 +27,7 @@ public class StripeCustomer {
     private String accountId;
     private boolean verified;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "userId")
     private List<StripePaymentMethod> paymentMethods;

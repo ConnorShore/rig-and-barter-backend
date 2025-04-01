@@ -26,6 +26,13 @@ public interface IListingService {
     List<ListingResponse> getAllListings();
 
     /**
+     * Gets all listings for a user
+     * @param userId The id of the user to get all listings for
+     * @return All listings for a user
+     */
+    List<ListingResponse> getAllListingsForUser(String userId);
+
+    /**
      * Gets a specific listing by its id
      * @param listingId The id of the listing to retrieve
      * @return The listing with id equal to listingId
@@ -54,6 +61,12 @@ public interface IListingService {
      * @param authToken The auth token of the user
      */
     void deleteListingById(String listingId, boolean deleteTransaction, String authToken);
+
+    /**
+     * Deletes all listings for a user
+     * @param userId The id of the user to delete the listings for
+     */
+    void deleteAllListingsByUserId(String userId);
 
     /**
      * Gets all active transactions for a listing

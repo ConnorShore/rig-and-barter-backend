@@ -195,6 +195,14 @@ public class TransactionServiceImpl implements ITransactionService {
                 .toList();
     }
 
+    @Override
+    public void deleteTransactionsForUser(String userId) {
+        log.info("Deleting all transactions for user {}", userId);
+        this.transactionRepository.deleteByBuyerId(userId);
+        this.transactionRepository.deleteBySellerId(userId);
+        log.info("All transactions deleted for user {}", userId);
+    }
+
     /**
      * Handler for when a transaction created event fails to send
      * @param error The error from the sending failure

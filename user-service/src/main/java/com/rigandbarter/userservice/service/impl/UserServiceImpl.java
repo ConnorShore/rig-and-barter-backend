@@ -8,6 +8,7 @@ import com.rigandbarter.eventlibrary.components.RBEventProducer;
 import com.rigandbarter.eventlibrary.components.RBEventProducerFactory;
 import com.rigandbarter.eventlibrary.events.StripeCustomerCreatedEvent;
 import com.rigandbarter.eventlibrary.events.UserCreatedEvent;
+import com.rigandbarter.eventlibrary.events.UserDeletedEvent;
 import com.rigandbarter.userservice.client.PaymentServiceClient;
 import com.rigandbarter.userservice.dto.*;
 import com.rigandbarter.userservice.mapper.UserMapper;
@@ -31,13 +32,18 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class UserServiceImpl implements IUserService {
-    private final IKeycloakService keycloakService;
+
     private final IUserRepository userRepository;
     private final IProfilePictureRepository profilePictureRepository;
-    private final RBEventProducer userCreatedProducer;;
-    private final String EVENT_SOURCE = "UserService";
+
+    private final IKeycloakService keycloakService;
 
     private final PaymentServiceClient paymentServiceClient;
+
+    private final RBEventProducer userCreatedProducer;;
+    private final RBEventProducer userDeletedProducer;
+
+    private final String EVENT_SOURCE = "UserService";
 
     public UserServiceImpl(IKeycloakService keycloakService,
                            IUserRepository userRepository,
@@ -46,10 +52,13 @@ public class UserServiceImpl implements IUserService {
                            PaymentServiceClient paymentServiceClient)
     {
         this.keycloakService = keycloakService;
+
         this.userRepository = userRepository;
         this.profilePictureRepository = profilePictureRepository;
 
         this.userCreatedProducer = rbEventProducerFactory.createProducer(UserCreatedEvent.class);
+        this.userDeletedProducer = rbEventProducerFactory.createProducer(UserDeletedEvent.class);
+
         this.paymentServiceClient = paymentServiceClient;
     }
 
@@ -111,6 +120,21 @@ public class UserServiceImpl implements IUserService {
                 .build();
 
         userCreatedProducer.send(event, this::handleFailedUserCreatedEvent);
+    }
+
+    /**
+     * Sends the user deleted event
+     * @param userId The id of the user whose resources to delete
+     */
+    private void sendUserDeletedEvent(String userId) {
+        UserDeletedEvent event = UserDeletedEvent.builder()
+                .userId(userId)
+                .id(UUID.randomUUID().toString())
+                .source(EVENT_SOURCE)
+                .creationDate(LocalDateTime.now())
+                .build();
+
+        userDeletedProducer.send(event, this::handleFailedUserCreatedEvent);
     }
 
     @Override
@@ -203,6 +227,19 @@ public class UserServiceImpl implements IUserService {
         } catch (Exception e) {
             throw new UpdateUserException("Failed to update user basic info");
         }
+    }
+
+    @Override
+    public void deleteUserById(String userId) {
+        log.info("Deleting user with id: " + userId);
+
+        var userEntity = this.userRepository.findByUserId(userId);
+        this.keycloakService.deleteUser(userEntity.getUserId());
+        this.userRepository.delete(userEntity);
+
+        log.info("User [{}] removed from db and keycloak. Sending user deleted event", userId);
+
+        sendUserDeletedEvent(userId);
     }
 
     @Override
