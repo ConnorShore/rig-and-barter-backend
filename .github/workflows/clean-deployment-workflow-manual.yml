@@ -12,6 +12,11 @@ on:
         - dev
         - demo
         - prod
+      applicationsOnly:
+        description: 'Only clean applications'
+        required: true
+        default: false
+        type: boolean
 
 jobs:
   clean-deployment-backend:
@@ -22,8 +27,16 @@ jobs:
       name: Checkout code
 
     - uses: actions-hub/kubectl@master
-      name: Clean Backend
+      if: ${{ inputs.applicationsOnly == false }}
+      name: Clean Entire Backend
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
         args: delete -f k8s/manifests/${{ inputs.environment }} --recursive
+    - uses: actions-hub/kubectl@master
+      if: ${{ inputs.applicationsOnly == true }}
+      name: Clean Application Backend Only
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: delete -f k8s/manifests/${{ inputs.environment }}/applications --recursive
