@@ -17,6 +17,11 @@ on:
         required: true
         default: '1'
         type: number
+      applicationsOnly:
+        description: 'Only deploy applications'
+        required: true
+        default: false
+        type: boolean
 
 jobs:
   deploy-backend:
@@ -36,6 +41,7 @@ jobs:
 
     - uses: actions-hub/kubectl@master
       name: Deploy Common Configs
+      if: ${{ inputs.applicationsOnly == false }}
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
@@ -43,6 +49,7 @@ jobs:
 
     - uses: actions-hub/kubectl@master
       name: Deploy Sealed Secrets
+      if: ${{ inputs.applicationsOnly == false }}
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
@@ -50,6 +57,7 @@ jobs:
 
     - uses: actions-hub/kubectl@master
       name: Deploy Ingress Routes
+      if: ${{ inputs.applicationsOnly == false }}
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
@@ -57,12 +65,14 @@ jobs:
 
     - uses: actions-hub/kubectl@master
       name: Deploy Infrastructure
+      if: ${{ inputs.applicationsOnly == false }}
       env:
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
         args: apply -f k8s/manifests/${{ inputs.environment }}/infrastructure --recursive
 
     - name: Delay for 15 seconds to allow infrastructure to be initialized
+      if: ${{ inputs.applicationsOnly == false }}
       run: sleep 15
 
     - uses: actions-hub/kubectl@master
